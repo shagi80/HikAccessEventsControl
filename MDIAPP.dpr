@@ -12,7 +12,9 @@ uses
   ShiftPresent in 'Controls\ShiftPresent.pas',
   TheEventsLoader in 'HikAPI\TheEventsLoader.pas',
   APIClient in 'HikAPI\APIClient.pas',
-  DigestHeader in 'HikAPI\DigestHeader.pas';
+  DigestHeader in 'HikAPI\DigestHeader.pas',
+  TheAPIExecutor in 'HikAPI\TheAPIExecutor.pas',
+  APIProcessWin in 'APIProcessWin.pas' {frmProcess};
 
 {$R *.RES}
 

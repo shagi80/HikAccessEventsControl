@@ -3,7 +3,7 @@ unit TheEventsLoader;
 interface
 
 uses
-  Classes, SysUtils, DateUtils, APIClient;
+  Classes, SysUtils, DateUtils, APIClient, DigestHeader;
 
 const
   apiTime = '/ISAPI/System/time/localTime';
@@ -17,6 +17,8 @@ type
     IP: string[20];
     Port: integer;
     Direction: TEventDirection;
+    Login: string[20];
+    Password: string[20];
   end;
 
   TMinorEvents = array of Integer;
@@ -24,54 +26,69 @@ type
   TEventsLoader = class (TObject)
   private
     FDevices: TList;
-    FAPIClient: IAPIClient;
+    //FAPIClient: IAPIClient;
     FMinorEvents: TMinorEvents;
     FMajor: integer;
     FUTC: string;
+    FUseThread: boolean;
+    FStopFlag: boolean;
+    FPortionSize: integer;
+    { Геттеры и сеттеры }
     function GetDevice(Ind: integer): TDevice;
     function GetDeviceCount: integer;
     function GetMinorEventsCount: integer;
     function GetMinorEvent(Ind: integer): integer;
-
-    procedure SetLoginPasswordFromDB;
-
+    { Работа с базой данных }
+    procedure LoadDeviceFromDB;
+    { Работа с HikAPI }
+    procedure PrepareAPIClient(Client: THTTPClient; DeviceID: integer);
+    function Request(DeviceId: integer; Method: TRequestMethod; Url, Body: string;
+      var Response: TStringList): integer;
+    function ISOTimeStrToDateTime(DateTimeStr: string): TDateTime;
+    function GetEventsPortion(DeviceInd, Position, Minor: integer;
+      StartTime, EndTime: TDateTime): integer;
   public
-    constructor Create(APIClientClass: TClass);
+    constructor Create;
     destructor Destroy; override;
-    procedure AddDevice(Name, IP: string; Port: integer;
-      Direction: TEventDirection); overload;
-    procedure AddDevice(Device: TDevice); overload;
+    { Свойства и настройки }
+    procedure AddDevice(Device: TDevice);
     property DeviceCount: integer read GetDeviceCount;
     property Device[Ind: integer]: TDevice read GetDevice;
     procedure AddMinorEvent(Minor: integer);
     property MinorEventCount: integer read GetMinorEventsCount;
     property MinorEvent[Ind: integer]: integer read GetMinorEvent;
+    { Работа с базой данных }
     function LastTimeInDB: TDateTime;
+    { Работа с HikAPI }
+    property UseThread: boolean read FUseThread write FUseThread;
     function GetDeviceTime(DeviceInd: integer): TDateTime;
     function CheckConnection(DeviceInd: integer): boolean;
-    function EventsCount(Minor: TMinorEvents;
+    function GetEventsCount(DeviceInd, Minor: integer;
+      StartTime, EndTime: TDateTime): integer;
+    function GetEvents(Minor: TMinorEvents;
       StartTime, EndTime: TDateTime): integer;
   end;
 
 implementation
 
-uses JSON, Dialogs, Clipbrd;
+uses
+  JSON, Dialogs, Clipbrd, TheAPIExecutor, Windows, Forms, APIProcessWin;
 
-constructor TEventsLoader.Create(APIClientClass: TClass);
+constructor TEventsLoader.Create;
 begin
   inherited Create;
   FDevices := TList.Create;
   FMajor := 5;
   FUTC := '+03:00';
-  if (APIClientClass = THTTPClient) then FAPIClient := THTTPClient.Create;
-  if (APIClientClass = TTCPClient) then FAPIClient := TTCPClient.Create;
-  if Assigned(FAPIClient) then SetLoginPasswordFromDB;
+  FUseThread := False;
+  FStopFlag := false;
+  FPortionSize := 30;
+  LoadDeviceFromDB;
 end;
 
 destructor TEventsLoader.Destroy;
 begin
   FDevices.Free;
-  FreeAndNil(FAPIClient);
   inherited Destroy;
 end;
 
@@ -89,19 +106,6 @@ begin
   PDevice := nil;
   if Ind < FDevices.Count then PDevice := FDevices.Items[Ind];
   Result := PDevice^;
-end;
-
-procedure TEventsLoader.AddDevice(Name, IP: string; Port: integer;
-      Direction: TEventDirection);
-var
-  PDevice: ^TDevice;
-begin
-  new(PDevice);
-  PDevice^.Name := Name;
-  PDevice^.IP := IP;
-  PDevice^.Port := Port;
-  PDevice^.Direction := Direction;
-  FDevices.Add(PDevice);
 end;
 
 procedure TEventsLoader.AddDevice(Device: TDevice);
@@ -130,32 +134,114 @@ begin
     else Result := FMinorEvents[Ind];
 end;
 
-{}
+{ Работа с базой данных. }
 
 function TEventsLoader.LastTimeInDB: TDateTime;
 begin
   Result := StartOfAYear(2025);;
 end;
 
-procedure TEventsLoader.SetLoginPasswordFromDB;
+procedure TEventsLoader.LoadDeviceFromDB;
+var
+  PDevice: ^TDevice;
 begin
-  FAPIClient.SetLoginPassword('admin', 'shrtyjk8006');
+  Self.FDevices.Clear;
+  new(PDevice);
+  PDevice^.Name := 'First';
+  PDevice^.IP := '192.168.24.113';
+  PDevice^.Port := 80;
+  PDevice^.Direction := edIN;
+  PDevice^.Login := 'admin';
+  PDevice^.Password := 'shrtyjk8006';
+  Fdevices.Add(PDevice);
 end;
 
-{}
+{ Работа с HikAPI. }
+
+procedure TEventsLoader.PrepareAPIClient(Client: THTTPClient; DeviceID: integer);
+var
+  PDevice: ^TDevice;
+begin
+  PDevice := FDevices.Items[DeviceId];
+  Client.SetHostPort(PDevice^.IP, PDevice^.Port);
+  Client.SetLoginPassword(PDevice^.Login, PDevice^.Password);
+end;
+
+function TEventsLoader.Request(DeviceId: integer; Method: TRequestMethod;
+  Url, Body: string; var Response: TStringList): integer;
+
+  function IsThreadRunning(AThread: TThread): Boolean;
+  begin
+    if (AThread = nil) or (AThread.Handle = 0) then Result := False
+      else Result := WaitForSingleObject(AThread.Handle, 0) = WAIT_TIMEOUT;
+  end;
+
+var
+  APIExecutor: TAPIExecutor;
+  HTTPClient: THTTPClient;
+begin
+  if Self.FUseThread then begin
+    APIExecutor := TAPIExecutor.Create;
+    PrepareAPIClient(APIExecutor.HTTPClient, DeviceId);
+    APIExecutor.PrepareRequest(Method, Url, Body);
+    APIExecutor.Resume;
+    while IsThreadRunning(APIExecutor) do begin
+      Application.ProcessMessages;
+      if (FStopFlag) and (APIExecutor.HTTPClient.IdHTTP.Connected) then
+            APIExecutor.HTTPClient.IdHTTP.Disconnect        
+    end;
+    Result := APIExecutor.Result;
+    Response.Text := APIExecutor.Response;
+    APIExecutor.Free;
+  end else begin
+    HTTPClient := THTTPClient.Create;;
+    PrepareAPIClient(HTTPClient, DeviceId);
+    Result := HTTPClient.Request(Method, Url, Body, Response);
+    HTTPClient.Free;
+  end;
+end;
+
+function TEventsLoader.ISOTimeStrToDateTime(DateTimeStr: string): TDateTime;
+var
+  CleanStr, UTCStr: string;
+  UTCMinute: integer;
+  DateTimeValue: TDateTime;
+  FormatSettings: TFormatSettings;
+begin
+  // Выделям часвой пояс и преобразуем в минуты для смещения
+  UTCStr := Copy(DateTimeStr, 20, MaxInt);
+  UTCMinute := StrToIntDef(Copy(UTCStr, 2, 2), 0) * 60
+    + StrToIntDef(Copy(UTCStr, 5, 2), 0);
+  if UTCStr[1] = '-' then UTCMinute := -UTCMinute;
+
+  // Выделяем дату и время, убираем символ 'T'
+  CleanStr := StringReplace(DateTimeStr, 'T', ' ', [rfReplaceAll]); // Удаляем 'T'
+  CleanStr := Copy(CleanStr, 1, 19);
+
+  // Настраиваем формат даты и времени
+  FormatSettings.DateSeparator := '-';
+  FormatSettings.ShortDateFormat := 'yyyy-mm-dd'; // Формат даты
+  FormatSettings.TimeSeparator := ':';
+  FormatSettings.LongTimeFormat := 'hh:nn:ss';    // Формат времени
+
+  // Преобразуем строку в TDateTime
+  DateTimeValue := StrToDateTime(CleanStr, FormatSettings);
+
+  //Добавялем часовой пояс
+  IncMinute(DateTimeValue, UTCMinute);
+
+  Result := DateTimeValue;
+end;
 
 function TEventsLoader.GetDeviceTime(DeviceInd: integer): TDateTime;
 var
-  PDevice: ^TDevice;
   Response: TStringList;
 begin
-  PDevice := FDevices.Items[DeviceInd];
-  FAPIClient.SetHostPort(PDevice^.IP, PDevice^.Port);
   Response := TStringList.Create;
   Result := 0;
   try
-    if (FAPIClient.Get(apiTime, Response) = 200) then
-      Result := ISO8601ToDate(Response.Text) ;
+    if (Request(DeviceInd, rmGET, apiTime, '', Response) = 200) then
+      Result := ISOTimeStrToDateTime(Response.Text) ;  
   finally
     Response.Free;
   end;
@@ -163,64 +249,109 @@ end;
 
 function TEventsLoader.CheckConnection(DeviceInd: integer): boolean;
 var
-  PDevice: ^TDevice;
   Response: TStringList;
 begin
-  PDevice := FDevices.Items[DeviceInd];
-  FAPIClient.SetHostPort(PDevice^.IP, PDevice^.Port);
   Response := TStringList.Create;
   try
-    Result := (FAPIClient.Get(apiTime, Response) = 200);
+    Result := (Request(DeviceInd, rmGET, apiTime, '', Response) = 200);
   finally
     Response.Free;
   end;
 end;
 
-function TEventsLoader.EventsCount(Minor: TMinorEvents;
+function TEventsLoader.GetEventsCount(DeviceInd, Minor: integer;
   StartTime, EndTime: TDateTime): integer;
 var
-  DevInd, MinorInd, Res: integer;
-  PDevice: ^TDevice;
+  Res: integer;
   Response: TStringList;
   StartTimeStr, EndTimeStr: string;
   JsonRoot, JsonInfo: TJsonObject;
   JsonResp: TJsonArray;
 begin
   Result := 0;
+
   // Определяем переменные для установки диапазона выборки
   StartTimeStr := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss' + FUTC, StartTime);
   EndTimeStr := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss' + FUTC, EndTime);
-  // Перебираем все устройства и все minor коды
-  for DevInd := 0 to FDevices.Count - 1 do begin
-    PDevice := FDevices.Items[DevInd];
-    FAPIClient.SetHostPort(PDevice^.IP, PDevice^.Port);
-    for MinorInd := 0 to High(Minor) do begin
-      // Подготавливаем тело запроса.
-      JsonInfo := TJsonObject.Create(nil);
-      JsonInfo.Add('major', FMajor);
-      JsonInfo.Add('minor', Minor[MinorInd]);
-      JsonInfo.Add('startTime', StartTimeStr);
-      JsonInfo.Add('endTime', EndTimeStr);
-      JsonRoot := TJsonObject.Create(nil);
-      JsonRoot.Add('AcsEventTotalNumCond', JsonInfo);
-      // Выполняем запрос
-      Response := TStringList.Create;
-      try
-        Res := FAPIClient.Post(apiEventNum, JsonRoot.JsonText, Response);
-        if Res = 200 then begin
-          JsonResp := JSON.ParseJSON(PAnsiChar(Response.Text));
-          Result := Result
-            + JsonResp.Field['AcsEventTotalNum'].Field['totalNum'].Value;
-        end else
-          raise Exception.Create(Response.Text);
-      finally
-        FreeAndNil(JsonRoot);
-        FreeAndNil(JsonResp);
-        Response.Free;
-      end;
-    end;
+
+  // Подготавливаем тело запроса.
+  JsonInfo := TJsonObject.Create(nil);
+  JsonInfo.Add('major', FMajor);
+  JsonInfo.Add('minor', Minor);
+  JsonInfo.Add('startTime', StartTimeStr);
+  JsonInfo.Add('endTime', EndTimeStr);
+  JsonRoot := TJsonObject.Create(nil);
+  JsonRoot.Add('AcsEventTotalNumCond', JsonInfo);
+      
+  // Выполняем запрос
+  Response := TStringList.Create;
+  try
+    Res := Request(DeviceInd, rmPost, apiEventNum, JsonRoot.JsonText, Response);
+    if Res = 200 then begin
+      JsonResp := JSON.ParseJSON(PAnsiChar(Response.Text));
+        Result := Result
+          + JsonResp.Field['AcsEventTotalNum'].Field['totalNum'].Value;
+    end else
+      raise Exception.Create(Response.Text);
+  finally
+    FreeAndNil(JsonRoot);
+    FreeAndNil(JsonResp);
+    Response.Free;
   end;
 end;
+
+function TEventsLoader.GetEventsPortion(DeviceInd, Position, Minor: integer;
+  StartTime, EndTime: TDateTime): integer;
+var
+  Res: integer;
+  Response: TStringList;
+  StartTimeStr, EndTimeStr: string;
+  JsonRoot, JsonInfo: TJsonObject;
+  JsonResp: TJsonArray;
+begin
+  Result := 0;
+
+  // Определяем переменные для установки диапазона выборки
+  StartTimeStr := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss' + FUTC, StartTime);
+  EndTimeStr := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss' + FUTC, EndTime);
+
+  // Подготавливаем тело запроса.
+  JsonInfo := TJsonObject.Create(nil);
+  JsonInfo.Add('searchID', '1');
+  JsonInfo.Add('searchResultPosition', Position);
+  JsonInfo.Add('maxResults', FPortionSize);
+  JsonInfo.Add('major', FMajor);
+  JsonInfo.Add('minor', Minor);
+  JsonInfo.Add('startTime', StartTimeStr);
+  JsonInfo.Add('endTime', EndTimeStr);
+  JsonRoot := TJsonObject.Create(nil);
+  JsonRoot.Add('AcsEventTotalNumCond', JsonInfo);
+      
+  // Выполняем запрос
+  Response := TStringList.Create;
+  try
+    Res := Request(DeviceInd, rmPost, apiEventNum, JsonRoot.JsonText, Response);
+    if Res = 200 then begin
+
+      {}
+
+    end else
+      raise Exception.Create(Response.Text);
+  finally
+    FreeAndNil(JsonRoot);
+    FreeAndNil(JsonResp);
+    Response.Free;
+  end;
+end;
+
+function TEventsLoader.GetEvents(Minor: TMinorEvents;
+  StartTime, EndTime: TDateTime): integer;
+begin
+  Result := 0;
+end;
+
+
+
 
 
 end.

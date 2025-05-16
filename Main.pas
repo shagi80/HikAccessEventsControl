@@ -109,21 +109,20 @@ var
   Minors: TMinorEvents;
   EventCount: integer;
 begin
-  Loader := TEventsLoader.Create(THTTPClient);
-  Loader.AddDevice('First', '192.168.24.113', 80, edIN);
+  Loader := TEventsLoader.Create;
   Loader.AddMinorEvent(75);
  { ShowMessage('Loader created:' + chr(13)
     + 'device: ' + Loader.Device[0].Name + chr(13)
     + 'event: ' + IntToStr(Loader.MinorEvent[0]));    }
-  ShowMessage(DateTimeToStr(Loader.GetDeviceTime(0)));
-  
+  //ShowMessage(DateTimeToStr(Loader.GetDeviceTime(0)));
+ Loader.UseThread := True;
 
   if Loader.CheckConnection(0) then begin
-    ShowMessage('Device on line !');
+    ShowMessage('Device on line 2 !');
     SetLength(Minors, 2);
     Minors[0] := 75;
     Minors[1] := 1;
-    EventCount := Loader.EventsCount(Minors, Loader.LastTimeInDB, now);
+    EventCount := Loader.GetEventsCount(0, 75, Loader.LastTimeInDB, now);
     ShowMessage(IntToStr(EventCount));
   end else ShowMessage('Not connect');
 
