@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2025.03.12 15:28:37.970.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Models\TheShift.pas</Transaction>
+    <Transaction>2025.05.15 16:55:31.303.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Source\JsonDataObjects.pas=</Transaction>
+    <Transaction>2025.05.15 17:42:07.711.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Controls\ShiftPresent.pas</Transaction>
+    <Transaction>2025.05.15 17:57:45.298.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\TheEventsLoader.pas</Transaction>
+  </Transactions>
+</BorlandProject>
