@@ -22,7 +22,8 @@ uses
   TheEventPairs in 'Models\TheEventPairs.pas',
   TheSettings in 'Models\TheSettings.pas',
   PersonEventsWin in 'PersonEventsWin.pas' {frmPervonEvents},
-  TheSchedule in 'Models\TheSchedule.pas';
+  TheSchedule in 'Models\TheSchedule.pas',
+  TheBreaks in 'Models\TheBreaks.pas';
 
 {$R *.RES}
 

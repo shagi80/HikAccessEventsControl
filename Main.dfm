@@ -125,6 +125,7 @@ object MainForm: TMainForm
       Height = 25
       Caption = 'Button2'
       TabOrder = 1
+      OnClick = Button2Click
     end
     object Button3: TButton
       Left = 205

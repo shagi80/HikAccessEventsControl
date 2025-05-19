@@ -64,6 +64,7 @@ type
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
+    procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
   private
@@ -82,7 +83,7 @@ implementation
 {$R res.RES}
 
 uses about, DateUtils, APIProcessWin, TheSettings, TheEventPairs,
-  PersonEventsWin;
+  PersonEventsWin, ShiftWin;
 
 
 procedure TMainForm.Button1Click(Sender: TObject);
@@ -92,6 +93,13 @@ begin
   frmProcess := TfrmProcess.Create(Self);
   frmProcess.ShowModal;
   frmProcess.Free;
+end;
+
+procedure TMainForm.Button2Click(Sender: TObject);
+var
+  frmShift: TfrmShift;
+begin
+  frmShift := TfrmShift.Create(Self);
 end;
 
 procedure TMainForm.Button3Click(Sender: TObject);

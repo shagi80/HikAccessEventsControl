@@ -17,5 +17,6 @@
     <Transaction>2025.05.18 19:22:11.989.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\ChildWin.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.dfm</Transaction>
     <Transaction>2025.05.18 19:25:18.682.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.pas=</Transaction>
     <Transaction>2025.05.18 19:25:18.682.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.dfm=</Transaction>
+    <Transaction>2025.05.19 18:17:32.321.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Models\TheBreaks.pas</Transaction>
   </Transactions>
 </BorlandProject>

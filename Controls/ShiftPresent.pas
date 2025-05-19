@@ -27,7 +27,7 @@ type
 
 implementation
 
-uses DateUtils;
+uses DateUtils, TheBreaks;
 
 constructor TShiftPresent.Create(AOwner: TComponent);
 begin
@@ -43,9 +43,9 @@ end;
 procedure TShiftPresent.SetWidth;
 begin
   Self.Width := Self.ImgSize * 2 + trunc(FScale *(
-    + MinutesBetween(FShift.EnterStart, FShift.StartTime)
+    + MinutesBetween(FShift.InStart, FShift.StartTime)
     + FShift.LengthOfMinutes
-    + (MinuteOfTheDay(Shift.ExitFinish) - MinuteOfTheDay(FEndTime))));
+    + (MinuteOfTheDay(Shift.OutFinish) - MinuteOfTheDay(FEndTime))));
 end;
 
 procedure TShiftPresent.SetShift(Shift: TShift);
@@ -101,22 +101,22 @@ begin
   Canvas.Pen.Color := clGreen;
   Y0 := ImgSize - Canvas.Pen.Width - 1;
   X := ImgSize;
-  TimeOut(X, ImgSize, FShift.EnterStart);
+  TimeOut(X, ImgSize, FShift.InStart);
   Canvas.MoveTo(X + 2, Y0);
-  X := X + trunc(MinutesBetween(FShift.EnterStart, FShift.EnterFinish) * FScale);
+  X := X + trunc(MinutesBetween(FShift.InStart, FShift.InFinish) * FScale);
   Canvas.LineTo(X, Y0);
-  TimeOut(X, ImgSize, FShift.EnterFinish);
+  TimeOut(X, ImgSize, FShift.InFinish);
   X := Self.Width - Self.ImgSize;
-  TimeOut(X, ImgSize, FShift.ExitFinish);
+  TimeOut(X, ImgSize, FShift.OutFinish);
   Canvas.MoveTo(X - 2, Y0);
-  X := X - trunc(MinutesBetween(FShift.ExitStart, FShift.ExitFinish) * FScale);
+  X := X - trunc(MinutesBetween(FShift.OutStart, FShift.OutFinish) * FScale);
   Canvas.LineTo(X, Y0);
-  TimeOut(X, ImgSize, FShift.ExitStart);
+  TimeOut(X, ImgSize, FShift.OutStart);
 
 
   Canvas.Pen.Width := 1;
   Canvas.Pen.Color := clSilver;
-  X0 := ImgSize + trunc(FScale * MinutesBetween(FShift.EnterStart,
+  X0 := ImgSize + trunc(FScale * MinutesBetween(FShift.InStart,
     FShift.StartTime));
   Y0 := FTextHeight + 3;
   Canvas.MoveTo(X0, Y0);
@@ -136,8 +136,8 @@ begin
 
   Canvas.Pen.Width := 3;
   Canvas.Pen.Color := clRed;
-  for I := 0 to FShift.BreakCount - 1 do begin
-    Break := FShift.Break[I];
+  for I := 0 to FShift.Breaks.Count - 1 do begin
+    Break := FShift.Breaks[I];
     if MinuteOfTheDay(Break.StartTime) > MinuteOfTheDay(FShift.StartTime) then
         X := X0 + trunc(FScale * MinutesBetween(FShift.StartTime,
           Break.StartTime))
