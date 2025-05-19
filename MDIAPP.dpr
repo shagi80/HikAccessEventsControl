@@ -21,7 +21,8 @@ uses
   TheAPIThreadEventsLoader in 'HikAPI\TheAPIThreadEventsLoader.pas',
   TheEventPairs in 'Models\TheEventPairs.pas',
   TheSettings in 'Models\TheSettings.pas',
-  PersonEventsWin in 'PersonEventsWin.pas' {frmPervonEvents};
+  PersonEventsWin in 'PersonEventsWin.pas' {frmPervonEvents},
+  TheSchedule in 'Models\TheSchedule.pas';
 
 {$R *.RES}
 

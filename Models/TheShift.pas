@@ -90,6 +90,7 @@ begin
     Length := StrToTime('00:30');
     Lateness := 0;
   end;
+  
 end;
 
 destructor TShift.Destroy;

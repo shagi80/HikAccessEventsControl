@@ -16,11 +16,12 @@ type
     procedure SetWidth;
     procedure SetShift(Shift: TShift);
     procedure SetScale(Scale: real);
+  protected
+    procedure Paint; override;
   public
     constructor Create(AOwner: TComponent); override;
     property Shift: TShift read FShift write SetShift;
     property Scale: real read FScale write SetScale;
-    procedure Paint; override;
   end;
 
 
@@ -151,9 +152,6 @@ begin
     Wdth := Canvas.TextWidth(Break.Title);
     Canvas.TextOut(trunc(X - Wdth / 2), Y0 + Canvas.Pen.Width + 1, Break.Title);
   end;
-
-
-
 end;
 
 
