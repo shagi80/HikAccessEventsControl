@@ -5,5 +5,17 @@
     <Transaction>2025.05.15 16:55:31.303.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Source\JsonDataObjects.pas=</Transaction>
     <Transaction>2025.05.15 17:42:07.711.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Controls\ShiftPresent.pas</Transaction>
     <Transaction>2025.05.15 17:57:45.298.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\TheEventsLoader.pas</Transaction>
+    <Transaction>2025.05.17 07:20:32.138.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\APIProcessWin.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\APIProcessWin.pas</Transaction>
+    <Transaction>2025.05.17 07:20:32.139.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\APIProcessWin.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\APIProcessWin.dfm</Transaction>
+    <Transaction>2025.05.17 09:25:40.684.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\TheAPIStateLoader.pas</Transaction>
+    <Transaction>2025.05.17 12:32:32.780.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\TheAPIExecutor.pas=</Transaction>
+    <Transaction>2025.05.17 14:36:59.637.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\TheAPIStateLoader.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\TheAPIThreadStateLoader.pas</Transaction>
+    <Transaction>2025.05.17 14:37:54.455.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\TheAPIThreadEventsLoader.pas</Transaction>
+    <Transaction>2025.05.18 16:18:14.973.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Models\TheEventPairs.pas</Transaction>
+    <Transaction>2025.05.18 16:50:13.904.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Models\TheSettings.pas</Transaction>
+    <Transaction>2025.05.18 19:22:11.989.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\ChildWin.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.pas</Transaction>
+    <Transaction>2025.05.18 19:22:11.989.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\ChildWin.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.dfm</Transaction>
+    <Transaction>2025.05.18 19:25:18.682.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.pas=</Transaction>
+    <Transaction>2025.05.18 19:25:18.682.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.dfm=</Transaction>
   </Transactions>
 </BorlandProject>

@@ -2,6 +2,13 @@ unit APIClient;
 
 interface
 
+{
+  Выполение POST b GET запросов с Digest авторизацией.
+
+  Используется IdHTTP для запросов и класс TDigestResponse для формирования
+  заголовка авторизации.
+}
+
 uses
   SysUtils, Variants, Classes, Dialogs, StdCtrls, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, IdAuthentication, IdHeaderList,
@@ -100,6 +107,7 @@ begin
       end;
     end;
   until (Result = 200) or (TryCount < 0);
+  FHTTP.Disconnect;
   ARequest.Free;
 end;
 

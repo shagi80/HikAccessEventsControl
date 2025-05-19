@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 111
   Caption = 'MDI Application'
   ClientHeight = 526
-  ClientWidth = 692
+  ClientWidth = 806
   Color = clAppWorkSpace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clBlack
@@ -20,7 +20,7 @@ object MainForm: TMainForm
   object StatusBar: TStatusBar
     Left = 0
     Top = 507
-    Width = 692
+    Width = 806
     Height = 19
     AutoHint = True
     Panels = <>
@@ -29,7 +29,7 @@ object MainForm: TMainForm
   object ToolBar2: TToolBar
     Left = 0
     Top = 0
-    Width = 692
+    Width = 806
     Height = 30
     BorderWidth = 1
     Color = clBtnFace
@@ -103,18 +103,18 @@ object MainForm: TMainForm
     end
   end
   object Panel1: TPanel
-    Left = 0
-    Top = 30
-    Width = 692
-    Height = 477
-    Align = alClient
+    Left = 8
+    Top = 430
+    Width = 329
+    Height = 71
+    BevelOuter = bvNone
     TabOrder = 2
     object Button1: TButton
       Left = 28
       Top = 24
       Width = 75
       Height = 25
-      Caption = 'Button1'
+      Caption = #1047#1072#1075#1088#1091#1079#1082#1072' '#1089#1086#1073#1099#1090#1080#1081' '#1080#1079' '#1091#1089#1090#1088#1086#1081#1089#1090#1074
       TabOrder = 0
       OnClick = Button1Click
     end
@@ -220,7 +220,6 @@ object MainForm: TMainForm
       Hint = 'New|Create a new file'
       ImageIndex = 6
       ShortCut = 16462
-      OnExecute = FileNew1Execute
     end
     object FileOpen1: TAction
       Category = 'File'
@@ -228,7 +227,6 @@ object MainForm: TMainForm
       Hint = 'Open|Open a file'
       ImageIndex = 7
       ShortCut = 16463
-      OnExecute = FileOpen1Execute
     end
     object FileClose1: TWindowClose
       Category = 'File'
@@ -251,11 +249,11 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'E&xit'
       Hint = 'Exit|Exit application'
-      OnExecute = FileExit1Execute
     end
     object EditCut1: TEditCut
       Category = 'Edit'
       Caption = 'Cu&t'
+      Enabled = False
       Hint = 'Cut|Cuts the selection and puts it on the Clipboard'
       ImageIndex = 0
       ShortCut = 16472
@@ -263,6 +261,7 @@ object MainForm: TMainForm
     object EditCopy1: TEditCopy
       Category = 'Edit'
       Caption = '&Copy'
+      Enabled = False
       Hint = 'Copy|Copies the selection and puts it on the Clipboard'
       ImageIndex = 1
       ShortCut = 16451
@@ -308,7 +307,6 @@ object MainForm: TMainForm
       Hint = 
         'About|Displays program information, version number, and copyrigh' +
         't'
-      OnExecute = HelpAbout1Execute
     end
   end
   object ImageList1: TImageList
