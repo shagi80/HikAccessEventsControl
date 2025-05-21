@@ -44,6 +44,8 @@ type
     function Add(Break: TBreak): Integer;
     procedure Insert(Index: Integer; Break: TBreak);
     function LoadFromBD(DBFileName: string): boolean;
+    procedure SortByTitle;
+    procedure SortByStartTime;
   end;
 
 implementation
@@ -192,6 +194,27 @@ begin
   end;
 end;
 
+procedure TBreakList.SortByTitle;
+
+  function CompareTitle(Item1, Item2: Pointer): integer;
+  begin
+    Result := CompareStr(TBreak(Item1).FTitle, TBreak(Item2).FTitle);
+  end;
+
+begin
+  Self.Sort(@CompareTitle);
+end;
+
+procedure TBreakList.SortByStartTime;
+
+  function CompareStartTime(Item1, Item2: Pointer): integer;
+  begin
+    Result := CompareTime(TBreak(Item1).FStartTime, TBreak(Item2).FStartTime);
+  end;
+
+begin
+  Self.Sort(@CompareStartTime);
+end;
 
 
 end.

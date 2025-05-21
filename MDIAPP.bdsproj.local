@@ -18,5 +18,9 @@
     <Transaction>2025.05.18 19:25:18.682.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.pas=</Transaction>
     <Transaction>2025.05.18 19:25:18.682.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\TPersonEventsWin.dfm=</Transaction>
     <Transaction>2025.05.19 18:17:32.321.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Models\TheBreaks.pas</Transaction>
+    <Transaction>2025.05.21 20:11:48.154.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\BreakEditWin.pas</Transaction>
+    <Transaction>2025.05.21 20:11:48.154.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\BreakEditWin.dfm</Transaction>
+    <Transaction>2025.05.21 21:03:20.058.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\ShiftEditWin.pas</Transaction>
+    <Transaction>2025.05.21 21:03:20.058.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\ShiftEditWin.dfm</Transaction>
   </Transactions>
 </BorlandProject>

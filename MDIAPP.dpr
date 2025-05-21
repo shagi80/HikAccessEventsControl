@@ -23,7 +23,9 @@ uses
   TheSettings in 'Models\TheSettings.pas',
   PersonEventsWin in 'PersonEventsWin.pas' {frmPervonEvents},
   TheSchedule in 'Models\TheSchedule.pas',
-  TheBreaks in 'Models\TheBreaks.pas';
+  TheBreaks in 'Models\TheBreaks.pas',
+  BreakEditWin in 'BreakEditWin.pas' {frmBreakEdit},
+  ShiftEditWin in 'ShiftEditWin.pas' {Form1};
 
 {$R *.RES}
 
@@ -31,5 +33,7 @@ begin
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TAboutBox, AboutBox);
+  Application.CreateForm(TfrmBreakEdit, frmBreakEdit);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

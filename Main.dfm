@@ -105,13 +105,13 @@ object MainForm: TMainForm
   object Panel1: TPanel
     Left = 8
     Top = 430
-    Width = 329
+    Width = 433
     Height = 71
     BevelOuter = bvNone
     TabOrder = 2
     object Button1: TButton
-      Left = 28
-      Top = 24
+      Left = 8
+      Top = 8
       Width = 75
       Height = 25
       Caption = #1047#1072#1075#1088#1091#1079#1082#1072' '#1089#1086#1073#1099#1090#1080#1081' '#1080#1079' '#1091#1089#1090#1088#1086#1081#1089#1090#1074
@@ -119,8 +119,8 @@ object MainForm: TMainForm
       OnClick = Button1Click
     end
     object Button2: TButton
-      Left = 109
-      Top = 24
+      Left = 89
+      Top = 8
       Width = 75
       Height = 25
       Caption = 'Button2'
@@ -128,13 +128,30 @@ object MainForm: TMainForm
       OnClick = Button2Click
     end
     object Button3: TButton
-      Left = 205
-      Top = 24
+      Left = 170
+      Top = 8
       Width = 75
       Height = 25
       Caption = 'Button3'
       TabOrder = 2
       OnClick = Button3Click
+    end
+    object Edit2: TEdit
+      Left = 8
+      Top = 39
+      Width = 409
+      Height = 21
+      TabOrder = 3
+      Text = 'Edit2'
+    end
+    object Button4: TButton
+      Left = 251
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = 'Button4'
+      TabOrder = 4
+      OnClick = Button4Click
     end
   end
   object MainMenu1: TMainMenu

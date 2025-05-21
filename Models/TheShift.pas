@@ -43,6 +43,7 @@ type
     procedure SetItem(Index: Integer; AObject: TShift); overload;
     function GetItem(GUID: TGUID): TShift; overload;
     procedure SetItem(GUID: TGUID; AObject: TShift);  overload;
+    function GetGUIDS(Text: string; GUIDSList: TStringList): boolean;
   public
     constructor Create(CanDestroyItem: boolean);
     destructor Destroy; override;
@@ -54,7 +55,8 @@ type
     function Add(Shift: TShift): Integer;
     procedure Insert(Index: Integer; Shift: TShift);
     function LoadFromBD(DBFileName: string; BreakList: TBreakList): boolean;
-    function GetGUIDS(Text: string; GUIDSList: TStringList): boolean;
+    procedure SortByTitle;
+    procedure SortByStartTime;
   end;
 
 implementation
@@ -81,7 +83,6 @@ begin
 end;
 
 { TShiftList }
-
 
 constructor TShiftList.Create(CanDestroyItem: boolean);
 begin
@@ -161,7 +162,6 @@ begin
     else raise Exception.Create('Shift GUID duplicate !');
 end;
 
-
 function TShiftList.LoadFromBD(DBFileName: string; BreakList: TBreakList): boolean;
 var
   DB: TSQLiteDatabase;
@@ -233,5 +233,28 @@ begin
   until (i = 0) or (Length(Text) = 0);
   Result := (GUIDSList.Count > 0);
 end;
+
+procedure TShiftList.SortByTitle;
+
+  function CompareTitle(Item1, Item2: Pointer): integer;
+  begin
+    Result := CompareStr(TShift(Item1).FTitle, TShift(Item2).FTitle);
+  end;
+
+begin
+  Self.Sort(@CompareTitle);
+end;
+
+procedure TShiftList.SortByStartTime;
+
+  function CompareStartTime(Item1, Item2: Pointer): integer;
+  begin
+    Result := CompareTime(TShift(Item1).FStartTime, TShift(Item2).FStartTime);
+  end;
+
+begin
+  Self.Sort(@CompareStartTime);
+end;
+
 
 end.

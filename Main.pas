@@ -64,6 +64,9 @@ type
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
+    Edit2: TEdit;
+    Button4: TButton;
+    procedure Button4Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -108,6 +111,14 @@ var
 begin
   frmPervonEvents := TfrmPervonEvents.Create(Self);
   //frmPervonEvents.Show;
+end;
+
+procedure TMainForm.Button4Click(Sender: TObject);
+var
+  g: tguid;
+begin
+  CreateGUID(g);
+  Edit2.Text := GuidToString(g);
 end;
 
 end.
