@@ -66,6 +66,8 @@ type
     Button3: TButton;
     Edit2: TEdit;
     Button4: TButton;
+    Button5: TButton;
+    procedure Button5Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -86,7 +88,8 @@ implementation
 {$R res.RES}
 
 uses about, DateUtils, APIProcessWin, TheSettings, TheEventPairs,
-  PersonEventsWin, ShiftWin;
+  PersonEventsWin, ShiftWin, ScheduleEditWin, TheShift, TheSchedule,
+  TheBreaks;
 
 
 procedure TMainForm.Button1Click(Sender: TObject);
@@ -119,6 +122,29 @@ var
 begin
   CreateGUID(g);
   Edit2.Text := GuidToString(g);
+end;
+
+procedure TMainForm.Button5Click(Sender: TObject);
+var
+  FShiftList: TShiftList;
+  FBreakList: TBreakList;
+  ScheduleList: TScheduleList;
+  Schedule: TSchedule;
+begin
+  ScheduleList := TScheduleList.Create(True);
+  FShiftList := TShiftList.Create(True);
+  FBreakList := TBreakList.Create(True);
+  FBreakList.LoadFromBD(Settings.GetInstance.DBFileName);
+  FShiftList.LoadFromBD(Settings.GetInstance.DBFileName, FBreakList);
+  ScheduleList.LoadFromBD(Settings.GetInstance.DBFileName, FShiftList);
+  Schedule := ScheduleList.Items[0];
+  if frmScheduleEdit.Edit(Schedule, FShiftList) then
+    ScheduleList.SaveToBD(Settings.GetInstance.DBFileName);
+
+  ScheduleList.Free;
+  FShiftList.Free;
+  FBreakList.Free;
+
 end;
 
 end.

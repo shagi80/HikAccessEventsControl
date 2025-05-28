@@ -19,6 +19,7 @@ type
     edLateness: TEdit;
     Label4: TLabel;
     btnCancel: TWebSpeedButton;
+    procedure dtpLengthChange(Sender: TObject);
     procedure edTitleChange(Sender: TObject);
     procedure edLatenessKeyPress(Sender: TObject; var Key: Char);
     procedure btnCancelClick(Sender: TObject);
@@ -37,6 +38,8 @@ implementation
 
 {$R *.dfm}
 
+uses DateUtils;
+
 
 procedure TfrmBreakEdit.btnCancelClick(Sender: TObject);
 begin
@@ -46,6 +49,11 @@ end;
 procedure TfrmBreakEdit.btnsaveClick(Sender: TObject);
 begin
   Self.ModalResult := mrOk;
+end;
+
+procedure TfrmBreakEdit.dtpLengthChange(Sender: TObject);
+begin
+  btnSave.Enabled := (MinuteOfTheDay(dtpLength.Time) > 0)
 end;
 
 function TfrmBreakEdit.Edit(var Break: TBreak): boolean;

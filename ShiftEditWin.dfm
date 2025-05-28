@@ -1,10 +1,10 @@
-object Form1: TForm1
+object frmShiftEdit: TfrmShiftEdit
   Left = 0
   Top = 0
   BorderStyle = bsDialog
   Caption = #1057#1084#1077#1085#1072
-  ClientHeight = 354
-  ClientWidth = 747
+  ClientHeight = 320
+  ClientWidth = 892
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,22 +13,24 @@ object Form1: TForm1
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Shape1: TShape
-    Left = 609
+    Left = 754
     Top = 0
     Width = 138
-    Height = 354
+    Height = 320
     Align = alRight
     Brush.Color = clBlack
-    ExplicitLeft = 737
-    ExplicitTop = 8
-    ExplicitHeight = 241
+    ExplicitLeft = 735
+    ExplicitTop = -8
+    ExplicitHeight = 354
   end
   object btnCancel: TWebSpeedButton
-    Left = 641
-    Top = 82
+    Left = 786
+    Top = 77
     Width = 106
     Height = 35
     Caption = #1054#1090#1084#1077#1085#1080#1090#1100
@@ -71,12 +73,13 @@ object Form1: TForm1
     DisableFontColor = clBtnShadow
     SelectFontColor = clWhite
     ActiveFontColor = clWhite
+    OnClick = btnCancelClick
     Margin = 0
     SpaceWidth = 5
   end
   object btnsave: TWebSpeedButton
-    Left = 641
-    Top = 31
+    Left = 786
+    Top = 26
     Width = 106
     Height = 35
     Caption = #1047#1072#1087#1080#1089#1072#1090#1100
@@ -119,6 +122,7 @@ object Form1: TForm1
     DisableFontColor = clGray
     SelectFontColor = clBlack
     ActiveFontColor = clBlack
+    OnClick = btnsaveClick
     Margin = 0
     SpaceWidth = 5
   end
@@ -139,9 +143,9 @@ object Form1: TForm1
   object Label1: TLabel
     Left = 24
     Top = 96
-    Width = 73
+    Width = 68
     Height = 13
-    Caption = #1044#1083#1080#1090#1077#1083#1100#1085#1086#1089#1090#1100
+    Caption = #1042#1093#1086#1076', '#1085#1072#1095#1072#1083#1086
   end
   object Label4: TLabel
     Left = 24
@@ -153,38 +157,140 @@ object Form1: TForm1
   object Label5: TLabel
     Left = 264
     Top = 61
-    Width = 69
+    Width = 73
     Height = 13
-    Caption = #1042#1088#1077#1084#1103' '#1085#1072#1095#1072#1083#1072
+    Caption = #1044#1083#1080#1090#1077#1083#1100#1085#1086#1089#1090#1100
   end
   object Label6: TLabel
     Left = 264
     Top = 96
-    Width = 73
+    Width = 59
     Height = 13
-    Caption = #1044#1083#1080#1090#1077#1083#1100#1085#1086#1089#1090#1100
+    Caption = #1042#1093#1086#1076','#1082#1086#1085#1077#1094
   end
   object Label7: TLabel
     Left = 264
     Top = 132
-    Width = 73
+    Width = 70
     Height = 13
-    Caption = #1044#1083#1080#1090#1077#1083#1100#1085#1086#1089#1090#1100
+    Caption = #1042#1099#1093#1086#1076', '#1082#1086#1085#1077#1094
   end
   object Label8: TLabel
     Left = 24
     Top = 132
-    Width = 73
+    Width = 76
     Height = 13
-    Caption = #1044#1083#1080#1090#1077#1083#1100#1085#1086#1089#1090#1100
+    Caption = #1042#1099#1093#1086#1076', '#1085#1072#1095#1072#1083#1086
+  end
+  object Label9: TLabel
+    Left = 488
+    Top = 26
+    Width = 53
+    Height = 13
+    Caption = #1055#1077#1088#1077#1088#1099#1074#1099
+  end
+  object btnBreakAdd: TWebSpeedButton
+    AlignWithMargins = True
+    Left = 660
+    Top = 17
+    Width = 33
+    Height = 30
+    Margins.Left = 0
+    Margins.Top = 0
+    Margins.Bottom = 0
+    Aligment = taCenter
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFDDE8983CE4E46DB7C
+      76F9E8E7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFEFDFDDC807ACD4C44D8736CF8E5E3FFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFDDC807ACD4C44D873
+      6CF8E5E3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAEDECF3
+      D5D3F2D1CFF2D0CED8726CCD4C43D56861EDBEBBF2D1CFF3D2D0FFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFE7B4ADD0574FCC483FCC483FCC483FCC483FCC48
+      3FCC483FCC483FCD4A41FFFFFFFFFFFFFFFFFFFFFFFFCECECE787878D1AC9BD6
+      6C65D35F57D35F57CE4F47CC4940CD4D44D15B53D35F57D36058FFFFFFF5F5F5
+      A4A4A4FEFEFE3D3D3D000000A5A099F6DFDEF5DDDBF5DBD9D8756FCD4B43D66B
+      64F0C7C4F5DDDBF6DDDCFFFFFFA2A2A20000001F1F1F0000000000000E0E0E13
+      1313FFFFFFFEFDFDDC807ACD4C44D8736CF8E5E3FFFFFFFFFFFFFFFFFFC3C3C3
+      020202000000010101121212030303000000131313E6E5E5DC807BCD4C43D974
+      6EF8E5E4FFFFFFFFFFFFC1C1C1656565000000070707B1B1B1FFFFFFD9D9D902
+      02020F0F0FA7A6A6CA8876D4655DDF8D87FAECEBFFFFFFFFFFFF000000000000
+      000000505050FFFFFFFFFFFFFFFFFF0505050000000000007E6F6EF6DEDCF9E8
+      E7FEFBFBFFFFFFFFFFFFCDCDCD737373000000252525F7F7F7FFFFFFB0B0B000
+      0000000000454545E2E2E2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEDEDED
+      0000000000002525254E4E4E060606000000212121FEFEFEFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFC4C4C401010101010103030300000000000003
+      0303000000A2A2A2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBFBFB
+      CDCDCDEAEAEA8B8B8B0000006C6C6CC3C3C3AFAFAFF7F7F7FFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1F1F1030303CDCDCDFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+    Color = clBtnFace
+    SelectColor = clScrollBar
+    ActiveColor = clMedGray
+    DisableFontColor = clGray
+    SelectFontColor = clBlack
+    ActiveFontColor = clBlack
+    OnClick = btnBreakAddClick
+    Margin = 0
+    SpaceWidth = 5
+  end
+  object btnBreakDelete: TWebSpeedButton
+    AlignWithMargins = True
+    Left = 696
+    Top = 17
+    Width = 33
+    Height = 30
+    Margins.Left = 0
+    Margins.Top = 0
+    Margins.Bottom = 0
+    Aligment = taCenter
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB5B2F97873F37670F4D4D3FBFAFAFFC4C2
+      FA7A75F4716BF3B3B0F9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC7
+      C5FB5049F02820ED7974F5CDCBFA706BF32B23ED3F38EEC6C5FAFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5F4FE9B98F73830EE2B23ED7570F33730
+      EF3029EEA09CF6F4F3FEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFE0DFFC6A65F22820EE2B23ED2720ED6B65F3E6E5FDFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFEFFE7E7AF42921EE2820EE2B23
+      EE8C88F5F3F3FEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCECECE787878E8E8E8F3
+      F3F6C6C4FB524BF1251DED4C45F1312AEE514BF0D0CEFBFCFCFEFFFFFFF5F5F5
+      A4A4A4FEFEFE3D3D3D000000A6A6A6D3D2E77772F42B23EE3A32EFADAAF8645E
+      F32921ED726DF3E2E1FCFFFFFFA2A2A20000001F1F1F0000000000000E0E0E18
+      1554534DF13A33EF8B87F5E7E6FDAAA7F84B45F0433CEFB1AEF8FFFFFFC3C3C3
+      02020200000001010112121203030305042017154AB4B1EADAD9F0FCFCFFEFEE
+      FECDCBFBC5C2FADEDDFDC1C1C1656565000000070707B1B1B1FFFFFFD9D9D902
+      02020F0F0FA6A6A6E6E6E6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000
+      000000505050FFFFFFFFFFFFFFFFFF050505000000000000747474FFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFCDCDCD737373000000252525F7F7F7FFFFFFB0B0B000
+      0000000000454545E2E2E2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEDEDED
+      0000000000002525254E4E4E060606000000212121FEFEFEFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFC4C4C401010101010103030300000000000003
+      0303000000A2A2A2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBFBFB
+      CDCDCDEAEAEA8B8B8B0000006C6C6CC3C3C3AFAFAFF7F7F7FFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1F1F1030303CDCDCDFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+    Color = clBtnFace
+    SelectColor = clScrollBar
+    ActiveColor = clMedGray
+    DisableFontColor = clGray
+    SelectFontColor = clBlack
+    ActiveFontColor = clBlack
+    OnClick = btnBreakDeleteClick
+    Margin = 0
+    SpaceWidth = 5
   end
   object edTitle: TEdit
     Left = 120
     Top = 23
-    Width = 449
+    Width = 337
     Height = 21
     TabOrder = 0
     Text = 'edTitle'
+    OnChange = edTitleChange
   end
   object dtpStartTime: TDateTimePicker
     Left = 120
@@ -195,8 +301,9 @@ object Form1: TForm1
     Time = 45798.834614710650000000
     Kind = dtkTime
     TabOrder = 1
+    OnChange = OnChangeTime
   end
-  object dtpLength: TDateTimePicker
+  object dtpInStart: TDateTimePicker
     Left = 120
     Top = 93
     Width = 97
@@ -205,6 +312,7 @@ object Form1: TForm1
     Time = 45798.834614710650000000
     Kind = dtkTime
     TabOrder = 2
+    OnChange = OnChangeTime
   end
   object edLateness: TEdit
     Left = 120
@@ -213,8 +321,10 @@ object Form1: TForm1
     Height = 21
     TabOrder = 3
     Text = 'edLateness'
+    OnChange = edLatenessChange
+    OnKeyPress = edLatenessKeyPress
   end
-  object DateTimePicker1: TDateTimePicker
+  object dtpLength: TDateTimePicker
     Left = 360
     Top = 58
     Width = 97
@@ -223,8 +333,9 @@ object Form1: TForm1
     Time = 45798.834614710650000000
     Kind = dtkTime
     TabOrder = 4
+    OnChange = OnChangeTime
   end
-  object DateTimePicker2: TDateTimePicker
+  object dtpInFinish: TDateTimePicker
     Left = 360
     Top = 93
     Width = 97
@@ -233,8 +344,9 @@ object Form1: TForm1
     Time = 45798.834614710650000000
     Kind = dtkTime
     TabOrder = 5
+    OnChange = OnChangeTime
   end
-  object DateTimePicker3: TDateTimePicker
+  object dtpOutFinish: TDateTimePicker
     Left = 360
     Top = 128
     Width = 97
@@ -243,8 +355,9 @@ object Form1: TForm1
     Time = 45798.834614710650000000
     Kind = dtkTime
     TabOrder = 6
+    OnChange = OnChangeTime
   end
-  object DateTimePicker4: TDateTimePicker
+  object dtpOutStart: TDateTimePicker
     Left = 120
     Top = 128
     Width = 97
@@ -253,5 +366,24 @@ object Form1: TForm1
     Time = 45798.834614710650000000
     Kind = dtkTime
     TabOrder = 7
+    OnChange = OnChangeTime
+  end
+  object lbBreaks: TListBox
+    Left = 488
+    Top = 58
+    Width = 241
+    Height = 125
+    ItemHeight = 13
+    TabOrder = 8
+    OnClick = lbBreaksClick
+  end
+  object pnPicture: TPanel
+    Left = 24
+    Top = 216
+    Width = 705
+    Height = 81
+    BevelOuter = bvNone
+    Color = clWhite
+    TabOrder = 9
   end
 end

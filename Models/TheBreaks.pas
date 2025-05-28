@@ -15,6 +15,7 @@ type
     FLength: TTime;
     FLateness: integer;
     function GetLengthOfMinutes: integer;
+    function GetEndTime: TDateTime;
   public
     constructor Create;
     property GUID: TGUID read FGUID;
@@ -23,6 +24,7 @@ type
     property Length: TTime read FLength write FLength;
     property Lateness: integer read FLateness write FLateness;
     property LengthOfMinutes: integer read GetLengthOfMinutes;
+    property EndTime: TDateTime read GetEndTime;
   end;
 
   TBreakList = class(TObjectList)
@@ -46,6 +48,7 @@ type
     function LoadFromBD(DBFileName: string): boolean;
     procedure SortByTitle;
     procedure SortByStartTime;
+    function SaveToBD(DBFileName: string): boolean;
   end;
 
 implementation
@@ -63,6 +66,12 @@ function TBreak.GetLengthOfMinutes: integer;
 begin
   Result := HourOf(FLength) * 60 + MinuteOf(FLength);
 end;
+
+function TBreak.GetEndTime: TDateTime;
+begin
+  Result := IncMinute(Self.StartTime, Self.LengthOfMinutes);
+end;
+
 
 { TBreakList }
 
@@ -216,5 +225,33 @@ begin
   Self.Sort(@CompareStartTime);
 end;
 
+function TBreakList.SaveToBD(DBFileName: string): boolean;
+var
+  DB: TSQLiteDatabase;
+  SQL: string;
+  Break: TBreak;
+  I: integer;
+begin
+  Result := False;
+  if not FileExists(DBFileName) then Exit;
+  DB := TSQLiteDatabase.Create(DBFileName);
+  if not DB.TableExists('breaks') then Exit;
+  try
+    SQL := 'DELETE FROM breaks';
+    DB.ExecSQL(SQL);
+    DB.BeginTransaction;
+    for I := 0 to Self.Count - 1 do begin
+      Break := Self.Items[i];
+      SQL := 'INSERT INTO breaks (GUID, title, start_time, length, lateness)'
+        + ' VALUES (?, ?, ?, ?, ?)';
+      DB.ExecSQL(SQL, [GuidToString(Break.FGUID), UTF8Encode(Break.FTitle),
+        Break.FStartTime, Break.FLength, Break.FLateness]);
+    end;
+    DB.Commit;
+    Result := True;
+  finally
+    DB.Free
+  end;
+end;
 
 end.

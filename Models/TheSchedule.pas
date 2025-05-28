@@ -2,7 +2,8 @@ unit TheSchedule;
 
 interface
 
-uses TheShift, SysUtils, DateUtils, Contnrs, Controls, Classes, SQLiteTable3;
+uses TheShift, SysUtils, DateUtils, Contnrs, Controls, Classes, SQLiteTable3,
+  StdCtrls, IdBaseComponent, IdComponent;
 
 type
   TScheduleType = (stWeek, stPeriod);
@@ -17,16 +18,19 @@ type
     function GetDayCount: integer;
     procedure SetDayCount(Cnt: integer);
     function GetDay(Ind: integer): TShiftList;
+    function GetMaxShiftCount: integer;
   public
     constructor Create;
     destructor Destroy; override;
     property GUID: TGUID read FGUID;
     property Title: string read FTitle write Ftitle;
     property DayCount: integer read GetDayCount write SetDayCount;
-    property ShedType: TScheduleType read FType write FType;
     property Day[Ind: integer]: TShiftList read GetDay;
     property StartDate: TDate read FStartDate write FStartDate;
     property ScheduleType: TScheduleType read FType write FType;
+    function AddShiftToDay(DayNum: integer; Shift: TShift): Integer;
+    property MaxShiftCount: integer read GetMaxShiftCount;
+    procedure Copy(Schedule: TSchedule);
   end;
 
   TScheduleList = class(TObjectList)
@@ -39,6 +43,7 @@ type
     procedure SetItem(Index: Integer; AObject: TSchedule); overload;
     function GetItem(GUID: TGUID): TSchedule; overload;
     procedure SetItem(GUID: TGUID; AObject: TSchedule);  overload;
+    function SaveScheduleDays(DB: TSQLiteDatabase; Schedule: TSchedule): boolean;
   public
     constructor Create(CanDestroyItem: boolean);
     destructor Destroy; override;
@@ -52,12 +57,11 @@ type
     function LoadFromBD(DBFileName: string; ShiftList: TShiftList): boolean;
     function GetGUIDS(Text: string; GUIDSList: TStringList): boolean;
     procedure SortByTitle;
+    function SaveToBD(DBFileName: string): boolean;
   end;
 
 
 implementation
-
-
 
 
 { TScheduleTemplate }
@@ -66,6 +70,7 @@ constructor TSchedule.Create;
 begin
   inherited Create;
   SetLength(FDays, 0);
+  FStartDate := DateUtils.DateOf(now);
 end;
 
 destructor TSchedule.Destroy;
@@ -85,7 +90,7 @@ var
 begin
   if Cnt < (High(Self.FDays) + 1) then begin
     for I := Cnt to High(FDays) do FDays[I].Free;
-    SetLength(FDays, 0);
+    SetLength(FDays, Cnt);
   end;
   if Cnt > (High(Self.FDays) + 1) then begin
     LastId := High(FDays) + 1;
@@ -99,6 +104,36 @@ function TSchedule.GetDay(Ind: integer): TShiftList;
 begin
   if (Ind >= 0) and (Ind <= High(FDays)) then Result := FDays[Ind]
     else Result := nil;
+end;
+
+function TSchedule.AddShiftToDay(DayNum: integer; Shift: TShift): Integer;
+begin
+  Result := Self.FDays[DayNum].Add(Shift);
+  if Result >= 0 then Self.FDays[DayNum].SortByStartTime;
+end;
+
+function TSchedule.GetMaxShiftCount: integer;
+var
+  I: integer;
+begin
+  Result := 0;
+  for I := 0 to High(FDays) do
+    if FDays[I].Count > Result then Result := Self.FDays[I].Count;
+    
+end;
+
+procedure TSchedule.Copy(Schedule: TSchedule);
+var
+  I, J: integer;
+begin
+  Self.SetDayCount(0);
+  Self.FTitle := Schedule.FTitle;
+  Self.FType := Schedule.FType;
+  Self.FStartDate := Schedule.FStartDate;
+  Self.SetDayCount(Schedule.DayCount);
+  for I := 0 to Schedule.DayCount - 1 do
+    for J := 0 to Schedule.Day[i].Count - 1 do
+      Self.Day[i].Add(Schedule.Day[i].Items[j]);
 end;
 
 { TScheduleList }
@@ -190,12 +225,12 @@ var
   I, Num: integer;
   Shift: TShift;
 begin
-  Result := False;
   SQL := 'SELECT day_num, shift_GUIDs FROM schedule_days WHERE schedule_GUID="'
     + GUIDToString(Schedule.FGUID) + '" ORDER BY day_num';
   GUIDSList := TStringList.Create;
   Table := DB.GetUniTable(SQL);
   try
+    Result := False;
     while not Table.EOF do begin
       Num := Table.FieldAsInteger(0);
       GUIDText := Table.FieldAsString(1);
@@ -242,7 +277,7 @@ begin
       DayCount := Table.FieldAsInteger(4);
       Schedule.SetDayCount(DayCount);
       if Assigned(ShiftList) and (DayCount > 0) then
-        if not Self.LoadScheduleDay(DB, Schedule, ShiftList) then
+        if not LoadScheduleDay(DB, Schedule, ShiftList) then
           raise Exception.Create('Error load Schedule days for "'
             + Schedule.Title + '" !');
       Self.Add(Schedule);
@@ -286,6 +321,85 @@ begin
   Self.Sort(@CompareTitle);
 end;
 
+function TScheduleList.SaveScheduleDays(DB: TSQLiteDatabase;
+  Schedule: TSchedule): boolean;
+
+  function DeleteCyrillic(Text: string): string;
+var
+  I: integer;
+begin
+  Result := '';
+  for I := 1 to Length(Text) do
+    if (Ord(Text[I]) >= 32) and (Ord(Text[I]) <= 126) then
+      Result := Result + Text[I];
+end;
+
+var
+  SQL, ShiftGUIDs, GuidStr: string;
+  I, J: integer;
+  GuidBytes: TBytes;
+begin
+  Result := False;
+  if not DB.TableExists('schedule_days') then Exit;
+  try
+    SQL := 'DELETE FROM schedule_days WHERE schedule_GUID="'
+      + GuidToString(Schedule.GUID) + '"';
+    DB.ExecSQL(SQL);
+    for I := 0 to Schedule.DayCount - 1 do begin
+      ShiftGUIDs := '';
+      for J := 0 to Schedule.Day[I].Count - 1 do begin
+        ShiftGUIDs := ShiftGUIDs + GuidToString(Schedule.Day[I].Items[J].GUID);
+        if not (J = Schedule.Day[I].Count - 1) then
+          ShiftGUIDs := ShiftGUIDs + '|';
+      end;
+      GuidStr := '{DCB9B57D-985D-47F1-BCF6-53F2C1287B72}';
+      GuidBytes := TEncoding.UTF8.GetBytes('{DCB9B57D-985D-47F1-BCF6-53F2C1287B72}');
+
+      SQL := 'INSERT INTO schedule_days (schedule_GUID, day_num, shift_GUIDs)'
+        + ' VALUES (?, ?, ?)';
+      DB.ExecSQL(SQL, [GuidStr, IntToStr(I), ShiftGUIDs]);
+    end;
+    Result := True;
+  finally
+    //
+  end;
+end;
+
+function TScheduleList.SaveToBD(DBFileName: string): boolean;
+var
+  DB: TSQLiteDatabase;
+  SQL: string;
+  Schedule: TSchedule;
+  I: integer;
+begin
+  Result := False;
+  if not FileExists(DBFileName) then Exit;
+  DB := TSQLiteDatabase.Create(DBFileName);
+  if not DB.TableExists('schedules') then Exit;
+  try
+    SQL := 'DELETE FROM schedules';
+    DB.ExecSQL(SQL);
+    DB.BeginTransaction;
+    for I := 0 to Self.Count - 1 do begin
+      Schedule := Self.Items[i];
+      SQL := 'INSERT INTO Schedules (GUID, title, start_date, type, day_count)'
+        + ' VALUES (?, ?, ?, ?, ?)';
+      DB.ExecSQL(SQL, [GuidToString(Schedule.FGUID), UTF8Encode(Schedule.FTitle),
+        Schedule.FStartDate, IntToStr(Ord(Schedule.FType) + 1),
+        Schedule.DayCount]);
+      Result := Self.SaveScheduleDays(DB, Schedule);
+      if not Result then begin
+        DB.Commit;
+        DB.Free;
+        Exit;
+      end;
+    end;
+    DB.Commit;
+    Result := True;
+  finally
+    DB.Free
+  end;
+end;
 
 
 end.

@@ -20,6 +20,12 @@ type
     FLateness: integer;
     FBreaks: TBreakList;
     function GetLengthOfMinutes: integer;
+    function GetEndTime: TDateTime;
+    function CheckIncorrectIn: boolean;
+    function CheckIncorrectOut: boolean;
+    function ChekIncorrectLength: boolean;
+    function CheckIncorrectBreaks: boolean;
+    function CheckIncorrect: boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -34,6 +40,14 @@ type
     property OutFinish: TTime read FOutFinish write FOutFinish;
     property Lateness: integer read FLateness write FLateness;
     property Breaks: TBreakList read FBreaks;
+    procedure AddBreak(Break: TBreak);
+    procedure Copy(Shift: TShift);
+    property EndTime: TDateTime read GetEndTime;
+    property IncorrectIn: boolean read CheckIncorrectIn;
+    property IncorrectOut: boolean read CheckIncorrectOut;
+    property IncorrectLength: boolean read ChekIncorrectLength;
+    property IncorrectBreaks: boolean read CheckIncorrectBreaks;
+    property Incorrect: boolean read CheckIncorrect;
   end;
 
   TShiftList = class(TObjectList)
@@ -57,6 +71,7 @@ type
     function LoadFromBD(DBFileName: string; BreakList: TBreakList): boolean;
     procedure SortByTitle;
     procedure SortByStartTime;
+    function SaveToBD(DBFileName: string): boolean;
   end;
 
 implementation
@@ -80,6 +95,81 @@ end;
 function TShift.GetLengthOfMinutes: integer;
 begin
   Result := HourOf(FLength) * 60 + MinuteOf(FLength);
+end;
+
+procedure TShift.AddBreak(Break: TBreak);
+begin
+  FBreaks.Add(Break);
+  if FBreaks.Count > 1 then FBreaks.SortByStartTime;
+end;
+
+procedure TShift.Copy(Shift: TShift);
+var
+  I: integer;
+begin
+  Self.FTitle := Shift.Title;
+  Self.FStartTime := Shift.FStartTime;
+  Self.FLength := Shift.FLength;
+  Self.FInStart := Shift.FInStart;
+  Self.FInFinish := Shift.FInFinish;
+  Self.FOutStart := Shift.FOutStart;
+  Self.FOutFinish := Shift.OutFinish;
+  Self.FLateness := Shift.FLateness;
+  Self.FBreaks.Clear;
+  for I := 0 to Shift.FBreaks.Count - 1 do
+    Self.FBreaks.Add(Shift.FBreaks.Items[i]);
+end;
+
+function TShift.GetEndTime: TDateTime;
+begin
+  Result := IncMinute(Self.StartTime, Self.LengthOfMinutes);
+end;
+
+function TShift.CheckIncorrectIn: boolean;
+begin
+  Result := not ((MinuteOfTheDay(Self.InStart) > 0)
+    and (MinuteOfTheDay(Self.InFinish) > 0)
+    and (Self.InFinish > Self.InStart)
+    and (MinuteOfTheDay(Self.InFinish) >= MinuteOfTheDay(Self.StartTime))
+    and (MinuteOfTheDay(Self.InStart) <= MinuteOfTheDay(Self.StartTime))
+    and (MinutesBetween(Self.InStart, Self.InFinish) < Self.GetLengthOfMinutes));
+end;
+
+function TShift.CheckIncorrectOut: boolean;
+begin
+  Result := not ((MinuteOfTheDay(Self.OutStart) > 0)
+    and (MinuteOfTheDay(Self.OutFinish) > 0)
+    and (Self.OutFinish > Self.OutStart)
+    and (MinuteOfTheDay(Self.OutFinish) >= MinuteOfTheDay(Self.GetEndTime))
+    and (MinuteOfTheDay(Self.OutStart) <= MinuteOfTheDay(Self.GetEndTime))
+    and (MinutesBetween(Self.OutStart, Self.OutFinish)
+      < Self.GetLengthOfMinutes));
+end;
+
+function TShift.ChekIncorrectLength: boolean;
+begin
+  Result := not ((Self.GetLengthOfMinutes < 24 * 60)
+    and (Self.GetLengthOfMinutes > 0));
+end;
+
+function TShift.CheckIncorrectBreaks: boolean;
+var
+  I: integer;
+  Break: TBreak;
+begin
+  Result := False;
+  for I := 0 to Self.FBreaks.Count - 1 do begin
+    Break := Self.FBreaks.Items[I];
+    Result := not ((Break.StartTime > Self.FStartTime)
+      and (Break.EndTime < Self.EndTime));
+    if Result then Exit;    
+  end;
+end;
+
+function TShift.CheckIncorrect: boolean;
+begin
+  Result := (IncorrectIn or IncorrectOut or IncorrectBreaks
+    or IncorrectLength);
 end;
 
 { TShiftList }
@@ -202,6 +292,7 @@ begin
             if Break <> nil then Shift.FBreaks.Add(Break);
           end;
         GUIDSList.Free;
+        if Shift.FBreaks.Count > 1 then Shift.FBreaks.SortByStartTime;
       end;
       Self.Add(Shift);
       Table.Next;
@@ -256,5 +347,42 @@ begin
   Self.Sort(@CompareStartTime);
 end;
 
+function TShiftList.SaveToBD(DBFileName: string): boolean;
+var
+  DB: TSQLiteDatabase;
+  SQL, BreaksGUIDs: string;
+  Shift: TShift;
+  I, J: integer;
+begin
+  Result := False;
+  if not FileExists(DBFileName) then Exit;
+  DB := TSQLiteDatabase.Create(DBFileName);
+  if not DB.TableExists('shifts') then Exit;
+  try
+    SQL := 'DELETE FROM shifts';
+    DB.ExecSQL(SQL);
+    DB.BeginTransaction;
+    for I := 0 to Self.Count - 1 do begin
+      Shift := Self.Items[i];
+      BreaksGUIDs := '';
+      for J := 0 to Shift.FBreaks.Count - 1 do begin
+        BreaksGUIDs := BreaksGUIDs + GuidToString(Shift.FBreaks.Items[J].GUID);
+        if not (J = Shift.FBreaks.Count - 1) then
+          BreaksGUIDs := BreaksGUIDs + '|';
+      end;
+      SQL := 'INSERT INTO Shifts (GUID, title, start_time, length, '
+        +'in_start, in_finish, out_start, out_finish, lateness, '
+        +'breaks_GUIDs)'
+        + ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      DB.ExecSQL(SQL, [GuidToString(Shift.FGUID), UTF8Encode(Shift.FTitle),
+        Shift.FStartTime, Shift.FLength, Shift.InStart, Shift.InFinish,
+        Shift.OutStart, Shift.OutFinish, Shift.FLateness, BreaksGUIDs]);
+    end;
+    DB.Commit;
+    Result := True;
+  finally
+    DB.Free
+  end;
+end;
 
 end.

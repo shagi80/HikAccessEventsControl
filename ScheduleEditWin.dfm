@@ -1,10 +1,10 @@
-object frmBreakEdit: TfrmBreakEdit
+object frmScheduleEdit: TfrmScheduleEdit
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = #1055#1077#1088#1077#1088#1099#1074
-  ClientHeight = 207
-  ClientWidth = 505
+  Caption = #1064#1072#1073#1083#1086#1085' '#1075#1088#1072#1092#1080#1082#1072
+  ClientHeight = 312
+  ClientWidth = 819
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,21 +13,36 @@ object frmBreakEdit: TfrmBreakEdit
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object Label3: TLabel
+    Left = 24
+    Top = 26
+    Width = 73
+    Height = 13
+    Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
+  end
+  object Label2: TLabel
+    Left = 24
+    Top = 61
+    Width = 64
+    Height = 13
+    Caption = #1058#1080#1087' '#1075#1088#1072#1092#1080#1082#1072
+  end
   object Shape1: TShape
-    Left = 367
+    Left = 681
     Top = 0
     Width = 138
-    Height = 207
+    Height = 312
     Align = alRight
     Brush.Color = clBlack
-    ExplicitTop = -21
-    ExplicitHeight = 252
+    ExplicitHeight = 320
   end
   object btnsave: TWebSpeedButton
-    Left = 399
-    Top = 23
+    Left = 713
+    Top = 26
     Width = 106
     Height = 35
     Caption = #1047#1072#1087#1080#1089#1072#1090#1100
@@ -74,37 +89,9 @@ object frmBreakEdit: TfrmBreakEdit
     Margin = 0
     SpaceWidth = 5
   end
-  object Label1: TLabel
-    Left = 24
-    Top = 96
-    Width = 73
-    Height = 13
-    Caption = #1044#1083#1080#1090#1077#1083#1100#1085#1086#1089#1090#1100
-  end
-  object Label2: TLabel
-    Left = 24
-    Top = 61
-    Width = 69
-    Height = 13
-    Caption = #1042#1088#1077#1084#1103' '#1085#1072#1095#1072#1083#1072
-  end
-  object Label3: TLabel
-    Left = 24
-    Top = 26
-    Width = 73
-    Height = 13
-    Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
-  end
-  object Label4: TLabel
-    Left = 24
-    Top = 131
-    Width = 62
-    Height = 13
-    Caption = #1044#1086#1087#1091#1089#1082', '#1084#1080#1085
-  end
   object btnCancel: TWebSpeedButton
-    Left = 399
-    Top = 74
+    Left = 713
+    Top = 77
     Width = 106
     Height = 35
     Caption = #1054#1090#1084#1077#1085#1080#1090#1100
@@ -151,43 +138,71 @@ object frmBreakEdit: TfrmBreakEdit
     Margin = 0
     SpaceWidth = 5
   end
+  object Label5: TLabel
+    Left = 312
+    Top = 61
+    Width = 65
+    Height = 13
+    Caption = #1044#1072#1090#1072' '#1085#1072#1095#1072#1083#1072
+  end
+  object Label1: TLabel
+    Left = 24
+    Top = 96
+    Width = 38
+    Height = 13
+    Caption = #1055#1077#1088#1080#1086#1076
+  end
   object edTitle: TEdit
     Left = 120
     Top = 23
-    Width = 225
+    Width = 385
     Height = 21
     TabOrder = 0
     Text = 'edTitle'
     OnChange = edTitleChange
   end
-  object dtpStartTime: TDateTimePicker
-    Left = 120
+  object dtpStartDate: TDateTimePicker
+    Left = 408
     Top = 58
     Width = 97
     Height = 21
     Date = 45798.834614710650000000
     Time = 45798.834614710650000000
-    Kind = dtkTime
     TabOrder = 1
-  end
-  object dtpLength: TDateTimePicker
-    Left = 120
-    Top = 93
-    Width = 97
-    Height = 21
-    Date = 45798.834614710650000000
-    Time = 45798.834614710650000000
-    Kind = dtkTime
-    TabOrder = 2
-    OnChange = dtpLengthChange
   end
   object edLateness: TEdit
     Left = 120
-    Top = 128
+    Top = 93
     Width = 49
     Height = 21
-    TabOrder = 3
+    TabOrder = 2
     Text = 'edLateness'
+    OnChange = edLatenessChange
     OnKeyPress = edLatenessKeyPress
+  end
+  object cbType: TComboBox
+    Left = 120
+    Top = 58
+    Width = 145
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 0
+    TabOrder = 3
+    OnChange = cbTypeChange
+    Items.Strings = (
+      #1085#1077#1076#1077#1083#1100#1085#1099#1081
+      #1087#1077#1088#1077#1086#1076#1080#1095#1077#1089#1082#1080#1081)
+  end
+  object pnPicture: TScrollBox
+    Left = 24
+    Top = 144
+    Width = 625
+    Height = 145
+    BevelInner = bvNone
+    BevelOuter = bvNone
+    BevelKind = bkFlat
+    Ctl3D = False
+    ParentCtl3D = False
+    TabOrder = 4
   end
 end

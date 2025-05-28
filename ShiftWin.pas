@@ -19,14 +19,17 @@ type
     btnSchedules: TWebSpeedButton;
     btnBreaks: TWebSpeedButton;
     btnShifts: TWebSpeedButton;
+    procedure btnUpdateClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
     procedure btnEditClick(Sender: TObject);
     procedure grGridSelectCell(Sender: TObject; ACol, ARow: Integer;
       var CanSelect: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ClickModeButton(Sender: TObject);
-    procedure SaveBtnClick(Sender: TObject);
     function GetObject: TObject;
+    procedure LoadFromBD;
   private
     { Private declarations }
     BreaksList: TBreakList;
@@ -40,6 +43,7 @@ type
     function CanChange(NewMode: integer): boolean;
     procedure SetModify(Value: boolean);
     procedure UpdateEditButtons(Sender: TObject);
+    procedure UpdateView;
   public
     { Public declarations }
   end;
@@ -49,28 +53,18 @@ implementation
 
 {$R *.dfm}
 
-uses Dialogs, DateUtils, SysUtils, TheSettings, BreakEditWin;
+uses Dialogs, DateUtils, SysUtils, TheSettings, BreakEditWin,
+  ShiftEditWin;
 
 
 procedure TfrmShift.FormCreate(Sender: TObject);
 begin
   BreaksList := TBreakList.Create(True);
-  BreaksList.LoadFromBD(Settings.GetInstance.DBFileName);
-  BreaksList.SortByTitle;
   ShiftsList := TShiftList.Create(True);
-  ShiftsList.LoadFromBD(Settings.GetInstance.DBFileName, BreaksList);
-  ShiftsList.SortByTitle;
   SchedulesList := TScheduleList.Create(True);
-  SchedulesList.LoadFromBD(Settings.GetInstance.DBFileName, ShiftsList);
-  SchedulesList.SortByTitle;
+  LoadFromBD;
   FMode := 1;
   Self.ClickModeButton(btnBreaks);
-end;
-
-procedure TfrmShift.grGridSelectCell(Sender: TObject; ACol, ARow: Integer;
-  var CanSelect: Boolean);
-begin
-  UpdateEditButtons(grGrid);
 end;
 
 procedure TfrmShift.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -78,6 +72,12 @@ begin
   BreaksList.Free;
   ShiftsList.Free;
   Action := caFree;
+end;
+
+procedure TfrmShift.grGridSelectCell(Sender: TObject; ACol, ARow: Integer;
+  var CanSelect: Boolean);
+begin
+  UpdateEditButtons(grGrid);
 end;
 
 procedure TfrmShift.SetModify(Value: boolean);
@@ -103,49 +103,47 @@ begin
   btnEdit.Enabled := (Obj <> nil);
 end;
 
-procedure TfrmShift.btnEditClick(Sender: TObject);
-var
-  Obj: TObject;
-  Sel: TGridRect;
-  Res: boolean;
-begin
-  Obj := nil;
-  if not(Sender = btnAdd) then begin
-    Obj := Self.GetObject;
-    if Obj = nil then Exit;
-  end;
-  Sel := grGrid.Selection;
-  Res := False;
-  case FMode of
-    1: begin
-      if Obj = nil then Obj := TBreak.Create;
-      Res := frmBreakEdit.Edit(TBreak(Obj));
-      if (Res) and (Sender = btnAdd) then BreaksList.Add(TBreak(Obj));
-      if Res then Self.ShowBreaks;
-    end;
-  end;
-  grGrid.Selection := sel;
-  if Res then Self.SetModify(Res);
-  UpdateEditButtons(Sender);
-end;
-
 function TfrmShift.CanChange(NewMode: integer): boolean;
 var
   Res: integer;
 begin
   Result := True;
   if (FModify = False) or (FMode = NewMode) then Exit;
-  Res := MessageDlg('', mtWarning, [mbYes, mbNo, mbCancel], 0);
+  Res := MessageDlg('Сохранить изменения данных ?', mtWarning,
+    [mbYes, mbNo, mbCancel], 0);
   case Res of
-    mrYes: Self.SaveBtnClick(Self);
-    mrNo: ;
+    mrYes: Self.btnSaveClick(Self);
+    mrNo: LoadFromBD;
     mrCancel: Result := False;
   end;
 end;
 
-procedure TfrmShift.ClickModeButton(Sender: TObject);
+procedure TfrmShift.LoadFromBD;
+begin
+  BreaksList.LoadFromBD(Settings.GetInstance.DBFileName);
+  BreaksList.SortByTitle;
+  ShiftsList.LoadFromBD(Settings.GetInstance.DBFileName, BreaksList);
+  ShiftsList.SortByTitle;
+  SchedulesList.LoadFromBD(Settings.GetInstance.DBFileName, ShiftsList);
+  SchedulesList.SortByTitle;
+end;
+
+{}
+
+procedure TfrmShift.UpdateView;
 var
   I: integer;
+begin
+  for I := 0 to grGrid.RowCount - 1 do grGrid.Rows[I].Clear;
+  case FMode of
+    1: Self.ShowBreaks;
+    2: Self.ShowShifts;
+    3: Self.ShowSchedules;
+  end;
+  Self.UpdateEditButtons(Self);
+end;
+
+procedure TfrmShift.ClickModeButton(Sender: TObject);
 begin
   if not CanChange(TWebSpeedButton(Sender).Tag) then begin
     case FMode of
@@ -157,14 +155,8 @@ begin
   end;
   TWebSpeedButton(Sender).Down := True;
   FMode := TWebSpeedButton(Sender).Tag;
-  for I := 0 to grGrid.RowCount - 1 do grGrid.Rows[I].Clear;
-  case FMode of
-    1: Self.ShowBreaks;
-    2: Self.ShowShifts;
-    3: Self.ShowSchedules;
-  end;
-  Self.SetModify(False);
-  Self.UpdateEditButtons(Self);
+  UpdateView;
+  SetModify(False);
 end;
 
 procedure TfrmShift.ShowBreaks;
@@ -225,7 +217,6 @@ begin
   grGrid.Enabled := (ShiftsList.Count > 0);
   for I := 0 to ShiftsList.Count - 1 do begin
     Shift := ShiftsList.Items[I];
-    Shift.Breaks.SortByStartTime;
     grGrid.Cells[0, I + 1] := Shift.Title;
     grGrid.Cells[1, I + 1] := TimeToStr(Shift.StartTime);
     grGrid.Cells[2, I + 1] := TimeToStr(Shift.Length);
@@ -273,7 +264,7 @@ begin
     Schedule := SchedulesList.Items[I];
     grGrid.Cells[0, I + 1] := Schedule.Title;
     grGrid.Cells[1, I + 1] := TimeToStr(Schedule.StartDate);
-    case Schedule.ShedType of
+    case Schedule.ScheduleType of
       stWeek: begin
         grGrid.Cells[2, I + 1] := 'недельный';
         grGrid.Cells[3, I + 1] := '---';
@@ -301,10 +292,84 @@ begin
 
 end;
 
-procedure TfrmShift.SaveBtnClick(Sender: TObject);
+{}
+
+procedure TfrmShift.btnDeleteClick(Sender: TObject);
+var
+  Obj: TObject;
 begin
-  //
+  if not (MessageDlg('Вы действительно хотите удалить этот объект ?',
+    mtConfirmation, [mbYes,mbNo], 0) = mrYes) then Exit;
+  Obj := Self.GetObject;
+  if Obj = nil then Exit;
+  case FMode of
+    1: BreaksList.Extract(Obj);
+    2: ShiftsList.Extract(Obj);
+    3: SchedulesList.Extract(Obj);
+  end;
+  UpdateView;
+  SetModify(True);
 end;
 
+procedure TfrmShift.btnEditClick(Sender: TObject);
+var
+  Obj: TObject;
+  Sel: TGridRect;
+  Res: boolean;
+begin
+  Obj := nil;
+  if not(Sender = btnAdd) then begin
+    Obj := Self.GetObject;
+    if Obj = nil then Exit;
+  end;
+  Res := False;
+  case FMode of
+    1: if Obj = nil then begin
+          Obj := TBreak.Create;
+          Res := frmBreakEdit.Edit(TBreak(Obj));
+          if Res then begin
+            if Sender = btnAdd then BreaksList.Add(TBreak(Obj));
+            BreaksList.SortByTitle;
+          end
+        end else Res := frmBreakEdit.Edit(TBreak(Obj));
+    2: if Obj = nil then begin
+          Obj := TShift.Create;
+          Res := frmShiftEdit.Edit(TShift(Obj), BreaksList);
+          if Res then begin
+            if Sender = btnAdd then ShiftsList.Add(TShift(Obj));
+            ShiftsList.SortByTitle;
+          end
+        end else Res := frmShiftEdit.Edit(TShift(Obj), BreaksList);
+  end;
+  if Res then begin
+    Sel := grGrid.Selection;
+    SetModify(Res);
+    UpdateView;
+    grGrid.Selection := sel;
+  end;
+end;
+
+procedure TfrmShift.btnSaveClick(Sender: TObject);
+var
+  Res: boolean;
+begin
+  Res := False;
+  if not FModify then Exit;
+  case FMode of
+    1: Res := BreaksList.SaveToBD(Settings.GetInstance.DBFileName);
+    2: Res := ShiftsList.SaveToBD(Settings.GetInstance.DBFileName);
+  end;
+  SetModify(not Res);
+  if not Res then
+    MessageDlg('Произошла какая-то ошибка !' + chr(13)
+      + 'Данные не записаны.', mtError, [mbOk], 0);
+end;
+
+procedure TfrmShift.btnUpdateClick(Sender: TObject);
+begin
+  LoadFromBD;
+  UpdateView;
+  SetModify(False);
+end;
 
 end.

@@ -25,7 +25,10 @@ uses
   TheSchedule in 'Models\TheSchedule.pas',
   TheBreaks in 'Models\TheBreaks.pas',
   BreakEditWin in 'BreakEditWin.pas' {frmBreakEdit},
-  ShiftEditWin in 'ShiftEditWin.pas' {Form1};
+  ShiftEditWin in 'ShiftEditWin.pas' {frmShiftEdit},
+  ObjectListWin in 'ObjectListWin.pas' {frmObjectList},
+  ScheduleEditWin in 'ScheduleEditWin.pas' {frmScheduleEdit},
+  ScheduleTemplatePresent in 'Controls\ScheduleTemplatePresent.pas';
 
 {$R *.RES}
 
@@ -34,6 +37,8 @@ begin
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TAboutBox, AboutBox);
   Application.CreateForm(TfrmBreakEdit, frmBreakEdit);
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TfrmShiftEdit, frmShiftEdit);
+  Application.CreateForm(TfrmObjectList, frmObjectList);
+  Application.CreateForm(TfrmScheduleEdit, frmScheduleEdit);
   Application.Run;
 end.

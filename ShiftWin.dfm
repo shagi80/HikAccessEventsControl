@@ -3,7 +3,7 @@ object frmShift: TfrmShift
   Top = 117
   Caption = 'MDI Child'
   ClientHeight = 425
-  ClientWidth = 843
+  ClientWidth = 974
   Color = clBtnFace
   ParentFont = True
   FormStyle = fsMDIChild
@@ -203,7 +203,7 @@ object frmShift: TfrmShift
   object Panel2: TPanel
     Left = 161
     Top = 0
-    Width = 682
+    Width = 813
     Height = 425
     Align = alClient
     BevelOuter = bvNone
@@ -213,7 +213,7 @@ object frmShift: TfrmShift
     object grGrid: TStringGrid
       Left = 20
       Top = 63
-      Width = 642
+      Width = 773
       Height = 342
       Align = alClient
       Ctl3D = False
@@ -234,7 +234,7 @@ object frmShift: TfrmShift
       AlignWithMargins = True
       Left = 20
       Top = 20
-      Width = 642
+      Width = 773
       Height = 33
       Margins.Left = 0
       Margins.Top = 0
@@ -246,7 +246,7 @@ object frmShift: TfrmShift
       TabOrder = 1
       object btnUpdate: TWebSpeedButton
         AlignWithMargins = True
-        Left = 542
+        Left = 673
         Top = 0
         Width = 100
         Height = 33
@@ -261,6 +261,7 @@ object frmShift: TfrmShift
         DisableFontColor = clGray
         SelectFontColor = clBlack
         ActiveFontColor = clBlack
+        OnClick = btnUpdateClick
         Margin = 0
         Align = alRight
         SpaceWidth = 2
@@ -269,7 +270,7 @@ object frmShift: TfrmShift
       end
       object btnSave: TWebSpeedButton
         AlignWithMargins = True
-        Left = 436
+        Left = 567
         Top = 0
         Width = 100
         Height = 33
@@ -289,6 +290,7 @@ object frmShift: TfrmShift
         DisableFontColor = clGray
         SelectFontColor = clBlack
         ActiveFontColor = clBlack
+        OnClick = btnSaveClick
         Margin = 0
         Align = alRight
         SpaceWidth = 2
@@ -339,6 +341,7 @@ object frmShift: TfrmShift
         DisableFontColor = clGray
         SelectFontColor = clBlack
         ActiveFontColor = clBlack
+        OnClick = btnDeleteClick
         Margin = 0
         Align = alLeft
         SpaceWidth = 5

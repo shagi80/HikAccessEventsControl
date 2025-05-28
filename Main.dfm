@@ -105,7 +105,7 @@ object MainForm: TMainForm
   object Panel1: TPanel
     Left = 8
     Top = 430
-    Width = 433
+    Width = 457
     Height = 71
     BevelOuter = bvNone
     TabOrder = 2
@@ -152,6 +152,15 @@ object MainForm: TMainForm
       Caption = 'Button4'
       TabOrder = 4
       OnClick = Button4Click
+    end
+    object Button5: TButton
+      Left = 332
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = 'Button5'
+      TabOrder = 5
+      OnClick = Button5Click
     end
   end
   object MainMenu1: TMainMenu
