@@ -323,21 +323,10 @@ end;
 
 function TScheduleList.SaveScheduleDays(DB: TSQLiteDatabase;
   Schedule: TSchedule): boolean;
-
-  function DeleteCyrillic(Text: string): string;
 var
-  I: integer;
-begin
-  Result := '';
-  for I := 1 to Length(Text) do
-    if (Ord(Text[I]) >= 32) and (Ord(Text[I]) <= 126) then
-      Result := Result + Text[I];
-end;
-
-var
-  SQL, ShiftGUIDs, GuidStr: string;
+  SQL, ShiftGUIDs: string;
+  GuidStr: PAnsiChar;
   I, J: integer;
-  GuidBytes: TBytes;
 begin
   Result := False;
   if not DB.TableExists('schedule_days') then Exit;
@@ -352,9 +341,7 @@ begin
         if not (J = Schedule.Day[I].Count - 1) then
           ShiftGUIDs := ShiftGUIDs + '|';
       end;
-      GuidStr := '{DCB9B57D-985D-47F1-BCF6-53F2C1287B72}';
-      GuidBytes := TEncoding.UTF8.GetBytes('{DCB9B57D-985D-47F1-BCF6-53F2C1287B72}');
-
+      GuidStr := PAnsiChar(GuidToString(SChedule.FGUID));
       SQL := 'INSERT INTO schedule_days (schedule_GUID, day_num, shift_GUIDs)'
         + ' VALUES (?, ?, ?)';
       DB.ExecSQL(SQL, [GuidStr, IntToStr(I), ShiftGUIDs]);

@@ -1,31 +1,43 @@
 [Closed Files]
-File_0=TSourceModule,'C:\Users\User\Documents\Borland\Octopus_v2\ControlCls\OrderGridFrm.pas',0,1,1,3,12,0,0,,
-File_1=TSourceModule,'C:\Users\User\Documents\Borland\Octopus_v2\Source\TntGrids.pas',0,1,1,1,1,0,0,,
-File_2=TSourceModule,'C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\ThreadExecuto.pas',0,1,19,1,111,0,0,{{43,45}
-File_3=TSourceModule,'c:\portable\tdlite\source\Win32\rtl\sys\SysUtils.pas',0,1,643,1,655,0,0,,
-File_4=TSourceModule,'C:\Users\User\Documents\Borland\Текущие разработки\HikVisionAPI\MainUnit.pas',0,1,65,70,83,0,0,,
-File_5=TSourceModule,'C:\Users\User\Documents\Borland\Текущие разработки\HikVisionAPI\TinyJson\hat_trie.pas',0,1,434,2,450,0,0,,
-File_6=TSourceModule,'C:\Users\User\Documents\Borland\Текущие разработки\HikVisionAPI\TinyJson\DUnit\JSONTests.pas',0,1,549,24,36,0,0,,
-File_7=TSourceModule,'C:\Users\User\Documents\Borland\Текущие разработки\HikVisionAPI\TinyJson\FastcodeCPUID.pas',0,1,36,3,51,0,0,,
-File_8=TSourceModule,'C:\Users\User\Documents\Borland\Текущие разработки\HikVisionAPI\TinyJson\FastInt64.pas',0,1,1,1,1,0,0,,
-File_9=TSourceModule,'C:\Users\User\Documents\Borland\Текущие разработки\HikVisionAPI\TinyJson\Hashes.pas',0,1,1,1,1,0,0,,
+File_0=TSourceModule,'C:\Users\User\Documents\Borland\Octopus_v2\ModelCls\PartListCls.pas',0,1,9,1,36,0,0,{{36,29},{39,3},{''}}{{41,29},{44,3},{''}}{{46,57},{57,3},{''}}{{59,50},{62,3},{''}}{{64,60},{67,3},{''}}{{69,48},{76,3},{''}}{{78,58},{85,3},{''}}{{87,32},{90,3},{''}}{{92,31},{95,3},{''}}{{97,49},{100,3},{''}}{{102,48},{106,3},{''}}{{108,59},{112,3},{''}},
+File_1=TSourceModule,'C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheEventsLoader.pas',0,1,1,42,184,0,0,{{89,53},{101,3},{''}}{{103,33},{107,3},{''}}{{111,47},{114,3},{''}}{{116,56},{123,3},{''}}{{125,51},{132,3},{''}}{{134,52},{137,3},{''}}{{139,54},{143,3},{''}}{{145,60},{149,3},{''}}{{154,36},{182,3},{''}}{{184,41},{219,3},{''}}{{221,79},{272,3},{''}}{{277,57},{297,3},{''}}{{299,76},{329,3},{''}}{{331,60},{339,3},{''}}{{341,68},{354,3},{''}}{{356,68},{366,3},{''}}{{369,42},{407,3},{''}}{{410,42},{453,3},{''}},
+File_2=TSourceModule,'C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheAPIExecutor.pas',0,1,1,23,20,0,0,,
+File_3=TSourceModule,'C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\APIClient.pas',0,1,4,38,21,0,0,{{33,31}
+File_4=TSourceModule,'c:\portable\tdlite\lib\IdTCPClient.pas',0,1,73,1,88,0,0,,
+File_5=TSourceModule,'c:\portable\tdlite\lib\IdHTTP.pas',0,1,1470,1,1485,0,0,,
+File_6=TSourceModule,'C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\DigestHeader.pas',0,1,46,26,10,0,0,,
+File_7=TSourceModule,'c:\portable\tdlite\lib\IdIOHandlerSocket.pas',0,1,138,1,153,0,0,,
+File_8=TSourceModule,'C:\Users\User\Documents\Borland\Octopus_v2\ControlCls\OrderGridFrm.pas',0,1,1,3,12,0,0,,
 
 [Modules]
-Module0=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\APIClient.pas
-Module1=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheEventsLoader.pas
-Module2=C:\Users\User\Documents\Borland\HikVisionAPI\Main.pas
-Module3=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheAPIExecutor.pas
-Module4=C:\Users\User\Documents\Borland\HikVisionAPI\MDIAPP.bdsproj
-Module5=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\DigestHeader.pas
+Module0=C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheSchedule.pas
+Module1=C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheShift.pas
+Module2=c:\portable\tdlite\source\Win32\rtl\common\Classes.pas
+Module3=C:\Users\User\Documents\Borland\HikVisionAPI\MDIAPP.bdsproj
+Module4=C:\Users\User\Documents\Borland\HikVisionAPI\Controls\ShiftPresent.pas
+Module5=C:\Users\User\Documents\Borland\HikVisionAPI\Main.pas
 Count=6
 EditWindowCount=1
 
-[C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\APIClient.pas]
+[C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheSchedule.pas]
 ModuleType=TSourceModule
 FormState=0
 FormOnTop=0
 
-[C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheEventsLoader.pas]
+[C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheShift.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[c:\portable\tdlite\source\Win32\rtl\common\Classes.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[C:\Users\User\Documents\Borland\HikVisionAPI\MDIAPP.bdsproj]
+ModuleType=TBaseProject
+
+[C:\Users\User\Documents\Borland\HikVisionAPI\Controls\ShiftPresent.pas]
 ModuleType=TSourceModule
 FormState=0
 FormOnTop=0
@@ -35,22 +47,9 @@ ModuleType=TSourceModule
 FormState=1
 FormOnTop=0
 
-[C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheAPIExecutor.pas]
-ModuleType=TSourceModule
-FormState=0
-FormOnTop=0
-
-[C:\Users\User\Documents\Borland\HikVisionAPI\MDIAPP.bdsproj]
-ModuleType=TBaseProject
-
-[C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\DigestHeader.pas]
-ModuleType=TSourceModule
-FormState=0
-FormOnTop=0
-
 [EditWindow0]
 ViewCount=6
-CurrentEditView=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\APIClient.pas
+CurrentEditView=C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheSchedule.pas
 View0=0
 View1=1
 View2=2
@@ -80,15 +79,17 @@ LeftPanelData=0000080001000100000019000000426F726C616E64456469746F72436F64654578
 RightPanelSize=0
 BottomPanelSize=0
 BottomPanelClients=MessageView@EditWindow0
-BottomPanelData=000008000100010000000B0000004D657373616765566965770000000000000000000000000000000000FFFFFFFF
+BottomPanelData=000008000100010000000B0000004D6573736167655669657700000000000000000000000000000000000100000000000000000B0000004D65737361676556696577FFFFFFFF
 BottomMiddlePanelSize=0
+BottomMiddlePanelClients=DockSite0
+BottomMiddelPanelData=0000080001000100000009000000446F636B53697465300000000000000000000000000000000000FFFFFFFF
 
 [View0]
 CustomEditViewType=TEditView
 Module=C:\Users\User\Documents\Borland\HikVisionAPI\Main.pas
-CursorX=4
-CursorY=118
-TopLine=100
+CursorX=46
+CursorY=105
+TopLine=105
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -96,27 +97,49 @@ EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\Main.pas
 
 [View1]
 CustomEditViewType=TEditView
-Module=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheEventsLoader.pas
-CursorX=1
-CursorY=182
-TopLine=152
+Module=C:\Users\User\Documents\Borland\HikVisionAPI\Controls\ShiftPresent.pas
+CursorX=53
+CursorY=24
+TopLine=7
 LeftCol=1
-Elisions={{72,33},{80,3},{''}}{{82,33},{86,3},{''}}{{90,47},{93,3},{''}}{{95,56},{102,3},{''}}{{104,51},{111,3},{''}}{{113,52},{116,3},{''}}{{118,54},{122,3},{''}}{{124,60},{128,3},{''}}{{132,47},{135,3},{''}}{{137,41},{150,3},{''}}{{154,80},{161,3},{''}}{{185,76},{215,3},{''}}{{217,68},{229,3},{''}}{{244,42},{288,3},{''}}
+Elisions={{32,53},{41,3},{''}}{{43,33},{49,3},{''}}{{51,48},{57,3},{''}}{{59,46},{69,3},{''}}{{71,30},{155,3},{''}}
 Bookmarks=
-EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheEventsLoader.pas
+EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\Controls\ShiftPresent.pas
 
 [View2]
 CustomEditViewType=TEditView
-Module=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\DigestHeader.pas
-CursorX=26
-CursorY=10
-TopLine=1
+Module=C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheSchedule.pas
+CursorX=53
+CursorY=35
+TopLine=16
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\DigestHeader.pas
+EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheSchedule.pas
 
 [View3]
+CustomEditViewType=TEditView
+Module=C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheShift.pas
+CursorX=3
+CursorY=93
+TopLine=78
+LeftCol=1
+Elisions={{59,44},{62,3},{''}}{{96,26},{100,3},{''}}{{102,44},{105,3},{''}}{{107,39},{110,3},{''}}{{112,45},{115,3},{''}}
+Bookmarks=
+EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\Models\TheShift.pas
+
+[View4]
+CustomEditViewType=TEditView
+Module=c:\portable\tdlite\source\Win32\rtl\common\Classes.pas
+CursorX=1
+CursorY=3187
+TopLine=3172
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=c:\portable\tdlite\source\Win32\rtl\common\Classes.pas
+
+[View5]
 CustomEditViewType=TEditView
 Module=C:\Users\User\Documents\Borland\HikVisionAPI\MDIAPP.dpr
 CursorX=53
@@ -126,28 +149,6 @@ LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\MDIAPP.dpr
-
-[View4]
-CustomEditViewType=TEditView
-Module=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheAPIExecutor.pas
-CursorX=47
-CursorY=21
-TopLine=67
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\TheAPIExecutor.pas
-
-[View5]
-CustomEditViewType=TEditView
-Module=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\APIClient.pas
-CursorX=7
-CursorY=112
-TopLine=93
-LeftCol=1
-Elisions={{19,52},{34,6},{''}}{{36,51},{52,6},{''}}{{58,31},{66,3},{''}}{{68,31},{72,3},{''}}{{74,63},{79,3},{''}}{{81,55},{84,3},{''}}{{86,64},{90,3},{''}}{{133,30},{139,3},{''}}{{141,30},{145,3},{''}}{{147,62},{152,3},{''}}{{154,54},{157,3},{''}}{{159,63},{163,3},{''}}{{165,70},{172,3},{''}}{{174,57},{178,3},{''}}{{181,38},{225,3},{''}}
-Bookmarks=
-EditViewName=C:\Users\User\Documents\Borland\HikVisionAPI\HikAPI\APIClient.pas
 
 [Watches]
 Count=0
@@ -193,7 +194,7 @@ MaxLeft=-7
 MaxTop=-12
 ClientWidth=9896
 ClientHeight=655
-BottomPanelSize=579
+BottomPanelSize=0
 
 [ProjectManager]
 PercentageSizes=1
@@ -204,11 +205,11 @@ State=0
 Left=0
 Top=0
 Width=1289
-Height=4138
+Height=2585
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1289
-ClientHeight=4138
+ClientHeight=2585
 TBDockHeight=267
 LRDockWidth=3730
 Dockable=1
@@ -313,33 +314,6 @@ LRDockWidth=2552
 Dockable=1
 StayOnTop=0
 
-[ToDo List]
-PercentageSizes=1
-Create=1
-Visible=0
-Docked=0
-State=0
-Left=1764
-Top=9794
-Width=3672
-Height=1808
-MaxLeft=-7
-MaxTop=-12
-ClientWidth=3568
-ClientHeight=1335
-TBDockHeight=1808
-LRDockWidth=3672
-Dockable=1
-StayOnTop=0
-Column0Width=200
-Column1Width=30
-Column2Width=100
-Column3Width=70
-Column4Width=70
-SortOrder=4
-ShowHints=1
-ShowChecked=1
-
 [TemplateView]
 PercentageSizes=1
 Create=1
@@ -434,11 +408,11 @@ Docked=1
 State=0
 Left=0
 Top=23
-Width=2773
+Width=6693
 Height=1068
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2773
+ClientWidth=6693
 ClientHeight=1068
 TBDockHeight=1068
 LRDockWidth=2773
@@ -451,8 +425,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=11
-Top=85
+Left=-271
+Top=-124
 Width=1465
 Height=8265
 MaxLeft=-1
@@ -465,9 +439,12 @@ Dockable=1
 StayOnTop=0
 
 [DockHosts]
-DockHostCount=1
+DockHostCount=2
 
 [DockSite0]
+DockSiteType=1
+
+[DockSite1]
 DockSiteType=1
 PercentageSizes=1
 Create=1
@@ -477,11 +454,11 @@ State=0
 Left=8516
 Top=1129
 Width=1445
-Height=4733
+Height=3180
 MaxLeft=-7
 MaxTop=-12
 ClientWidth=1341
-ClientHeight=4260
+ClientHeight=2706
 TBDockHeight=3180
 LRDockWidth=1445
 Dockable=1
