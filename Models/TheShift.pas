@@ -26,6 +26,7 @@ type
     function ChekIncorrectLength: boolean;
     function CheckIncorrectBreaks: boolean;
     function CheckIncorrect: boolean;
+    function GetScheduleState(MinNum: integer): TScheduleState;
   public
     constructor Create;
     destructor Destroy; override;
@@ -48,6 +49,7 @@ type
     property IncorrectLength: boolean read ChekIncorrectLength;
     property IncorrectBreaks: boolean read CheckIncorrectBreaks;
     property Incorrect: boolean read CheckIncorrect;
+    property ScheduleState[MinNum: integer]: TScheduleState read GetScheduleState;
   end;
 
   TShiftList = class(TObjectList)
@@ -171,6 +173,39 @@ begin
   Result := (IncorrectIn or IncorrectOut or IncorrectBreaks
     or IncorrectLength);
 end;
+
+function TShift.GetScheduleState(MinNum: integer): TScheduleState;
+var
+  StartMin, EndMin: integer;
+  BreakState: TScheduleState;
+  I: integer;
+begin
+  StartMin := MinuteOfTheDay(Self.FStartTime);
+  EndMin := StartMin + Self.GetLengthOfMinutes;
+  Result := ssNone;
+  if Self.FLateness > 0 then begin
+    if (MinNum > StartMin) and ((MinNum - StartMin) < Self.FLateness) then begin
+      Result := ssLateToShift;
+      Exit;
+    end;
+    if (MinNum < EndMin) and ((EndMin - MinNum) < Self.FLateness) then begin
+      Result := ssEarlyFromShist;
+      Exit;
+    end;
+    Inc(StartMin, Self.FLateness);
+    Dec(EndMin, - Self.FLateness);
+  end;
+  if (MinNum >= StartMin) and (MinNum <= EndMin) then
+    Result := ssWork;
+  for I := 0 to Self.FBreaks.Count - 1 do begin
+    BreakState := FBreaks.Items[I].ScheduleState[MinNum];
+    if BreakState <> ssNone then begin
+      Result := BreakState;
+      Exit;
+    end;
+  end;
+end;
+
 
 { TShiftList }
 

@@ -4,7 +4,7 @@ interface
 
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
   StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
-  ActnList, ToolWin, ImgList, Grids;
+  ActnList, ToolWin, ImgList, Grids, TWebButton, ButtonGroup, Tabs, DockTabSet;
 
 type
   TMainForm = class(TForm)
@@ -29,7 +29,6 @@ type
     CopyItem: TMenuItem;
     PasteItem: TMenuItem;
     WindowMinimizeItem: TMenuItem;
-    StatusBar: TStatusBar;
     ActionList1: TActionList;
     EditCut1: TEditCut;
     EditCopy1: TEditCopy;
@@ -47,33 +46,25 @@ type
     FileClose1: TWindowClose;
     WindowTileVertical1: TWindowTileVertical;
     WindowTileItem2: TMenuItem;
-    ToolBar2: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
-    ToolButton9: TToolButton;
-    ToolButton7: TToolButton;
-    ToolButton8: TToolButton;
-    ToolButton10: TToolButton;
-    ToolButton11: TToolButton;
     ImageList1: TImageList;
-    Panel1: TPanel;
-    Button1: TButton;
-    Button2: TButton;
-    Button3: TButton;
-    Edit2: TEdit;
-    Button4: TButton;
-    Button5: TButton;
-    procedure Button5Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    Panel2: TPanel;
+    btnPerson: TWebSpeedButton;
+    btnProcess: TWebSpeedButton;
+    btnDivisionReport: TWebSpeedButton;
+    btnPersonReport: TWebSpeedButton;
+    btnSchedule: TWebSpeedButton;
+    sbFormButtons: TScrollBox;
+    pnFormButtons: TPanel;
+    TabSet1: TTabSet;
+    procedure btnPersonReportClick(Sender: TObject);
+    procedure btnPersonClick(Sender: TObject);
+    procedure btnScheduleClick(Sender: TObject);
+    procedure btnDivisionReportClick(Sender: TObject);
+    procedure btnProcessClick(Sender: TObject);
   private
     { Private declarations }
+    function HasChildren(AClassName: string): boolean;
+    procedure UnselectFormButton;
   public
     { Public declarations }
   end;
@@ -88,11 +79,35 @@ implementation
 {$R res.RES}
 
 uses about, DateUtils, APIProcessWin, TheSettings, TheEventPairs,
-  PersonEventsWin, ShiftWin, ScheduleEditWin, TheShift, TheSchedule,
-  TheBreaks;
+  PersonEventsWin, ScheduleEditWin, TheShift, TheSchedule,
+  TheBreaks, ScheduleAndShiftSettingsWin, TheAnalysisByMinute,
+  AnalysisByMinPresent, SubdivisionEventsWin, DivisionAndPersonSettingsWin;
 
 
-procedure TMainForm.Button1Click(Sender: TObject);
+function TMainForm.HasChildren(AClassName: string): boolean;
+var
+  I: integer;
+begin
+  Result := False;
+  for I := 0 to Self.MDIChildCount - 1 do begin
+    Result := (Self.MDIChildren[I].ClassName = AClassName);
+    if Result then begin
+      Self.MDIChildren[I].Show;
+      Exit;
+    end;
+  end;
+
+end;
+
+procedure TMainForm.UnselectFormButton;
+var
+  I: integer;
+begin
+  for I := 0 to Self.pnFormButtons.ControlCount - 1 do
+    TWebSpeedButton(Self.pnFormButtons.Controls[I]).Down := False;
+end;
+
+procedure TMainForm.btnProcessClick(Sender: TObject);
 var
   frmProcess: TfrmProcess;
 begin
@@ -101,50 +116,39 @@ begin
   frmProcess.Free;
 end;
 
-procedure TMainForm.Button2Click(Sender: TObject);
+procedure TMainForm.btnDivisionReportClick(Sender: TObject);
 var
-  frmShift: TfrmShift;
+  frmSubdivisionEvents: TfrmSubdivisionEvents;
 begin
-  frmShift := TfrmShift.Create(Self);
+  frmSubdivisionEvents := TfrmSubdivisionEvents.Create(Self);
+  frmSubdivisionEvents.ShowFomButton(pnFormButtons);
 end;
 
-procedure TMainForm.Button3Click(Sender: TObject);
+procedure TMainForm.btnPersonReportClick(Sender: TObject);
 var
   frmPervonEvents: TfrmPervonEvents;
 begin
   frmPervonEvents := TfrmPervonEvents.Create(Self);
-  //frmPervonEvents.Show;
+  frmPervonEvents.ShowFomButton(pnFormButtons);
 end;
 
-procedure TMainForm.Button4Click(Sender: TObject);
+procedure TMainForm.btnScheduleClick(Sender: TObject);
 var
-  g: tguid;
+  frmShiftSettings: TfrmShift;
 begin
-  CreateGUID(g);
-  Edit2.Text := GuidToString(g);
+  if not Self.HasChildren(TfrmShift.ClassName) then
+    frmShiftSettings := TfrmShift.Create(Self);
+  UnselectFormButton
 end;
 
-procedure TMainForm.Button5Click(Sender: TObject);
+procedure TMainForm.btnPersonClick(Sender: TObject);
 var
-  FShiftList: TShiftList;
-  FBreakList: TBreakList;
-  ScheduleList: TScheduleList;
-  Schedule: TSchedule;
+  frmPersonSettings: TfrmDivisionAndPersonSettings;
 begin
-  ScheduleList := TScheduleList.Create(True);
-  FShiftList := TShiftList.Create(True);
-  FBreakList := TBreakList.Create(True);
-  FBreakList.LoadFromBD(Settings.GetInstance.DBFileName);
-  FShiftList.LoadFromBD(Settings.GetInstance.DBFileName, FBreakList);
-  ScheduleList.LoadFromBD(Settings.GetInstance.DBFileName, FShiftList);
-  Schedule := ScheduleList.Items[0];
-  if frmScheduleEdit.Edit(Schedule, FShiftList) then
-    ScheduleList.SaveToBD(Settings.GetInstance.DBFileName);
-
-  ScheduleList.Free;
-  FShiftList.Free;
-  FBreakList.Free;
-
+  if not Self.HasChildren(TfrmDivisionAndPersonSettings.ClassName) then
+    frmPersonSettings := TfrmDivisionAndPersonSettings.Create(Self);
+  UnselectFormButton
 end;
+
 
 end.

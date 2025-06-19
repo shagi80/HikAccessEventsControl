@@ -24,11 +24,23 @@ uses
   PersonEventsWin in 'PersonEventsWin.pas' {frmPervonEvents},
   TheSchedule in 'Models\TheSchedule.pas',
   TheBreaks in 'Models\TheBreaks.pas',
-  BreakEditWin in 'BreakEditWin.pas' {frmBreakEdit},
-  ShiftEditWin in 'ShiftEditWin.pas' {frmShiftEdit},
-  ObjectListWin in 'ObjectListWin.pas' {frmObjectList},
-  ScheduleEditWin in 'ScheduleEditWin.pas' {frmScheduleEdit},
-  ScheduleTemplatePresent in 'Controls\ScheduleTemplatePresent.pas';
+  BreakEditWin in 'DialogWin\BreakEditWin.pas' {frmBreakEdit},
+  ShiftEditWin in 'DialogWin\ShiftEditWin.pas' {frmShiftEdit},
+  ObjectListWin in 'DialogWin\ObjectListWin.pas' {frmObjectList},
+  ScheduleEditWin in 'DialogWin\ScheduleEditWin.pas' {frmScheduleEdit},
+  ScheduleTemplatePresent in 'Controls\ScheduleTemplatePresent.pas',
+  ScheduleAndShiftSettingsWin in 'ScheduleAndShiftSettingsWin.pas' {frmShift},
+  TheAnalysisByMinute in 'Analysis\TheAnalysisByMinute.pas',
+  AnalysisByMinPresent in 'Controls\AnalysisByMinPresent.pas',
+  SubdivisionEventsWin in 'SubdivisionEventsWin.pas' {frmSubdivisionEvents},
+  ChildWin in 'ChildWin.pas' {MDIChild},
+  PersonMinuteAnalysisWin in 'DialogWin\PersonMinuteAnalysisWin.pas' {frmPersonMinuteAnalysis},
+  ThePersons in 'Models\ThePersons.pas',
+  TheDivisions in 'Models\TheDivisions.pas',
+  DivisionAndPersonSettingsWin in 'DivisionAndPersonSettingsWin.pas' {frmDivisionAndPersonSettings},
+  PersonEditWin in 'DialogWin\PersonEditWin.pas' {frmPersonEdit},
+  MonthSchedulePresent in 'Controls\MonthSchedulePresent.pas',
+  DivisionEditWin in 'DialogWin\DivisionEditWin.pas' {frmDivisionEdit};
 
 {$R *.RES}
 
@@ -40,5 +52,8 @@ begin
   Application.CreateForm(TfrmShiftEdit, frmShiftEdit);
   Application.CreateForm(TfrmObjectList, frmObjectList);
   Application.CreateForm(TfrmScheduleEdit, frmScheduleEdit);
+  Application.CreateForm(TfrmPersonMinuteAnalysis, frmPersonMinuteAnalysis);
+  Application.CreateForm(TfrmPersonEdit, frmPersonEdit);
+  Application.CreateForm(TfrmDivisionEdit, frmDivisionEdit);
   Application.Run;
 end.

@@ -7,6 +7,11 @@ uses
 
 
 type
+  TScheduleState = (ssNone, ssWork, ssBreak, ssEarlyToBreak, ssEarlyFromShist,
+    ssLateFromBreak, ssLateToShift);
+
+  TScheduleStateArray = array of TScheduleState;
+
   TBreak = class(TObject)
   private
     FGUID: TGUID;
@@ -16,6 +21,7 @@ type
     FLateness: integer;
     function GetLengthOfMinutes: integer;
     function GetEndTime: TDateTime;
+    function GetScheduleState(MinNum: integer): TScheduleState;
   public
     constructor Create;
     property GUID: TGUID read FGUID;
@@ -25,6 +31,7 @@ type
     property Lateness: integer read FLateness write FLateness;
     property LengthOfMinutes: integer read GetLengthOfMinutes;
     property EndTime: TDateTime read GetEndTime;
+    property ScheduleState[MinNum: integer]: TScheduleState read GetScheduleState;
   end;
 
   TBreakList = class(TObjectList)
@@ -70,6 +77,28 @@ end;
 function TBreak.GetEndTime: TDateTime;
 begin
   Result := IncMinute(Self.StartTime, Self.LengthOfMinutes);
+end;
+
+function TBreak.GetScheduleState(MinNum: integer): TScheduleState;
+var
+  StartMin, EndMin: integer;
+begin
+  StartMin := MinuteOfTheDay(Self.FStartTime);
+  EndMin := StartMin + Self.GetLengthOfMinutes;
+  Result := ssNone;
+  if Self.FLateness > 0 then begin
+    if (MinNum > EndMin) and ((MinNum - EndMin) < Self.FLateness) then begin
+      Result := ssLateFromBreak;
+      Exit;
+    end;
+    if (MinNum < StartMin) and ((StartMin - MinNum) < Self.FLateness) then begin
+      Result := ssEarlyToBreak;
+      Exit;
+    end;
+    Dec(StartMin, - Self.FLateness);
+    Inc(EndMin,Self.FLateness);
+  end;
+  if (MinNum >= StartMin) and (MinNum <= EndMin) then Result := ssBreak;
 end;
 
 

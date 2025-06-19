@@ -78,8 +78,9 @@ begin
       // ѕроверка соединени€
       FStatuses[I].Enabled := Loader.CheckConnection(I);
       // —амое позднее врем€ последнего обновлени€ и кол-во новых событий
-      FStatuses[I].LastTimeInBD := FEndTime;
+      FStatuses[I].LastTimeInBD := 0;
       if FStatuses[I].Enabled then begin
+        FStatuses[I].LastTimeInBD := FEndTime;
         Cnt := 0;
         for j := 0 to Loader.MinorEventCount - 1 do begin
           // «апрашиваем врем€ последнего обновлени€ дл€ каждого типа событий.

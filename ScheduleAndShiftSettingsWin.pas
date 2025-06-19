@@ -1,12 +1,12 @@
-unit ShiftWin;
+unit ScheduleAndShiftSettingsWin;
 
 interface
 
 uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TheBreaks,
-  TheShift, Grids, ExtCtrls, TWebButton, TheSchedule;
+  TheShift, Grids, ExtCtrls, TWebButton, TheSchedule, CHILDWIN;
 
 type
-  TfrmShift = class(TForm)
+  TfrmShift = class(TMDIChild)
     Panel1: TPanel;
     Panel2: TPanel;
     grGrid: TStringGrid;
@@ -29,12 +29,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ClickModeButton(Sender: TObject);
     function GetObject: TObject;
-    procedure LoadFromBD;
   private
     { Private declarations }
-    BreaksList: TBreakList;
-    ShiftsList: TShiftList;
-    SchedulesList: TScheduleList;
     FMode: integer;
     FModify: boolean;
     procedure ShowBreaks;
@@ -54,14 +50,12 @@ implementation
 {$R *.dfm}
 
 uses Dialogs, DateUtils, SysUtils, TheSettings, BreakEditWin,
-  ShiftEditWin;
+  ShiftEditWin, ScheduleEditWin;
 
 
 procedure TfrmShift.FormCreate(Sender: TObject);
 begin
-  BreaksList := TBreakList.Create(True);
-  ShiftsList := TShiftList.Create(True);
-  SchedulesList := TScheduleList.Create(True);
+  inherited;
   LoadFromBD;
   FMode := 1;
   Self.ClickModeButton(btnBreaks);
@@ -69,9 +63,7 @@ end;
 
 procedure TfrmShift.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  BreaksList.Free;
-  ShiftsList.Free;
-  Action := caFree;
+  if Self.CanChange(0) then Action := caFree;
 end;
 
 procedure TfrmShift.grGridSelectCell(Sender: TObject; ACol, ARow: Integer;
@@ -108,27 +100,17 @@ var
   Res: integer;
 begin
   Result := True;
-  if (FModify = False) or (FMode = NewMode) then Exit;
+  if (FModify = False) or ((FMode > 0) and (FMode = NewMode)) then Exit;
   Res := MessageDlg('Сохранить изменения данных ?', mtWarning,
     [mbYes, mbNo, mbCancel], 0);
   case Res of
     mrYes: Self.btnSaveClick(Self);
-    mrNo: LoadFromBD;
+    mrNo: if FMode > 0 then LoadFromBD;
     mrCancel: Result := False;
   end;
 end;
 
-procedure TfrmShift.LoadFromBD;
-begin
-  BreaksList.LoadFromBD(Settings.GetInstance.DBFileName);
-  BreaksList.SortByTitle;
-  ShiftsList.LoadFromBD(Settings.GetInstance.DBFileName, BreaksList);
-  ShiftsList.SortByTitle;
-  SchedulesList.LoadFromBD(Settings.GetInstance.DBFileName, ShiftsList);
-  SchedulesList.SortByTitle;
-end;
-
-{}
+{ Методы обновления формы. }
 
 procedure TfrmShift.UpdateView;
 var
@@ -263,7 +245,7 @@ begin
   for I := 0 to SchedulesList.Count - 1 do begin
     Schedule := SchedulesList.Items[I];
     grGrid.Cells[0, I + 1] := Schedule.Title;
-    grGrid.Cells[1, I + 1] := TimeToStr(Schedule.StartDate);
+    grGrid.Cells[1, I + 1] := DateToStr(Schedule.StartDate);
     case Schedule.ScheduleType of
       stWeek: begin
         grGrid.Cells[2, I + 1] := 'недельный';
@@ -292,7 +274,7 @@ begin
 
 end;
 
-{}
+{ Методы кнопок. }
 
 procedure TfrmShift.btnDeleteClick(Sender: TObject);
 var
@@ -330,7 +312,7 @@ begin
           if Res then begin
             if Sender = btnAdd then BreaksList.Add(TBreak(Obj));
             BreaksList.SortByTitle;
-          end
+          end else Obj.Free;
         end else Res := frmBreakEdit.Edit(TBreak(Obj));
     2: if Obj = nil then begin
           Obj := TShift.Create;
@@ -338,8 +320,16 @@ begin
           if Res then begin
             if Sender = btnAdd then ShiftsList.Add(TShift(Obj));
             ShiftsList.SortByTitle;
-          end
+          end else Obj.Free;
         end else Res := frmShiftEdit.Edit(TShift(Obj), BreaksList);
+    3: if Obj = nil then begin
+          Obj := TSchedule.Create;
+          Res := frmScheduleEdit.Edit(TSchedule(Obj), ShiftsList);
+          if Res then begin
+            if Sender = btnAdd then SchedulesList.Add(TSchedule(Obj));
+            SchedulesList.SortByTitle;
+          end else Obj.Free;
+        end else Res := frmScheduleEdit.Edit(TSchedule(Obj), ShiftsList);
   end;
   if Res then begin
     Sel := grGrid.Selection;
@@ -358,6 +348,7 @@ begin
   case FMode of
     1: Res := BreaksList.SaveToBD(Settings.GetInstance.DBFileName);
     2: Res := ShiftsList.SaveToBD(Settings.GetInstance.DBFileName);
+    3: Res := SchedulesList.SaveToBD(Settings.GetInstance.DBFileName);
   end;
   SetModify(not Res);
   if not Res then

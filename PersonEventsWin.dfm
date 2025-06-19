@@ -144,8 +144,6 @@ object frmPervonEvents: TfrmPervonEvents
         Height = 13
         Align = alTop
         Caption = 'Id '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1072
-        ExplicitLeft = 1
-        ExplicitTop = 1
         ExplicitWidth = 73
       end
       object Edit1: TEdit
@@ -161,9 +159,6 @@ object frmPervonEvents: TfrmPervonEvents
         Align = alTop
         TabOrder = 0
         Text = 'Edit1'
-        ExplicitLeft = 121
-        ExplicitTop = 1
-        ExplicitWidth = 56
       end
       object Label4: TLabel
         Left = 0
@@ -172,8 +167,6 @@ object frmPervonEvents: TfrmPervonEvents
         Height = 13
         Align = alTop
         Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082
-        ExplicitLeft = 1
-        ExplicitTop = 31
         ExplicitWidth = 56
       end
       object Panel1: TPanel
@@ -185,9 +178,6 @@ object frmPervonEvents: TfrmPervonEvents
         BevelOuter = bvNone
         Color = clWhite
         TabOrder = 1
-        ExplicitLeft = 121
-        ExplicitTop = 31
-        ExplicitWidth = 206
         object SpeedButton1: TSpeedButton
           AlignWithMargins = True
           Left = 185
@@ -219,7 +209,6 @@ object frmPervonEvents: TfrmPervonEvents
           ReadOnly = True
           TabOrder = 0
           Text = 'Edit2'
-          ExplicitWidth = 183
         end
       end
       object Label2: TLabel
@@ -229,8 +218,6 @@ object frmPervonEvents: TfrmPervonEvents
         Height = 13
         Align = alTop
         Caption = #1044#1072#1090#1072' '#1085#1072#1095#1072#1083#1072
-        ExplicitLeft = 1
-        ExplicitTop = 61
         ExplicitWidth = 65
       end
       object DateTimePicker2: TDateTimePicker
@@ -247,9 +234,6 @@ object frmPervonEvents: TfrmPervonEvents
         Date = 45795.816870324070000000
         Time = 45795.816870324070000000
         TabOrder = 2
-        ExplicitLeft = 121
-        ExplicitTop = 61
-        ExplicitWidth = 76
       end
       object Label3: TLabel
         Left = 0
@@ -258,8 +242,6 @@ object frmPervonEvents: TfrmPervonEvents
         Height = 13
         Align = alTop
         Caption = #1044#1072#1090#1072' '#1086#1082#1085#1095#1072#1085#1080#1103
-        ExplicitLeft = 1
-        ExplicitTop = 91
         ExplicitWidth = 77
       end
       object DateTimePicker1: TDateTimePicker
@@ -276,9 +258,6 @@ object frmPervonEvents: TfrmPervonEvents
         Date = 45795.816858587960000000
         Time = 45795.816858587960000000
         TabOrder = 3
-        ExplicitLeft = 121
-        ExplicitTop = 91
-        ExplicitWidth = 76
       end
     end
   end

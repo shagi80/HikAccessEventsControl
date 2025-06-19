@@ -163,6 +163,7 @@ procedure TfrmProcess.OnGetState(Statuses: TDeviceStatuses);
 var
   I: integer;
   AllDevEnabled: boolean;
+  LastEventDateTime: TDateTime;
 begin
   tmProgress.Enabled := False;
   AllDevEnabled := True;
@@ -177,7 +178,10 @@ begin
         grStatuses.Cells[1, i + 1] := '-';
         AllDevEnabled := False;
       end;
-    grStatuses.Cells[2, i + 1] := DateTimeToStr(Statuses[i].LastTimeInBD);
+    LastEventDateTime := Statuses[i].LastTimeInBD;
+    if DateUtils.MinutesBetween(0, LastEventDateTime) = 0 then
+      grStatuses.Cells[2, i + 1] := '-'
+        else grStatuses.Cells[2, i + 1] := DateTimeToStr(LastEventDateTime);
     grStatuses.Cells[3, i + 1] := IntToStr(Statuses[i].EventsCount);
     FEventsCount := FEventsCount + Statuses[i].EventsCount;
   end;

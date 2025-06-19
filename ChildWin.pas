@@ -2,25 +2,122 @@ unit CHILDWIN;
 
 interface
 
-uses Windows, Classes, Graphics, Forms, Controls, StdCtrls;
+uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TheBreaks, TheShift,
+  TheSchedule, TheSettings, TheDivisions, ThePersons, ExtCtrls, TWebButton;
 
 type
   TMDIChild = class(TForm)
-    Memo1: TMemo;
+    procedure FormActivate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
+    FFormButton: TWebSpeedButton;
+    FFormBtnParentPanel: TPanel;
+    procedure OnClickFormButton(Sender: TObject);
+  protected
+    ShiftsList: TShiftList;
+    BreaksList: TBreakList;
+    SchedulesList: TScheduleList;
+    DivisionsList: TDivisionList;
+    PersonsList: TPersonList;
+    procedure LoadFromBD;
   public
     { Public declarations }
+    property FormButton: TWebSpeedButton read FFormButton;
+    procedure ChangeTitle(Value: string);
+    procedure ShowFomButton(ParentPanel: TPanel);
   end;
 
 implementation
 
 {$R *.dfm}
 
+procedure TMDIChild.FormCreate(Sender: TObject);
+begin
+  ShiftsList := TShiftList.Create(True);
+  BreaksList := TBreakList.Create(True);
+  SchedulesList := TScheduleList.Create(True);
+  DivisionsList := TDivisionList.Create(True);
+  PersonsList := TPersonList.Create(True);
+  FFormButton := TWebSpeedButton.Create(Self);
+  FFormButton.Color := cl3DDkShadow;
+  FFormButton.Caption := Self.Caption;
+  FFormButton.Font.Color := clSilver;
+  FFormButton.ActiveColor := clMaroon;
+  FFormButton.ActiveFontColor := clWhite;
+  FFormButton.SelectColor := cl3DDkShadow;
+  FFormButton.SelectFontColor := clWhite;
+  FFormButton.GroupIndex := 1;
+  FFormButton.Width := 150;
+  FFormButton.Height := 33;
+  FFormButton.OnClick := Self.OnClickFormButton;
+  FFormButton.AlignWithMargins := True;
+  FFormButton.Align := alLeft;
+  FFormButton.Left := MaxInt;
+end;
+
+procedure TMDIChild.FormActivate(Sender: TObject);
+var
+  I: integer;
+begin
+  if Assigned(FFormBtnParentPanel) then
+    for I := 0 to FFormBtnParentPanel.ControlCount - 1 do
+      TWebSpeedButton(FFormBtnParentPanel.Controls[I]).Down := False;
+  OnClickFormButton(Self);
+end;
+
 procedure TMDIChild.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  ShiftsList.Free;
+  BreaksList.Free;
+  SchedulesList.Free;
+  DivisionsList.Free;
+  PersonsList.Free;
+  FFormButton.Free;
   Action := caFree;
+end;
+
+procedure TMDIChild.LoadFromBD;
+var
+  DBFileName: string;
+begin
+  DBFileName := Settings.GetInstance.DBFileName;
+  BreaksList.LoadFromBD(DBFileName);
+  ShiftsList.LoadFromBD(DBFileName, BreaksList);
+  SchedulesList.LoadFromBD(DBFileName, ShiftsList);
+  DivisionsList.LoadFromBD(DBFileName, SchedulesList);
+  PersonsList.LoadFromBD(DBFileName, DivisionsList, SchedulesList);
+  BreaksList.SortByTitle;
+  ShiftsList.SortByTitle;
+  SchedulesList.SortByTitle;
+  DivisionsList.SortByTitle;
+  PersonsList.SortByTitle;
+end;
+
+procedure TMDIChild.OnClickFormButton(Sender: TObject);
+begin
+  FFormButton.Down := True;
+  if Sender is TWebSpeedButton then Self.Show;
+end;
+
+procedure TMDIChild.ChangeTitle(Value: string);
+begin
+  Self.Caption := Value;
+  Self.FFormButton.Caption := Self.Caption;
+end;
+
+procedure TMDIChild.ShowFomButton(ParentPanel: TPanel);
+var
+  I: integer;
+begin
+  FFormBtnParentPanel := ParentPanel;
+  if Assigned(FFormBtnParentPanel) then
+    for I := 0 to FFormBtnParentPanel.ControlCount - 1 do
+      TWebSpeedButton(FFormBtnParentPanel.Controls[I]).Down := False;
+  FFormButton.Parent := FFormBtnParentPanel;
+  ParentPanel.Width := (FFormButton.Width + FFormButton.Margins.Left
+    + FFormButton.Margins.Right) * ParentPanel.ControlCount;
 end;
 
 end.

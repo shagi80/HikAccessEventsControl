@@ -84,7 +84,10 @@ begin
   SetSaveBtnEnabled;
 
   Result := (Self.ShowModal = mrOk);
-  if Result then Schedule.Copy(FSchedule);
+  if Result then begin
+    FSchedule.StartDate := DateOf(dtpStartDate.Date);
+    Schedule.Copy(FSchedule);
+  end;
 end;
 
 { Изменение списка смен икол-ва дней.}
@@ -128,6 +131,7 @@ begin
   if Length(Text) = 0 then begin
     FSchedule.AddShiftToDay(DayNum, NewShift);
     FPresent.UpdateSchedule;
+    SetSaveBtnEnabled;
   end else MessageDlg(Text, mtWarning, [mbOk], 0);
 end;
 

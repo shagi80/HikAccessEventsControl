@@ -67,8 +67,8 @@ begin
   FPairs[High(FPairs)].InTime := InTime;
   FPairs[High(FPairs)].OutTime := OutTime;
   FPairs[High(FPairs)].State := psNormal;
-  if OutTime = 0 then FPairs[High(FPairs)].State := psNotOut;
-  if InTime = 0 then FPairs[High(FPairs)].State := psNotIn;
+  if MinuteOfTheDay(OutTime) = 0 then FPairs[High(FPairs)].State := psNotOut;
+  if MinuteOfTheDay(InTime) = 0 then FPairs[High(FPairs)].State := psNotIn;
 end;
 
 function TEmplPairs.CreatePairsFromBD(DBFileName: string; StartTime,

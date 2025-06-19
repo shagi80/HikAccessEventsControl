@@ -3,10 +3,10 @@ unit PersonEventsWin;
 interface
 
 uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TWebButton,
-  ComCtrls, ExtCtrls, Grids, Buttons;
+  ComCtrls, ExtCtrls, Grids, Buttons, CHILDWIN;
 
 type
-  TfrmPervonEvents = class(TForm)
+  TfrmPervonEvents = class(TMDIChild)
     PairGrid: TStringGrid;
     pnLeft: TPanel;
     WebSpeedButton1: TWebSpeedButton;
@@ -53,6 +53,9 @@ begin
   PairGrid.RowCount := Pairs.Count + 1;
   for I := 0 to Pairs.Count - 1 do begin
     PairGrid.Cells[0, I + 1] := IntToStr(I + 1);
+
+    //PairGrid.Cells[0, I + 1] := IntToStr(ord(Pairs.Pair[I].State));
+
     if Pairs.Pair[I].InTime > 0 then Date := DateOf(Pairs.Pair[I].InTime)
       else Date := DateOf(Pairs.Pair[I].OutTime);
     if I = 0 then PairGrid.Cells[1, I + 1] := DateToStr(Date)

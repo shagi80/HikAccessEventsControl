@@ -8,6 +8,7 @@ uses TheShift, SysUtils, DateUtils, Contnrs, Controls, Classes, SQLiteTable3,
 type
   TScheduleType = (stWeek, stPeriod);
 
+
   TSchedule = class(TOBject)
   private
     FGUID: TGUID;
@@ -31,6 +32,7 @@ type
     function AddShiftToDay(DayNum: integer; Shift: TShift): Integer;
     property MaxShiftCount: integer read GetMaxShiftCount;
     procedure Copy(Schedule: TSchedule);
+    function GetDayNumber(Date: TDate): integer;
   end;
 
   TScheduleList = class(TObjectList)
@@ -63,13 +65,15 @@ type
 
 implementation
 
+uses Dialogs;
 
 { TScheduleTemplate }
 
 constructor TSchedule.Create;
 begin
   inherited Create;
-  SetLength(FDays, 0);
+  CreateGUID(FGUID);
+  Self.SetDayCount(7);
   FStartDate := DateUtils.DateOf(now);
 end;
 
@@ -135,6 +139,26 @@ begin
     for J := 0 to Schedule.Day[i].Count - 1 do
       Self.Day[i].Add(Schedule.Day[i].Items[j]);
 end;
+
+function TSchedule.GetDayNumber(Date: TDate): integer;
+var
+  Number, Period: integer;
+begin
+  if Self.FType = stWeek then begin
+    Result := DateUtils.DayOfTheWeek(Date) - 1;
+    Exit;
+  end;
+  Period := Length(Self.FDays);
+  Number := DaysBetween(StartOfTheDay(FStartDate), StartOfTheDay(Date));
+  //ShowMessage(DateToStr(Date) + ' = ' + IntToStr(Number));
+  if StartOfTheDay(FStartDate) < StartOfTheDay(Date) then begin
+    if Number < Period then Result := Number else Result := Number mod Period;
+  end else begin
+    if Number >= Period then Number := Number mod Period;
+    if Number = 0 then Result := 0 else Result := Period - Number;
+  end;
+end;
+
 
 { TScheduleList }
 

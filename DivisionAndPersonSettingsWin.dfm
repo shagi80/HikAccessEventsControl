@@ -1,87 +1,33 @@
-object frmShift: TfrmShift
-  Left = 197
-  Top = 117
-  Caption = 'MDI Child'
-  ClientHeight = 425
-  ClientWidth = 974
-  Color = clBtnFace
-  ParentFont = True
+object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
+  Left = 0
+  Top = 0
+  Caption = #1055#1077#1088#1089#1086#1085#1072#1083
+  ClientHeight = 434
+  ClientWidth = 939
+  Color = clWhite
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
   FormStyle = fsMDIChild
   OldCreateOrder = False
-  Position = poDefault
   Visible = True
-  OnClose = FormClose
+  WindowState = wsMaximized
   OnCreate = FormCreate
+  OnResize = ResizePersonGrid
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 161
-    Height = 425
+    Height = 434
     Align = alLeft
     BevelOuter = bvNone
     Color = clBlack
     TabOrder = 0
-    object btnSchedules: TWebSpeedButton
-      Tag = 3
-      AlignWithMargins = True
-      Left = 30
-      Top = 136
-      Width = 131
-      Height = 40
-      Margins.Left = 30
-      Margins.Top = 10
-      Margins.Right = 0
-      Caption = #1043#1088#1072#1092#1080#1082#1080
-      Aligment = taLeftJustify
-      Glyph.Data = {
-        36030000424D3603000000000000360000002800000010000000100000000100
-        18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD6D6D688888860
-        6060606060898989D7D7D7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFF1F1F15B5B5B0101010000000000000000000000000202025D5D5DF1F1
-        F1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1F1F12D2D2D00000007070741414167
-        67676767674141410707070000002E2E2EF1F1F1FFFFFFFFFFFFFFFFFFFFFFFF
-        5A5A5A0000001D1D1D919191A6A6A6A6A6A6A6A6A6A6A6A69090901C1C1C0000
-        005D5D5DFFFFFFFFFFFFFFFFFFD6D6D6010101080808919191A6A6A6A6A6A6A6
-        A6A6A6A6A6A6A6A6A6A6A6909090070707020202D7D7D7FFFFFFFFFFFF858585
-        000000434343A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A64141
-        41000000878787FFFFFFFFFFFF616161000000676767A6A6A6A6A6A6A6A6A6A6
-        A6A6A6A6A6A6A6A6A6A6A6A6A6A6666666000000626262FFFFFFFFFFFF616161
-        000000676767A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A66666
-        66000000626262FFFFFFFFFFFF858585000000424242A6A6A6A6A6A6A6A6A6A6
-        A6A6A6A6A6A6A6A6A6A6A6A6A6A6414141000000878787FFFFFFFFFFFFD5D5D5
-        010101080808929292A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A6A69191910707
-        07010101D6D6D6FFFFFFFFFFFFFFFFFF5959590000001E1E1E929292A6A6A6A6
-        A6A6A6A6A6A6A6A69191911D1D1D0000005C5C5CFFFFFFFFFFFFFFFFFFFFFFFF
-        F0F0F02C2C2C0000000808084242426868686868684242420808080000002D2D
-        2DF1F1F1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0F0F059595901010100000000
-        00000000000000000101015A5A5AF1F1F1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFD5D5D5868686606060606060868686D6D6D6FFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-      Color = clWindowFrame
-      SelectColor = clBtnShadow
-      ActiveColor = clMaroon
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      DisableFontColor = clBlack
-      SelectFontColor = clWhite
-      ActiveFontColor = clWhite
-      OnClick = ClickModeButton
-      Switcher = True
-      Margin = 0
-      GroupIndex = 1
-      Align = alTop
-      SpaceWidth = 5
-      ExplicitTop = 95
-    end
-    object btnBreaks: TWebSpeedButton
+    object btnDivision: TWebSpeedButton
       Tag = 1
       AlignWithMargins = True
       Left = 30
@@ -91,7 +37,7 @@ object frmShift: TfrmShift
       Margins.Left = 30
       Margins.Top = 30
       Margins.Right = 0
-      Caption = #1055#1077#1088#1077#1088#1099#1074#1099
+      Caption = #1055#1086#1076#1088#1072#1079#1076#1077#1083#1077#1085#1080#1103
       Aligment = taLeftJustify
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
@@ -131,7 +77,7 @@ object frmShift: TfrmShift
       DisableFontColor = clBlack
       SelectFontColor = clWhite
       ActiveFontColor = clWhite
-      OnClick = ClickModeButton
+      OnClick = SelectPageBtnClick
       Switcher = True
       Margin = 0
       GroupIndex = 1
@@ -141,7 +87,7 @@ object frmShift: TfrmShift
       ExplicitTop = 120
       ExplicitWidth = 100
     end
-    object btnShifts: TWebSpeedButton
+    object btnPerson: TWebSpeedButton
       Tag = 2
       AlignWithMargins = True
       Left = 30
@@ -151,7 +97,7 @@ object frmShift: TfrmShift
       Margins.Left = 30
       Margins.Top = 10
       Margins.Right = 0
-      Caption = #1057#1084#1077#1085#1099
+      Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082#1080
       Aligment = taLeftJustify
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
@@ -191,7 +137,7 @@ object frmShift: TfrmShift
       DisableFontColor = clBlack
       SelectFontColor = clWhite
       ActiveFontColor = clWhite
-      OnClick = ClickModeButton
+      OnClick = SelectPageBtnClick
       Switcher = True
       Margin = 0
       GroupIndex = 1
@@ -200,53 +146,43 @@ object frmShift: TfrmShift
       ExplicitTop = 95
     end
   end
-  object Panel2: TPanel
+  object pnMain: TPanel
     Left = 161
     Top = 0
-    Width = 813
-    Height = 425
+    Width = 778
+    Height = 434
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 20
     Color = clWhite
     TabOrder = 1
-    object grGrid: TStringGrid
-      Left = 20
-      Top = 63
-      Width = 773
-      Height = 342
-      Align = alClient
-      Ctl3D = False
-      FixedCols = 0
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing]
-      ParentCtl3D = False
-      TabOrder = 0
-      OnDblClick = btnEditClick
-      OnSelectCell = grGridSelectCell
-      ColWidths = (
-        144
-        64
-        64
-        64
-        64)
+    object Splitter1: TSplitter
+      Left = 270
+      Top = 73
+      Height = 341
+      Margins.Left = 10
+      ResizeStyle = rsLine
+      ExplicitLeft = 280
+      ExplicitTop = 76
+      ExplicitHeight = 335
     end
     object pnButtons: TPanel
       AlignWithMargins = True
       Left = 20
       Top = 20
-      Width = 773
+      Width = 738
       Height = 33
       Margins.Left = 0
       Margins.Top = 0
       Margins.Right = 0
-      Margins.Bottom = 10
+      Margins.Bottom = 20
       Align = alTop
       BevelOuter = bvNone
       Color = clWindow
-      TabOrder = 1
+      TabOrder = 0
       object btnUpdate: TWebSpeedButton
         AlignWithMargins = True
-        Left = 673
+        Left = 638
         Top = 0
         Width = 100
         Height = 33
@@ -270,7 +206,7 @@ object frmShift: TfrmShift
       end
       object btnSave: TWebSpeedButton
         AlignWithMargins = True
-        Left = 567
+        Left = 532
         Top = 0
         Width = 100
         Height = 33
@@ -443,13 +379,307 @@ object frmShift: TfrmShift
         DisableFontColor = clGray
         SelectFontColor = clBlack
         ActiveFontColor = clBlack
-        OnClick = btnEditClick
+        OnClick = btnAddClick
         Margin = 0
         Align = alLeft
         SpaceWidth = 5
         ExplicitLeft = 48
         ExplicitHeight = 41
       end
+    end
+    object pcPages: TPageControl
+      Left = 273
+      Top = 73
+      Width = 485
+      Height = 341
+      ActivePage = tabPerson
+      Align = alClient
+      Style = tsFlatButtons
+      TabOrder = 1
+      object tabDivision: TTabSheet
+        Caption = 'tabDivision'
+        TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
+        object pnSchedule: TPanel
+          Left = 0
+          Top = 0
+          Width = 477
+          Height = 331
+          Margins.Left = 10
+          Margins.Top = 0
+          Margins.Right = 0
+          Align = alClient
+          BevelOuter = bvNone
+          Color = clWhite
+          TabOrder = 0
+          object pnScheduleCB: TPanel
+            AlignWithMargins = True
+            Left = 10
+            Top = 0
+            Width = 467
+            Height = 21
+            Margins.Left = 10
+            Margins.Top = 0
+            Margins.Right = 0
+            Margins.Bottom = 10
+            Align = alTop
+            BevelOuter = bvNone
+            Color = clWhite
+            TabOrder = 0
+            object btnIncMonth: TWebSpeedButton
+              AlignWithMargins = True
+              Left = 445
+              Top = 0
+              Width = 22
+              Height = 21
+              Margins.Left = 5
+              Margins.Top = 0
+              Margins.Right = 0
+              Margins.Bottom = 0
+              Aligment = taCenter
+              Glyph.Data = {
+                36030000424D3603000000000000360000002800000010000000100000000100
+                18000000000000030000120B0000120B00000000000000000000FFFFFFFCFCFC
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFF73C390BFCBC3FEFEFEFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF42C06F
+                1CBA55ADC3B5FCFCFCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFF45C17100BF4411BD4E9BBDA7FAFAFAFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF42C06F
+                00BF4400BF440BBD498AB89AF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFF42C06F00BF4400BF4400BF4405BE4776B68DF2
+                F2F2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF42C06F
+                00BF4400BF4400BF4400BF4402BF4466B482EAEAEAFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFF42C06F00BF4400BF4400BF4400BF4400BF4400
+                BF4458BE7BFEFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF42C06F
+                00BF4400BF4400BF4400BF4400BF4400BF4483DFA3FFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFF43C17000BF4400BF4400BF4400BF4402BF44B1
+                EBC6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF45C171
+                00BF4400BF4400BF4406C047CFF3DCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFF45C17100BF4400BF440EC04CE3F8EAFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5DC984
+                00BF4417C354EDFAF2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFF81D69F2CC862F6FDF8FFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1FBF5
+                FDFEFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+              Color = clBtnFace
+              SelectColor = clScrollBar
+              ActiveColor = clMedGray
+              DisableFontColor = clGray
+              SelectFontColor = clBlack
+              ActiveFontColor = clBlack
+              OnClick = btnIncMonthClick
+              Margin = 0
+              Align = alRight
+              SpaceWidth = 5
+              ExplicitLeft = 296
+            end
+            object lbMonth: TLabel
+              Left = 316
+              Top = 0
+              Width = 124
+              Height = 21
+              Align = alRight
+              Alignment = taCenter
+              AutoSize = False
+              Caption = 'lbMonth'
+              Color = clBtnFace
+              ParentColor = False
+              Layout = tlCenter
+              ExplicitLeft = 240
+            end
+            object btnDecMonth: TWebSpeedButton
+              AlignWithMargins = True
+              Left = 289
+              Top = 0
+              Width = 22
+              Height = 21
+              Margins.Left = 10
+              Margins.Top = 0
+              Margins.Right = 5
+              Margins.Bottom = 0
+              Aligment = taCenter
+              Glyph.Data = {
+                36030000424D3603000000000000360000002800000010000000100000000100
+                18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCFCFCFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFEFEBF
+                CBC373C390FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFCFCFCADC3B51CBA5542C06FFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAFAFA9BBDA711BD4E00
+                BF4445C171FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFF7F7F78AB89A0BBD4900BF4400BF4442C06FFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF2F2F276B68D05BE4700BF4400BF4400
+                BF4442C06FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEAEAEA
+                66B48202BF4400BF4400BF4400BF4400BF4442C06FFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFEFFFE58BE7B00BF4400BF4400BF4400BF4400BF4400
+                BF4442C06FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF83DFA3
+                00BF4400BF4400BF4400BF4400BF4400BF4442C06FFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB1EBC602BF4400BF4400BF4400BF4400
+                BF4443C170FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFCFF3DC06C04700BF4400BF4400BF4445C171FFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE3F8EA0EC04C00BF4400
+                BF4445C171FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFEDFAF217C35400BF445DC984FFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF6FDF82C
+                C86281D69FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFEFDF1FBF5FFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+              Color = clBtnFace
+              SelectColor = clScrollBar
+              ActiveColor = clMedGray
+              DisableFontColor = clGray
+              SelectFontColor = clBlack
+              ActiveFontColor = clBlack
+              OnClick = btnDecMonthClick
+              Margin = 0
+              Align = alRight
+              SpaceWidth = 5
+              ExplicitLeft = 201
+            end
+            object lbSchedule: TLabel
+              AlignWithMargins = True
+              Left = 10
+              Top = 3
+              Width = 62
+              Height = 16
+              Margins.Left = 10
+              Align = alClient
+              Caption = 'lbSchedule'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clNavy
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentFont = False
+              Layout = tlCenter
+            end
+          end
+          object sbSchedule: TScrollBox
+            AlignWithMargins = True
+            Left = 20
+            Top = 34
+            Width = 454
+            Height = 294
+            Margins.Left = 20
+            Align = alClient
+            BevelInner = bvNone
+            BevelOuter = bvNone
+            BorderStyle = bsNone
+            Ctl3D = False
+            ParentCtl3D = False
+            TabOrder = 1
+          end
+        end
+      end
+      object tabPerson: TTabSheet
+        Caption = 'tabPerson'
+        ImageIndex = 1
+        TabVisible = False
+        object pnPersonDivisionCaption: TPanel
+          AlignWithMargins = True
+          Left = 20
+          Top = 0
+          Width = 457
+          Height = 21
+          Margins.Left = 20
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 10
+          Align = alTop
+          BevelOuter = bvNone
+          Color = clWhite
+          TabOrder = 0
+          object btnPastePersonFromClipborad: TWebSpeedButton
+            AlignWithMargins = True
+            Left = 357
+            Top = 0
+            Width = 100
+            Height = 21
+            Margins.Top = 0
+            Margins.Right = 0
+            Margins.Bottom = 0
+            Caption = #1054#1090#1084#1077#1085#1080#1090#1100
+            Aligment = taCenter
+            Color = clBtnFace
+            SelectColor = clScrollBar
+            ActiveColor = clMedGray
+            DisableFontColor = clGray
+            SelectFontColor = clBlack
+            ActiveFontColor = clBlack
+            OnClick = btnPastePersonFromClipboradClick
+            Margin = 0
+            Align = alRight
+            SpaceWidth = 2
+            ExplicitLeft = 415
+          end
+          object lbPersonDivision: TLabel
+            Left = 0
+            Top = 0
+            Width = 354
+            Height = 21
+            Align = alClient
+            Caption = 'lbPersonDivision'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clNavy
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            Layout = tlCenter
+            ExplicitWidth = 92
+            ExplicitHeight = 16
+          end
+        end
+        object sgPerson: TStringGrid
+          AlignWithMargins = True
+          Left = 20
+          Top = 31
+          Width = 457
+          Height = 300
+          Margins.Left = 20
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          Align = alClient
+          ColCount = 3
+          Ctl3D = False
+          FixedCols = 0
+          Options = [goFixedVertLine, goFixedHorzLine, goRangeSelect, goRowSelect]
+          ParentCtl3D = False
+          TabOrder = 1
+          OnDblClick = btnEditClick
+          OnMouseDown = sgPersonMouseDown
+          ColWidths = (
+            198
+            103
+            64)
+        end
+      end
+    end
+    object tvDivision: TTreeView
+      Left = 20
+      Top = 73
+      Width = 250
+      Height = 341
+      Align = alLeft
+      Ctl3D = False
+      HideSelection = False
+      Indent = 19
+      ParentCtl3D = False
+      ReadOnly = True
+      TabOrder = 2
+      ToolTips = False
+      OnChange = tvDivisionChange
+      OnDblClick = btnEditClick
+      OnDragDrop = tvDivisionDragDrop
+      OnDragOver = tvDivisionDragOver
     end
   end
 end
