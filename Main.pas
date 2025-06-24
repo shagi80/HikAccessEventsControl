@@ -8,45 +8,6 @@ uses Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
 
 type
   TMainForm = class(TForm)
-    MainMenu1: TMainMenu;
-    File1: TMenuItem;
-    FileNewItem: TMenuItem;
-    FileOpenItem: TMenuItem;
-    FileCloseItem: TMenuItem;
-    Window1: TMenuItem;
-    Help1: TMenuItem;
-    N1: TMenuItem;
-    FileExitItem: TMenuItem;
-    WindowCascadeItem: TMenuItem;
-    WindowTileItem: TMenuItem;
-    WindowArrangeItem: TMenuItem;
-    HelpAboutItem: TMenuItem;
-    OpenDialog: TOpenDialog;
-    FileSaveItem: TMenuItem;
-    FileSaveAsItem: TMenuItem;
-    Edit1: TMenuItem;
-    CutItem: TMenuItem;
-    CopyItem: TMenuItem;
-    PasteItem: TMenuItem;
-    WindowMinimizeItem: TMenuItem;
-    ActionList1: TActionList;
-    EditCut1: TEditCut;
-    EditCopy1: TEditCopy;
-    EditPaste1: TEditPaste;
-    FileNew1: TAction;
-    FileSave1: TAction;
-    FileExit1: TAction;
-    FileOpen1: TAction;
-    FileSaveAs1: TAction;
-    WindowCascade1: TWindowCascade;
-    WindowTileHorizontal1: TWindowTileHorizontal;
-    WindowArrangeAll1: TWindowArrange;
-    WindowMinimizeAll1: TWindowMinimizeAll;
-    HelpAbout1: TAction;
-    FileClose1: TWindowClose;
-    WindowTileVertical1: TWindowTileVertical;
-    WindowTileItem2: TMenuItem;
-    ImageList1: TImageList;
     Panel2: TPanel;
     btnPerson: TWebSpeedButton;
     btnProcess: TWebSpeedButton;
@@ -122,12 +83,15 @@ var
 begin
   frmSubdivisionEvents := TfrmSubdivisionEvents.Create(Self);
   frmSubdivisionEvents.ShowFomButton(pnFormButtons);
+  frmSubdivisionEvents.WindowState := wsMaximized;
 end;
 
 procedure TMainForm.btnPersonReportClick(Sender: TObject);
 var
   frmPervonEvents: TfrmPervonEvents;
 begin
+  MessageDlg('Это еще не работает !', mtWarning, [mbOk], 0);
+  //Exit;
   frmPervonEvents := TfrmPervonEvents.Create(Self);
   frmPervonEvents.ShowFomButton(pnFormButtons);
 end;

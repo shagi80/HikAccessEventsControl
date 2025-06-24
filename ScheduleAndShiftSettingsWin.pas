@@ -3,7 +3,8 @@ unit ScheduleAndShiftSettingsWin;
 interface
 
 uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TheBreaks,
-  TheShift, Grids, ExtCtrls, TWebButton, TheSchedule, CHILDWIN;
+  TheShift, Grids, ExtCtrls, TWebButton, TheSchedule, CHILDWIN,
+  TheHolyday;
 
 type
   TfrmShift = class(TMDIChild)
@@ -19,6 +20,9 @@ type
     btnSchedules: TWebSpeedButton;
     btnBreaks: TWebSpeedButton;
     btnShifts: TWebSpeedButton;
+    btnHolydays: TWebSpeedButton;
+    btnClose: TWebSpeedButton;
+    procedure btnCloseClick(Sender: TObject);
     procedure btnUpdateClick(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -36,6 +40,7 @@ type
     procedure ShowBreaks;
     procedure ShowShifts;
     procedure ShowSchedules;
+    procedure ShowHolydays;
     function CanChange(NewMode: integer): boolean;
     procedure SetModify(Value: boolean);
     procedure UpdateEditButtons(Sender: TObject);
@@ -50,7 +55,7 @@ implementation
 {$R *.dfm}
 
 uses Dialogs, DateUtils, SysUtils, TheSettings, BreakEditWin,
-  ShiftEditWin, ScheduleEditWin;
+  ShiftEditWin, ScheduleEditWin, HolydayEditWin;
 
 
 procedure TfrmShift.FormCreate(Sender: TObject);
@@ -63,7 +68,11 @@ end;
 
 procedure TfrmShift.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if Self.CanChange(0) then Action := caFree;
+  if not Self.CanChange(0) then begin
+    Action := caNone;
+    Exit;
+  end;
+  inherited;
 end;
 
 procedure TfrmShift.grGridSelectCell(Sender: TObject; ACol, ARow: Integer;
@@ -76,7 +85,7 @@ procedure TfrmShift.SetModify(Value: boolean);
 begin
   FModify := Value;
   btnSave.Enabled := FModify;
-  btnUpdate.Enabled := FModify;
+ // btnUpdate.Enabled := FModify;
 end;
 
 function TfrmShift.GetObject: TObject;
@@ -105,7 +114,7 @@ begin
     [mbYes, mbNo, mbCancel], 0);
   case Res of
     mrYes: Self.btnSaveClick(Self);
-    mrNo: if FMode > 0 then LoadFromBD;
+    mrNo: if NewMode > 0 then LoadFromBD;
     mrCancel: Result := False;
   end;
 end;
@@ -121,6 +130,7 @@ begin
     1: Self.ShowBreaks;
     2: Self.ShowShifts;
     3: Self.ShowSchedules;
+    4: Self.ShowHolydays;
   end;
   Self.UpdateEditButtons(Self);
 end;
@@ -274,6 +284,37 @@ begin
 
 end;
 
+procedure TfrmShift.ShowHolydays;
+var
+  I: integer;
+  Holyday: THolyday;
+begin
+  grGrid.ColCount := 3;
+  grGrid.Cells[0, 0] := 'Период';
+  grGrid.Cells[1, 0] := 'Подразделение';
+  grGrid.Cells[2, 0] := 'Описание';
+  grGrid.ColWidths[0] := 350;
+  grGrid.ColWidths[1] := 250;
+  grGrid.ColWidths[2] := 350;
+  if HolydaysList.Count = 0 then begin
+    grGrid.RowCount := 2;
+    Exit;
+  end;
+  grGrid.RowCount := HolydaysList.Count + 1;
+  grGrid.Enabled := (HolydaysList.Count > 0);
+  for I := 0 to HolydaysList.Count - 1 do begin
+    Holyday := HolydaysList.Items[I];
+    grGrid.Cells[0, I + 1] := FormatDateTime('dd.mm.YYYY hh:MM', Holyday.StartTime)
+      + ' - ' + FormatDateTime('dd.mm.YYYY hh:MM', Holyday.EndTime);
+    if Assigned(Holyday.Schedule) then
+      grGrid.Cells[1, I + 1] := Holyday.Schedule.Title
+    else
+      grGrid.Cells[1, I + 1] := 'для всех графиков';
+    grGrid.Cells[2, I + 1] := Holyday.Title;
+    grGrid.Objects[0, I + 1] := Holyday;
+  end
+end;
+
 { Методы кнопок. }
 
 procedure TfrmShift.btnDeleteClick(Sender: TObject);
@@ -288,6 +329,7 @@ begin
     1: BreaksList.Extract(Obj);
     2: ShiftsList.Extract(Obj);
     3: SchedulesList.Extract(Obj);
+    4: HolydaysList.Extract(Obj);
   end;
   UpdateView;
   SetModify(True);
@@ -330,6 +372,14 @@ begin
             SchedulesList.SortByTitle;
           end else Obj.Free;
         end else Res := frmScheduleEdit.Edit(TSchedule(Obj), ShiftsList);
+    4: if Obj = nil then begin
+          Obj := THolyday.Create;
+          Res := frmHolydayEdit.Edit(THolyday(Obj), SchedulesList);
+          if Res then begin
+            if Sender = btnAdd then HolydaysList.Add(THolyday(Obj));
+            HolydaysList.SortByDateDesc;
+          end else Obj.Free;
+        end else Res := frmHolydayEdit.Edit(THolyday(Obj), SchedulesList);
   end;
   if Res then begin
     Sel := grGrid.Selection;
@@ -349,6 +399,7 @@ begin
     1: Res := BreaksList.SaveToBD(Settings.GetInstance.DBFileName);
     2: Res := ShiftsList.SaveToBD(Settings.GetInstance.DBFileName);
     3: Res := SchedulesList.SaveToBD(Settings.GetInstance.DBFileName);
+    4: Res := HolydaysList.SaveToBD(Settings.GetInstance.DBFileName);
   end;
   SetModify(not Res);
   if not Res then
@@ -362,5 +413,12 @@ begin
   UpdateView;
   SetModify(False);
 end;
+
+procedure TfrmShift.btnCloseClick(Sender: TObject);
+begin
+  Self.Close;
+end;
+
+
 
 end.

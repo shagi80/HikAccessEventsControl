@@ -3,7 +3,8 @@ unit CHILDWIN;
 interface
 
 uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TheBreaks, TheShift,
-  TheSchedule, TheSettings, TheDivisions, ThePersons, ExtCtrls, TWebButton;
+  TheSchedule, TheSettings, TheDivisions, ThePersons, ExtCtrls, TWebButton,
+  TheHolyday;
 
 type
   TMDIChild = class(TForm)
@@ -21,6 +22,7 @@ type
     SchedulesList: TScheduleList;
     DivisionsList: TDivisionList;
     PersonsList: TPersonList;
+    HolydaysList: THolydayList;
     procedure LoadFromBD;
   public
     { Public declarations }
@@ -40,6 +42,7 @@ begin
   SchedulesList := TScheduleList.Create(True);
   DivisionsList := TDivisionList.Create(True);
   PersonsList := TPersonList.Create(True);
+  HolydaysList := THolydayList.Create(True);
   FFormButton := TWebSpeedButton.Create(Self);
   FFormButton.Color := cl3DDkShadow;
   FFormButton.Caption := Self.Caption;
@@ -75,6 +78,7 @@ begin
   DivisionsList.Free;
   PersonsList.Free;
   FFormButton.Free;
+  HolydaysList.Free;
   Action := caFree;
 end;
 
@@ -88,11 +92,13 @@ begin
   SchedulesList.LoadFromBD(DBFileName, ShiftsList);
   DivisionsList.LoadFromBD(DBFileName, SchedulesList);
   PersonsList.LoadFromBD(DBFileName, DivisionsList, SchedulesList);
+  HolydaysList.LoadFromBD(DBFileName, SchedulesList);
   BreaksList.SortByTitle;
   ShiftsList.SortByTitle;
   SchedulesList.SortByTitle;
   DivisionsList.SortByTitle;
   PersonsList.SortByTitle;
+  HolydaysList.SortByDateDesc;
 end;
 
 procedure TMDIChild.OnClickFormButton(Sender: TObject);

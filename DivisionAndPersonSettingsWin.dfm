@@ -14,6 +14,7 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
   OldCreateOrder = False
   Visible = True
   WindowState = wsMaximized
+  OnClose = FormClose
   OnCreate = FormCreate
   OnResize = ResizePersonGrid
   PixelsPerInch = 96
@@ -182,14 +183,14 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
       TabOrder = 0
       object btnUpdate: TWebSpeedButton
         AlignWithMargins = True
-        Left = 638
+        Left = 595
         Top = 0
         Width = 100
         Height = 33
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
-        Caption = #1054#1090#1084#1077#1085#1080#1090#1100
+        Caption = #1054#1073#1085#1086#1074#1080#1090#1100
         Aligment = taCenter
         Color = clBtnFace
         SelectColor = clScrollBar
@@ -206,7 +207,7 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
       end
       object btnSave: TWebSpeedButton
         AlignWithMargins = True
-        Left = 532
+        Left = 489
         Top = 0
         Width = 100
         Height = 33
@@ -386,6 +387,55 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
         ExplicitLeft = 48
         ExplicitHeight = 41
       end
+      object btnClose: TWebSpeedButton
+        AlignWithMargins = True
+        Left = 698
+        Top = 0
+        Width = 40
+        Height = 33
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 0
+        Aligment = taCenter
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE3E3E3232323ACACACFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFACACAC232323E3E3E3FFFFFFFFFFFFFFFFFFE7E7E7
+          1F1F1F333333181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFACACAC1818183333
+          331F1F1FE7E7E7FFFFFFFFFFFF919191333333FDFDFDA3A3A3181818ACACACFF
+          FFFFFFFFFFACACAC181818A3A3A3FDFDFD333333919191FFFFFFFFFFFFFCFCFC
+          3B3B3B9E9E9EFFFFFFA3A3A3151515A5A5A5ACACAC1616169B9B9BFFFFFFA6A6
+          A6353535FAFAFAFFFFFFFFFFFFFFFFFFFDFDFD464646A3A3A3FFFFFFA3A3A318
+          1818161616A1A1A1FFFFFFA6A6A6474747FDFDFDFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFDFDFD515151A3A3A3FFFFFFA7A7A7A7A7A7FFFFFFA3A3A3505050FDFD
+          FDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFD414141A7A7A7FF
+          FFFFFFFFFFA9A9A9414141FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFACACAC161616A5A5A5FFFFFFFFFFFFA6A6A6171717A6A6A6FFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACACAC181818A3A3A3FFFFFFA7
+          A7A7A7A7A7FFFFFFA3A3A3181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          ACACAC161616A1A1A1FFFFFFA6A6A65A5A5A5B5B5BA3A3A3FFFFFFA3A3A31717
+          17A6A6A6FFFFFFFFFFFFFFFFFFC9C9C91616169B9B9BFFFFFFA6A6A6565656FC
+          FCFCFDFDFD5A5A5A9E9E9EFFFFFFA3A3A3151515C9C9C9FFFFFFFFFFFFA9A9A9
+          343434FDFDFDA3A3A35B5B5BFDFDFDFFFFFFFFFFFFFDFDFD5B5B5BA3A3A3FDFD
+          FD343434A9A9A9FFFFFFFFFFFFFFFFFF9E9E9E3C3C3C5B5B5BFDFDFDFFFFFFFF
+          FFFFFFFFFFFFFFFFFDFDFD5B5B5B3D3D3D9F9F9FFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFD1D1D1FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDD1D1
+          D1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        Color = 10329087
+        SelectColor = 6579455
+        ActiveColor = clMedGray
+        DisableFontColor = clGray
+        SelectFontColor = clBlack
+        ActiveFontColor = clBlack
+        OnClick = btnCloseClick
+        Margin = 0
+        Align = alRight
+        SpaceWidth = 2
+        ExplicitLeft = 736
+      end
     end
     object pcPages: TPageControl
       Left = 273
@@ -399,10 +449,6 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
       object tabDivision: TTabSheet
         Caption = 'tabDivision'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object pnSchedule: TPanel
           Left = 0
           Top = 0
@@ -547,8 +593,8 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
               AlignWithMargins = True
               Left = 10
               Top = 3
-              Width = 62
-              Height = 16
+              Width = 266
+              Height = 15
               Margins.Left = 10
               Align = alClient
               Caption = 'lbSchedule'
@@ -559,6 +605,8 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
               Font.Style = []
               ParentFont = False
               Layout = tlCenter
+              ExplicitWidth = 62
+              ExplicitHeight = 16
             end
           end
           object sbSchedule: TScrollBox
@@ -587,7 +635,7 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
           Left = 20
           Top = 0
           Width = 457
-          Height = 21
+          Height = 24
           Margins.Left = 20
           Margins.Top = 0
           Margins.Right = 0
@@ -598,15 +646,42 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
           TabOrder = 0
           object btnPastePersonFromClipborad: TWebSpeedButton
             AlignWithMargins = True
-            Left = 357
+            Left = 296
             Top = 0
-            Width = 100
-            Height = 21
+            Width = 161
+            Height = 24
             Margins.Top = 0
             Margins.Right = 0
             Margins.Bottom = 0
-            Caption = #1054#1090#1084#1077#1085#1080#1090#1100
+            Caption = #1042#1089#1090#1072#1074#1080#1090#1100' '#1080#1079' '#1073#1091#1092#1077#1088#1072
             Aligment = taCenter
+            Glyph.Data = {
+              36030000424D3603000000000000360000002800000010000000100000000100
+              18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+              1515150000000000000000000000000000000000000000000000000000000000
+              00000000FFFFFFFFFFFFFFFFFFFFFFFF00000057AFFF57AFFF57AFFF57AFFF57
+              AFFF57AFFF57AFFF57AFFF57AFFF57AFFF000000FFFFFFFFFFFFFFFFFFFFFFFF
+              00000057AFFF57AFFF57AFFF57AFFF57AFFF57AFFF57AFFF57AFFF57AFFF57AF
+              FF000000FFFFFFFFFFFF0000000000000000000000006666666666666666668A
+              8A8A57AFFF57AFFF57AFFF57AFFF57AFFF000000FFFFFFFFFFFF000000E0E0E0
+              C6C6C6DBDBDBFFFFFFEEEEEEFFFFFF5A5A5A57AFFF57AFFF0000000000000000
+              00000000000000000000000000C8C8C8E0E0E0AAAAAAE0E0E0FFFFFFFFFFFF5C
+              5C5C57AFFF0A1A1F50D5FF50D5FF50D5FF50D5FF000000FFFFFF292929DDDDDD
+              A3A3A3FFFFFFFFFFFFFFFFFFFFFFFF5C5C5C5151510000000000000000000000
+              00000000FFFFFFFFFFFF666666F5F5F5DCDCDCFFFFFFFFFFFFFCFCFCFFFFFF5C
+              5C5CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF666666F5F5F5
+              FFFFFFFFFFFFFCFCFCFFFFFFFFFFFF5C5C5CFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFF666666F5F5F5FFFFFFFFFFFF9D9D9D4B4B4B3F3F3F54
+              5454FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF666666F5F5F5
+              FFFFFFFFFFFF8E8E8EACACAC505050ECECECFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFF6666660000000000000000000000003B3B3BEEEEEEFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCCCCCCAAAAAA
+              AAAAAAAAAAAAAAAAAAEEEEEEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
             Color = clBtnFace
             SelectColor = clScrollBar
             ActiveColor = clMedGray
@@ -617,13 +692,12 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
             Margin = 0
             Align = alRight
             SpaceWidth = 2
-            ExplicitLeft = 415
           end
           object lbPersonDivision: TLabel
             Left = 0
             Top = 0
-            Width = 354
-            Height = 21
+            Width = 293
+            Height = 24
             Align = alClient
             Caption = 'lbPersonDivision'
             Font.Charset = DEFAULT_CHARSET
@@ -633,16 +707,16 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
             Font.Style = []
             ParentFont = False
             Layout = tlCenter
-            ExplicitWidth = 92
-            ExplicitHeight = 16
+            ExplicitWidth = 354
+            ExplicitHeight = 22
           end
         end
         object sgPerson: TStringGrid
           AlignWithMargins = True
           Left = 20
-          Top = 31
+          Top = 34
           Width = 457
-          Height = 300
+          Height = 297
           Margins.Left = 20
           Margins.Top = 0
           Margins.Right = 0
@@ -656,6 +730,8 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
           TabOrder = 1
           OnDblClick = btnEditClick
           OnMouseDown = sgPersonMouseDown
+          ExplicitTop = 31
+          ExplicitHeight = 300
           ColWidths = (
             198
             103

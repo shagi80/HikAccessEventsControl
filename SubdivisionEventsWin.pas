@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, TheAnalysisByMinute, AnalysisByMinPresent, TWebButton, ExtCtrls,
-  CHILDWIN, TheSettings, ComCtrls, StdCtrls, TheDivisions;
+  CHILDWIN, TheSettings, ComCtrls, StdCtrls, TheDivisions, TheAnalysisByMinuteThread;
 
 type
   TfrmSubdivisionEvents = class(TMDIChild)
@@ -24,6 +24,8 @@ type
     pnMain: TPanel;
     Panel2: TPanel;
     lbMessage: TLabel;
+    btnClose: TWebSpeedButton;
+    procedure btnCloseClick(Sender: TObject);
     procedure btnUpdateClick(Sender: TObject);
     procedure btnPreviosMonthClick(Sender: TObject);
     procedure btnCurrentMonthClick(Sender: TObject);
@@ -35,8 +37,10 @@ type
     { Private declarations }
     FAnalysisByMinPresent: TAnalysisByMinPresent;
     FAnalysisByMinute: TAnalysisByMinute;
+    Thread: TAnalysisByMinuteThread;
     procedure UpdateDivisionListForPerson(
       DivisionList: TDivisionList; CurDivision: TDivision);
+    procedure EndAnalysis(var Result: boolean);
   public
     { Public declarations }
   end;
@@ -46,7 +50,7 @@ implementation
 
 {$R *.dfm}
 
-uses DateUtils, ThePersons;
+uses DateUtils, ThePersons, ProgressWin;
 
 
 procedure TfrmSubdivisionEvents.FormCreate(Sender: TObject);
@@ -118,6 +122,11 @@ begin
     end;
 end;
 
+procedure TfrmSubdivisionEvents.btnCloseClick(Sender: TObject);
+begin
+  Self.Close;
+end;
+
 procedure TfrmSubdivisionEvents.btnPreviosMonthClick(Sender: TObject);
 begin
   Self.dtpStartDate.Date := StartOfTheMonth(IncDay(StartOfTheMonth(now), -1));
@@ -161,8 +170,8 @@ begin
   PersonList := TStringList.Create;
   for I := 0 to PersonsList.Count - 1 do begin
     Person := PersonsList.Items[I];
-    if Person.Division = Division then PersonList.Add(
-      Person.PersonId + '=' + Person.Name);
+    if Person.Division = Division then
+      PersonList.Add(Person.PersonId + '=' + Person.Name);
   end;
   if PersonList.Count = 0 then begin
     lbMessage.Font.Color := clRed;
@@ -170,17 +179,31 @@ begin
       [Division.Title]);
     Exit;
   end;
+  //
   lbMessage.Font.Color := clNavy;
   lbMessage.Caption := Format('График для подразделения "%s": %s',
       [Division.Title, Division.Schedule.Title]);
-  FAnalysisByMinute.Analysis(PersonList, Self.SchedulesList.Items[0], dtpStartDate.Date,
-    dtpEndDate.Date);
-  FAnalysisByMinPresent.UpdateAnalys;
-  FAnalysisByMinPresent.Visible := True;
-  tbScale.Enabled := FAnalysisByMinPresent.Enabled;
-  PersonList.Free;
   Self.ChangeTitle(Division.Title + ' c ' + DateToStr(dtpStartDate.Date)
-    + ' по ' + DateToStr(dtpEndDate.Date));
+        + ' по ' + DateToStr(dtpEndDate.Date));
+  FAnalysisByMinute.SetParametrs(PersonList, Division.Schedule,
+    dtpStartDate.Date, dtpEndDate.Date, HolydaysList);
+  Thread := TAnalysisByMinuteThread.Create(True);
+  Thread.FreeOnTerminate := True;
+  Thread.Analysis := Self.FAnalysisByMinute;
+  Thread.Present := Self.FAnalysisByMinPresent;
+  Thread.OnAnalysisEnd := Self.EndAnalysis;
+  Thread.Resume;
+end;
+
+procedure TfrmSubdivisionEvents.EndAnalysis(var Result: boolean);
+begin
+  if not Result then begin
+      lbMessage.Font.Color := clRed;
+      lbMessage.Caption := 'Ошибка при выполнении анализа !';
+    end else begin
+      tbScale.Enabled := FAnalysisByMinPresent.Enabled;
+      FAnalysisByMinPresent.Visible := True;
+    end;
 end;
 
 

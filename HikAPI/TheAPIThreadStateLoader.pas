@@ -79,22 +79,22 @@ begin
       FStatuses[I].Enabled := Loader.CheckConnection(I);
       // —амое позднее врем€ последнего обновлени€ и кол-во новых событий
       FStatuses[I].LastTimeInBD := 0;
-      if FStatuses[I].Enabled then begin
-        FStatuses[I].LastTimeInBD := FEndTime;
-        Cnt := 0;
-        for j := 0 to Loader.MinorEventCount - 1 do begin
-          // «апрашиваем врем€ последнего обновлени€ дл€ каждого типа событий.
-          StartTime := Loader.LastTimeInDB(I, J);
-          if StartTime < FStatuses[I].LastTimeInBD then
-            FStatuses[I].LastTimeInBD := StartTime;
-          StartTime := IncSecond(StartTime, 1);
-          // «апрашиваем количество новых событийй
+      FStatuses[I].LastTimeInBD := FEndTime;
+      Cnt := 0;
+      for j := 0 to Loader.MinorEventCount - 1 do begin
+        // «апрашиваем врем€ последнего обновлени€ дл€ каждого типа событий.
+        StartTime := Loader.LastTimeInDB(I, J);
+        if StartTime < FStatuses[I].LastTimeInBD then
+          FStatuses[I].LastTimeInBD := StartTime;
+        StartTime := IncSecond(StartTime, 1);
+        // «апрашиваем количество новых событийй (если устройство активне)
+        if FStatuses[I].Enabled then
           Cnt := Cnt + Loader.GetEventsCount(I, Loader.MinorEvent[J],
             StartTime, FEndTime);
-        end;
-        FStatuses[I].EventsCount := Cnt;
       end;
+      FStatuses[I].EventsCount := Cnt;
     end;
+    //end;
     Synchronize(Self.SyncGetData);
     SetLength(FStatuses, 0);
   finally

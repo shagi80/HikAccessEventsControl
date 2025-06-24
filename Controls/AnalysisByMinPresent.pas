@@ -7,6 +7,8 @@ uses Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
   ActnList, ToolWin, ImgList, Grids, TheAnalysisByMinute, Contnrs;
 
 type
+  TTikEvent = procedure (Sender: TObject) of object;
+
   TShowHours = set of byte;
 
   TPersonStateHandler = class(TObject)
@@ -23,6 +25,7 @@ type
     FTexColCount: integer;
     FMinPerPixel: integer;
     FShowHours: TShowHours;
+    FTikEvent: TTikEvent;
     procedure SetDrawColWidth;
     procedure Clear;
     function CreatePersonBitmap(ARow: integer): TObject;
@@ -43,6 +46,7 @@ type
     property Analysis: TAnalysisByMinute read FAnalysis write SetAnalysis;
     property ShowHours: TShowHours write FShowHours;
     property MinPerPixel: integer read FMinPerPixel write SetMinPerPixel;
+    property OnTikEvent: TTikEvent read FTikEvent write FTikEvent;
     procedure UpdateAnalys;
   end;
 
@@ -191,8 +195,10 @@ begin
       else Self.Cells[4, ARow] := 'нет';
     PersonStateHandler := TPersonStateHandler.Create(FAnalysis.PersonState[ARow - 1]);
     Self.Objects[Self.FTexColCount, ARow] := PersonStateHandler;
+    if Assigned(Self.FTikEvent) then Self.FTikEvent(Self);
+    
   end;
-  Self.Repaint;
+  if self.Visible then Self.Repaint;
 end;
 
 { Методы рисования. }

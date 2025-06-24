@@ -1,4 +1,4 @@
-program Mdiapp;
+program HikEvents;
 
 uses
   Forms,
@@ -40,12 +40,17 @@ uses
   DivisionAndPersonSettingsWin in 'DivisionAndPersonSettingsWin.pas' {frmDivisionAndPersonSettings},
   PersonEditWin in 'DialogWin\PersonEditWin.pas' {frmPersonEdit},
   MonthSchedulePresent in 'Controls\MonthSchedulePresent.pas',
-  DivisionEditWin in 'DialogWin\DivisionEditWin.pas' {frmDivisionEdit};
+  HolydayEditWin in 'DialogWin\HolydayEditWin.pas' {frmHolydayEdit},
+  TheHolyday in 'Models\TheHolyday.pas',
+  DivisionEditWin in 'DialogWin\DivisionEditWin.pas' {frmDivisionEdit},
+  ProgressWin in 'DialogWin\ProgressWin.pas' {frmProgress},
+  TheAnalysisByMinuteThread in 'Analysis\TheAnalysisByMinuteThread.pas';
 
 {$R *.RES}
 
 begin
   Application.Initialize;
+  Application.Title := 'HikEvents';
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TAboutBox, AboutBox);
   Application.CreateForm(TfrmBreakEdit, frmBreakEdit);
@@ -54,6 +59,8 @@ begin
   Application.CreateForm(TfrmScheduleEdit, frmScheduleEdit);
   Application.CreateForm(TfrmPersonMinuteAnalysis, frmPersonMinuteAnalysis);
   Application.CreateForm(TfrmPersonEdit, frmPersonEdit);
+  Application.CreateForm(TfrmHolydayEdit, frmHolydayEdit);
   Application.CreateForm(TfrmDivisionEdit, frmDivisionEdit);
+  Application.CreateForm(TfrmProgress, frmProgress);
   Application.Run;
 end.

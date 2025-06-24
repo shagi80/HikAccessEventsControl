@@ -15,13 +15,14 @@ type
     FParentGUIDStr: string;
     FParentDivision: TDivision;
     FSchedule: TSchedule;
+    function GetSchedule: TSchedule;
   public
     constructor Create;
     property GUID: TGUID read FGUID;
     property Title: string read FName write FName;
     property DivisionId: string read FDivisionId write FDivisionId;
     property ParentDivision: TDivision read FParentDivision write FParentDivision;
-    property Schedule: TSchedule read FSchedule write FSchedule;
+    property Schedule: TSchedule read GetSchedule write FSchedule;
   end;
 
   TDivisionList = class(TObjectList)
@@ -62,6 +63,13 @@ constructor TDivision.Create;
 begin
   inherited Create;
   CreateGUID(FGUID);
+end;
+
+function TDivision.GetSchedule: TSchedule;
+begin
+  if Assigned(Self.FSchedule) then Result := Self.FSchedule
+    else if not Assigned(Self.ParentDivision) then Result := nil
+      else Result := Self.ParentDivision.FSchedule;
 end;
 
 { TDivisionList }

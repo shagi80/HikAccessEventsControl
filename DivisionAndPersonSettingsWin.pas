@@ -35,6 +35,9 @@ type
     btnPastePersonFromClipborad: TWebSpeedButton;
     lbPersonDivision: TLabel;
     sgPerson: TStringGrid;
+    btnClose: TWebSpeedButton;
+    procedure btnCloseClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure sgPersonMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure btnPastePersonFromClipboradClick(Sender: TObject);
@@ -71,6 +74,7 @@ type
     function AddPerson: boolean;
     function EditPerson: boolean;
     function DeletePerson: boolean;
+    function CanChange(NewPage: integer): boolean;
   public
     { Public declarations }
   end;
@@ -82,6 +86,16 @@ implementation
 
 uses DivisionEditWin, TheSettings, DateUtils, Clipbrd, PersonEditWin;
 
+
+procedure TfrmDivisionAndPersonSettings.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  if not Self.CanChange(-1) then begin
+    Action := caNone;
+    Exit;
+  end;
+  inherited;
+end;
 
 procedure TfrmDivisionAndPersonSettings.FormCreate(Sender: TObject);
 begin
@@ -166,7 +180,7 @@ end;
 
 procedure TfrmDivisionAndPersonSettings.SelectPageBtnClick(Sender: TObject);
 begin
-  if False{not CanChange(TWebSpeedButton(Sender).Tag)} then begin
+  if not CanChange(TWebSpeedButton(Sender).Tag - 1) then begin
     case pcPages.ActivePageIndex of
       0: btnDivision.Down := True;
       1: btnPerson.Down := True;
@@ -211,7 +225,7 @@ procedure TfrmDivisionAndPersonSettings.SetModified(Value: boolean);
 begin
   Self.FModified := Value;
   btnSave.Enabled := FModified;
-  btnUpdate.Enabled := FModified;
+  //btnUpdate.Enabled := FModified;
 end;
 
 procedure TfrmDivisionAndPersonSettings.UpdateDivisionsTV(TreeView: TTreeView);
@@ -256,6 +270,26 @@ begin
     0: ChangeSchedule(TDivision(Node.Data).Schedule);
     1: Self.UpdatePersonList(TDivision(Node.Data));
   end;
+end;
+
+function TfrmDivisionAndPersonSettings.CanChange(NewPage: integer): boolean;
+var
+  Res: integer;
+begin
+  Result := True;
+  if (FModified = False) or (pcPages.ActivePageIndex = NewPage) then Exit;
+  Res := MessageDlg('Сохранить изменения данных ?', mtWarning,
+    [mbYes, mbNo, mbCancel], 0);
+  case Res of
+    mrYes: Self.btnSaveClick(Self);
+    mrNo: if NewPage >= 0 then LoadFromBD;
+    mrCancel: Result := False;
+  end;
+end;
+
+procedure TfrmDivisionAndPersonSettings.btnCloseClick(Sender: TObject);
+begin
+  Self.Close;
 end;
 
 { Division page }
@@ -474,7 +508,8 @@ begin
       Str := Strings[I];
       Person.PersonId := Copy(Str, 1, Pos(chr(9), Str) - 1);
       if Length(Person.PersonId) = 0 then
-       raise Exception.Create('Не задан PersonId');
+       raise Exception.Create(Format('В строчке "%s" не задан PersonId',
+        [Strings[I]]));
       Str := Copy(Str, Pos(chr(9), Str) + 1, MaxInt);
       if Pos(chr(9), Str) <= 0 then Person.Name := Str
         else Person.Name := Copy(Str, 1, Pos(chr(9), Str) - 1);

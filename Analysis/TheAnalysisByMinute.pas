@@ -3,7 +3,7 @@ unit TheAnalysisByMinute;
 interface
 
 uses SysUtils, Contnrs, Controls, Classes, SQLiteTable3, StdCtrls, TheSchedule,
-  TheShift, TheBreaks, TheEventPairs;
+  TheShift, TheBreaks, TheEventPairs, TheHolyday;
 
 type
   TEventState = (esNone, esRest, esOvertime, esWork, esEarlyBreak,
@@ -42,6 +42,8 @@ type
     FMinuteState: array of TPersonMinuteState;
     FScheduleTotalTime: integer;
     FPersonCount: integer;
+    FHolydayList: THolydayList;
+    FPersonList: TStringList;
     function LoadPersonPairs(PersonId: string; PersonInd: integer): boolean;
     function GetDayCount: integer;
     function GetMinCount: integer;
@@ -50,12 +52,14 @@ type
     function GetScheduleState(Ind: integer): TScheduleState;
     function GetDayShifts(Date: TDate): TShiftList;
     procedure PrepareScheduleStateArray;
+    procedure SetHolydays;
     procedure Clear;
   public
     constructor Create;
     destructor Destroy; override;
-    function Analysis(PersonIdList: TStringList; ScheduleTemplate: TSchedule;
-      StartDate, EndDate: TDate): boolean;
+    procedure SetParametrs(PersonIdList: TStringList; ScheduleTemplate: TSchedule;
+      StartDate, EndDate: TDate; Holydays: THolydayList);
+    function Analysis: boolean;
     procedure IncEventsTotalTime(State: TEventState; var TotalTime: TEventsTotalTime);
     property DayCount: integer read GetDayCount;
     property PersonCount: integer read FPersonCount;
@@ -77,6 +81,8 @@ begin
   inherited Create;
   FMaxShiftLen := 14;
   FPersonCount := 0;
+  FHolydayList := nil;
+  FPersonList := nil;
   SetLength(FMinuteState, 0);
   SetLength(FScheduleStateArray, 0);
 end;
@@ -88,6 +94,7 @@ begin
   for I := 0 to High(FMinuteState) do SetLength(FMinuteState[I].StateArray, 0);
   SetLength(FMinuteState, 0);
   SetLength(FScheduleStateArray, 0);
+  FPersonList := nil;;
   inherited Destroy;
 end;
 
@@ -124,7 +131,7 @@ begin
   FMinuteState[PersonInd].Pairs := TEmplPairs.Create(PersonId, FMaxShiftLen);
   FMinuteState[PersonInd].Pairs.CreatePairsFromBD(Settings.GetInstance.DBFileName,FStartDate,
     FEndDate);
-  for I := 0 to FMinuteState[PersonInd].Pairs.Count - 1 do
+  for I := 0 to FMinuteState[PersonInd].Pairs.Count - 1 do begin
     if FMinuteState[PersonInd].Pairs.Pair[I].State = psNormal then begin
       StartMin := MinutesBetween(FStartDate,
         FMinuteState[PersonInd].Pairs.Pair[I].InTime);
@@ -136,6 +143,7 @@ begin
         Self.FMinuteState[PersonInd].StateArray[Min].Presence := True;
       Result := True;
     end;
+  end;
 end;
 
 { Заполнение массива минут данными о графике. }
@@ -144,31 +152,57 @@ function TAnalysisByMinute.GetDayShifts(Date: TDate): TShiftList;
 var
   SchedDayNum: integer;
 begin
-  SchedDayNum := -1;
-  if Self.FScheduleTemplate.ScheduleType = stWeek then begin
-    SchedDayNum := DayOfTheWeek(Date) - 1;
-  end;
+  SchedDayNum := FScheduleTemplate.GetDayNumber(Date);
   Result := FScheduleTemplate.Day[SchedDayNum];
 end;
 
 procedure TAnalysisByMinute.PrepareScheduleStateArray;
 var
-  DayNum, ShiftNum, MinNum: integer;
+  Date: TDate;
+  DayNum, ShiftNum, MinNum, I: integer;
   StartMin, EndMin: integer;
   ShiftList: TShiftList;
 begin
   SetLength(FScheduleStateArray, MinutesBetween(FStartDate, FEndDate));
-  if Self.FScheduleTemplate = nil then Exit;  
+  if Self.FScheduleTemplate = nil then Exit;
   for DayNum := 0 to Self.DayCount do begin
-    ShiftList := GetDayShifts(DateOf(IncDay(FStartDate, DayNum)));
+    Date := DateOf(IncDay(FStartDate, DayNum));
+    ShiftList := GetDayShifts(Date);
     for ShiftNum := 0 to ShiftList.Count - 1 do begin
       StartMin := MinuteOfTheDay(ShiftList.Items[ShiftNum].StartTime);
       EndMin := StartMin + ShiftList.Items[ShiftNum].LengthOfMinutes;
       for MinNum := StartMin to EndMin do begin
-        FScheduleStateArray[MinNum + DayNum * 60 *24] :=
-          ShiftList.Items[ShiftNum].ScheduleState[MinNum];
-        if not(ShiftList.Items[ShiftNum].ScheduleState[MinNum] in [ssNone, ssBreak])
-         and (DayNum > 0) then Inc(Self.FScheduleTotalTime);
+        I := MinNum + DayNum * 60 *24;
+        if I <= High(FScheduleStateArray) then begin
+          FScheduleStateArray[I] := ShiftList.Items[ShiftNum].ScheduleState[MinNum];
+          if not(ShiftList.Items[ShiftNum].ScheduleState[MinNum] in [ssNone, ssBreak])
+            and (DayNum > 0) then Inc(Self.FScheduleTotalTime);
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TAnalysisByMinute.SetHolydays;
+var
+  Date: TDate;
+  DayNum, MinNum, I: integer;
+  StartMin, MinCount: integer;
+  Holyday: THolyday;
+begin
+  for DayNum := 1 to Self.DayCount do begin
+    Date := DateOf(IncDay(FStartDate, DayNum));
+    Holyday := Self.FHolydayList.Items[Date];
+    if (not Assigned(Holyday)) or ((Holyday.Schedule <> nil)
+      and (Holyday.Schedule <> Self.FScheduleTemplate)) then Continue;
+    MinCount := MinutesBetween(Holyday.StartTime, Holyday.EndTime);
+    StartMin := MinuteOfTheDay(Holyday.StartTime);
+    for MinNum := StartMin to (StartMin + MinCount + 1) do begin
+      I := MinNum + DayNum * 60 * 24;
+      if I <= High(FScheduleStateArray) then begin
+        if not (FScheduleStateArray[I]
+          in [ssNone, ssBreak]) then Dec(Self.FScheduleTotalTime);
+        FScheduleStateArray[MinNum + DayNum * 60 * 24] := ssNone;
       end;
     end;
   end;
@@ -240,6 +274,19 @@ end;
 
 { Основная процедура. }
 
+procedure TAnalysisByMinute.SetParametrs(PersonIdList: TStringList;
+  ScheduleTemplate: TSchedule; StartDate, EndDate: TDate;
+  Holydays: THolydayList);
+begin
+  Self.Clear;
+  FPersonList := PersonIdList;
+  FHolydayList := Holydays;
+  FScheduleTemplate := ScheduleTemplate;
+  FStartDate := StartOfTheDay(IncDay(StartDate, -1));
+  FEndDate := EndOfTheDay(EndDate);
+  FPersonCount := FPersonList.Count;
+end;
+
 procedure TAnalysisByMinute.Clear;
 var
   I: integer;
@@ -249,6 +296,8 @@ begin
     FMinuteState[I].Pairs.Free;
   end;
   SetLength(FMinuteState, 0);
+  SetLength(FScheduleStateArray, 0);
+  FPersonList := nil;
   FScheduleTotalTime := 0;
   FScheduleTemplate := nil;
   FStartDate := 0;
@@ -256,19 +305,14 @@ begin
   FPersonCount := 0;
 end;
 
-function TAnalysisByMinute.Analysis(PersonIdList: TStringList;
-  ScheduleTemplate: TSchedule; StartDate, EndDate: TDate): boolean;
+function TAnalysisByMinute.Analysis: boolean;
 var
   PersonId: string;
   I: integer;
 begin
   Result := False;
-  Clear;
-  //
-  FScheduleTemplate := ScheduleTemplate;
-  FStartDate := StartOfTheDay(IncDay(StartDate, -1));
-  FEndDate := EndOfTheDay(EndDate);
-  FPersonCount := PersonIdList.Count;
+  if (not Assigned(FPersonList)) or (not Assigned(FScheduleTemplate))
+    or (FPersonCount = 0) then Exit;
   SetLength(FMinuteState, FPersonCount);
   for I := 0 to High(FMinuteState) do begin
     FMinuteState[I].TotalTime.TotalWork := 0;
@@ -278,16 +322,17 @@ begin
   end;
   try
     PrepareScheduleStateArray;
+    SetHolydays;
     for I := 0 to FPersonCount - 1 do begin
-      PersonId := PersonIdList.Names[I];
+      PersonId := FPersonList.Names[I];
       FMinuteState[I].PersinId := PersonId;
-      FMinuteState[I].PersonName := PersonIdList.Values[PersonId];
+      FMinuteState[I].PersonName := FPersonList.Values[PersonId];
       LoadPersonPairs(PersonId, I);
     end;
     AnalysisEvent;
     Result := True;
   finally
-    //
+    FPersonList.Free;
   end;
 end;
 
