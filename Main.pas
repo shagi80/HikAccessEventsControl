@@ -91,7 +91,7 @@ var
   frmPervonEvents: TfrmPervonEvents;
 begin
   MessageDlg('Это еще не работает !', mtWarning, [mbOk], 0);
-  //Exit;
+  Exit;
   frmPervonEvents := TfrmPervonEvents.Create(Self);
   frmPervonEvents.ShowFomButton(pnFormButtons);
 end;
