@@ -109,6 +109,7 @@ procedure TSettingsSingleton.SaveSettings;
 var
   Stream: TFileStream;
 begin
+  Exit;
   Stream := TFileStream.Create(SETTINGS_FILE, fmCreate or fmOpenWrite);
   try
     WriteString(Stream, FDBFileName);

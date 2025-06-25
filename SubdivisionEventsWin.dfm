@@ -291,7 +291,7 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
       Align = alTop
       Style = csDropDownList
       Ctl3D = True
-      ItemHeight = 0
+      ItemHeight = 13
       ParentCtl3D = False
       TabOrder = 0
     end

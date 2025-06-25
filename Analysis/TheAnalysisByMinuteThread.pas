@@ -35,9 +35,11 @@ end;
 
 procedure TAnalysisByMinuteThread.SyncTikEnd;
 begin
-  FPresent.OnTikEvent := frmProgress.Tik;
-  FPresent.UpdateAnalys;
-  FPresent.OnTikEvent := nil;
+  if Assigned(FPresent) then begin
+    FPresent.OnTikEvent := frmProgress.Tik;
+    FPresent.UpdateAnalys;
+    FPresent.OnTikEvent := nil;
+  end;
   if Assigned(FAnalysisEnd) then FAnalysisEnd(FResult);
   frmProgress.TikEnd('Все получилось !', 500);
 end;

@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, TheAnalysisByMinute, AnalysisByMinPresent, TWebButton, ExtCtrls,
-  CHILDWIN, TheSettings, ComCtrls, StdCtrls, TheDivisions, TheAnalysisByMinuteThread;
+  CHILDWIN, TheSettings, ComCtrls, StdCtrls, TheDivisions, TheAnalysisByMinuteThread,
+  PersonEventsWin;
 
 type
   TfrmSubdivisionEvents = class(TMDIChild)
@@ -66,7 +67,6 @@ begin
   FAnalysisByMinPresent.Visible := False;
   Self.dtpStartDate.Date := StartOfTheMonth(now);
   Self.dtpEndDate.Date := now;
-  Self.Height := 480;
   Self.DoubleBuffered := True;
   Self.LoadFromBD;
   UpdateDivisionListForPerson(nil);
@@ -163,13 +163,12 @@ var
   I: integer;
 begin
   FAnalysisByMinPresent.Visible := False;
-  if cbDivision.ItemIndex < 0 then Exit;
-  Division := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
-  if not Assigned(Division) then begin
+  if cbDivision.ItemIndex < 0 then begin
     lbMessage.Font.Color := clRed;
     lbMessage.Caption := 'Подразделение не выбрано';
     Exit;
   end;
+  Division := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
   if not Assigned(Division.Schedule) then begin
     lbMessage.Font.Color := clRed;
     lbMessage.Caption := Format('Для подразделения "%s" не задан график',

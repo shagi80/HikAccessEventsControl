@@ -4,7 +4,8 @@ interface
 
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
   StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
-  ActnList, ToolWin, ImgList, Grids, TWebButton, ButtonGroup, Tabs, DockTabSet;
+  ActnList, ToolWin, ImgList, Grids, TWebButton, ButtonGroup, Tabs, DockTabSet,
+  TheAPIThreadStateLoader, jpeg;
 
 type
   TMainForm = class(TForm)
@@ -18,6 +19,9 @@ type
     pnFormButtons: TPanel;
     TabSet1: TTabSet;
     btnSettings: TWebSpeedButton;
+    pnState: TPanel;
+    lbLastTime: TLabel;
+    Image1: TImage;
     procedure FormShow(Sender: TObject);
     procedure btnSettingsClick(Sender: TObject);
     procedure btnPersonReportClick(Sender: TObject);
@@ -27,9 +31,12 @@ type
     procedure btnProcessClick(Sender: TObject);
   private
     { Private declarations }
+    FLastTimeInBD: TDateTime;
+    FConnectToBd: boolean;
     function HasChildren(AClassName: string): boolean;
     procedure UnselectFormButton;
     procedure SetButtonsEnabled;
+    function UpdateLastTime: boolean;
   public
     { Public declarations }
   end;
@@ -47,10 +54,11 @@ uses about, DateUtils, APIProcessWin, TheSettings, TheEventPairs,
   PersonEventsWin, ScheduleEditWin, TheShift, TheSchedule,
   TheBreaks, ScheduleAndShiftSettingsWin, TheAnalysisByMinute,
   AnalysisByMinPresent, SubdivisionEventsWin, DivisionAndPersonSettingsWin,
-  SettingsWin;
+  SettingsWin, TheEventsLoader;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
+  FConnectToBd := Self.UpdateLastTime;
   SetButtonsEnabled;
 end;
 
@@ -79,9 +87,43 @@ end;
 
 procedure TMainForm.SetButtonsEnabled;
 begin
-  Self.btnSchedule.Enabled := (Settings.GetInstance.AccessLevel > 0);
-  Self.btnPerson.Enabled := (Settings.GetInstance.AccessLevel > 0);
+  Self.btnSchedule.Enabled := (Settings.GetInstance.AccessLevel > 0)
+    and (FConnectToBd);
+  Self.btnPerson.Enabled := (Settings.GetInstance.AccessLevel > 0)
+    and (FConnectToBd);
+  Self.btnProcess.Enabled := FConnectToBd;
+  Self.btnDivisionReport.Enabled := FConnectToBd;
+  Self.btnPersonReport.Enabled := FConnectToBd;
+  lbLastTime.Visible := FConnectToBd;
+  if Self.FConnectToBd then begin
+    lbLastTime.Caption := 'Данные актуальны на ' + FormatDateTime(
+      'dd mmmm YY hh:MM:ss', FLastTimeInBD);
+    pnState.Caption := '';
+  end else
+    pnState.Caption := 'Нет связи с базой данных ...';
 end;
+
+function TMainForm.UpdateLastTime: boolean;
+var
+  Loader: TEventsLoader;
+  Device: TDevice;
+  I, J: integer;
+  DeviceTime: TDateTime;
+begin
+  Result := False;
+  Loader := TEventsLoader.Create(Settings.GetInstance.DBFileName);
+  FLastTimeInBD := now;
+  for I := 0 to Loader.DeviceCount - 1 do begin
+    Device := Loader.Device[I];
+    for j := 0 to Loader.MinorEventCount - 1 do begin
+      DeviceTime := Loader.LastTimeInDB(I, J);
+      if DeviceTime < FLastTimeInBD then FLastTimeInBD := DeviceTime;
+      Result := True;
+    end;
+  end;
+  Loader.Free;
+end;
+
 
 procedure TMainForm.btnProcessClick(Sender: TObject);
 var
@@ -122,7 +164,10 @@ end;
 
 procedure TMainForm.btnSettingsClick(Sender: TObject);
 begin
-  if frmSettings.ShowModal = mrOk then Self.SetButtonsEnabled;
+  if frmSettings.ShowModal = mrOk then begin
+    FConnectToBd := Self.UpdateLastTime;
+    SetButtonsEnabled;
+  end;
 end;
 
 procedure TMainForm.btnPersonClick(Sender: TObject);
