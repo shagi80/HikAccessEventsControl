@@ -61,5 +61,7 @@
     <Transaction>2025.06.22 20:31:46.392.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\DialogWin\ProgressWin.pas</Transaction>
     <Transaction>2025.06.22 20:31:46.392.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\DialogWin\ProgressWin.dfm</Transaction>
     <Transaction>2025.06.23 18:24:41.046.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Analysis\TheAnalysisByMinuteThread.pas</Transaction>
+    <Transaction>2025.06.24 18:46:06.128.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\DialogWin\SettingsWin.pas</Transaction>
+    <Transaction>2025.06.24 18:46:06.128.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\DialogWin\SettingsWin.dfm</Transaction>
   </Transactions>
 </BorlandProject>

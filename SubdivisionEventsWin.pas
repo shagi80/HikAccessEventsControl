@@ -38,8 +38,7 @@ type
     FAnalysisByMinPresent: TAnalysisByMinPresent;
     FAnalysisByMinute: TAnalysisByMinute;
     Thread: TAnalysisByMinuteThread;
-    procedure UpdateDivisionListForPerson(
-      DivisionList: TDivisionList; CurDivision: TDivision);
+    procedure UpdateDivisionListForPerson(CurDivision: TDivision);
     procedure EndAnalysis(var Result: boolean);
   public
     { Public declarations }
@@ -70,7 +69,7 @@ begin
   Self.Height := 480;
   Self.DoubleBuffered := True;
   Self.LoadFromBD;
-  UpdateDivisionListForPerson(Self.DivisionsList, nil);
+  UpdateDivisionListForPerson(nil);
 end;
 
 procedure TfrmSubdivisionEvents.FormDestroy(Sender: TObject);
@@ -87,7 +86,7 @@ begin
 end;
 
 procedure TfrmSubdivisionEvents.UpdateDivisionListForPerson(
-  DivisionList: TDivisionList; CurDivision: TDivision);
+  CurDivision: TDivision);
 
   procedure AddChildDivision(Level: integer; ParentDivision: TDivision);
   var
@@ -95,12 +94,12 @@ procedure TfrmSubdivisionEvents.UpdateDivisionListForPerson(
     Text: string;
     Division: TDivision;
   begin
-    for J := 0 to DivisionList.Count - 1 do begin
-      Division := DivisionList[J];
+    for J := 0 to DivisionsList.Count - 1 do begin
+      Division := DivisionsList.Items[J];
       if Division.ParentDivision = ParentDivision then begin
-        Text := Division.Title;
-        for I := 0 to Level - 1 do Text := '- ' + Text;
-        cbDivision.Items.AddObject(Text, Division);
+        Text := ' - ' + Division.Title;
+        for I := 0 to Level - 1 do Text := '   ' + Text;
+        cbDivision.AddItem(Text, Division);
         AddChildDivision(Level + 1, Division);
       end;
     end;
@@ -111,8 +110,9 @@ var
   Division: TDivision;
 begin
   cbDivision.Clear;
-  Division := DivisionList.Items['parent'];
-  cbDivision.Items.AddObject(Division.Title, Division);
+  Division := DivisionsList.Items['parent'];
+  if not Assigned(Division) then Exit;
+  cbDivision.AddItem(Division.Title,  TObject(Division));
   AddChildDivision(1, Division);
   cbDivision.ItemIndex := 0;
   for I := 0 to cbDivision.Items.Count - 1 do
@@ -135,8 +135,16 @@ begin
 end;
 
 procedure TfrmSubdivisionEvents.btnUpdateClick(Sender: TObject);
+var
+  SelectDivision: TDivision;
+  SelectDivGUID: TGUID;
 begin
+  if cbDivision.ItemIndex < 0 then Exit;  
+  SelectDivision := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
+  SelectDivGUID := SelectDivision.GUID;
   Self.LoadFromBD;
+  SelectDivision := DivisionsList.Items[SelectDivGUID];
+  UpdateDivisionListForPerson(SelectDivision);
   Analysis(Self);
 end;
 
@@ -155,6 +163,7 @@ var
   I: integer;
 begin
   FAnalysisByMinPresent.Visible := False;
+  if cbDivision.ItemIndex < 0 then Exit;
   Division := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
   if not Assigned(Division) then begin
     lbMessage.Font.Color := clRed;

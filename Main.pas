@@ -17,6 +17,9 @@ type
     sbFormButtons: TScrollBox;
     pnFormButtons: TPanel;
     TabSet1: TTabSet;
+    btnSettings: TWebSpeedButton;
+    procedure FormShow(Sender: TObject);
+    procedure btnSettingsClick(Sender: TObject);
     procedure btnPersonReportClick(Sender: TObject);
     procedure btnPersonClick(Sender: TObject);
     procedure btnScheduleClick(Sender: TObject);
@@ -26,6 +29,7 @@ type
     { Private declarations }
     function HasChildren(AClassName: string): boolean;
     procedure UnselectFormButton;
+    procedure SetButtonsEnabled;
   public
     { Public declarations }
   end;
@@ -42,8 +46,13 @@ implementation
 uses about, DateUtils, APIProcessWin, TheSettings, TheEventPairs,
   PersonEventsWin, ScheduleEditWin, TheShift, TheSchedule,
   TheBreaks, ScheduleAndShiftSettingsWin, TheAnalysisByMinute,
-  AnalysisByMinPresent, SubdivisionEventsWin, DivisionAndPersonSettingsWin;
+  AnalysisByMinPresent, SubdivisionEventsWin, DivisionAndPersonSettingsWin,
+  SettingsWin;
 
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+  SetButtonsEnabled;
+end;
 
 function TMainForm.HasChildren(AClassName: string): boolean;
 var
@@ -66,6 +75,12 @@ var
 begin
   for I := 0 to Self.pnFormButtons.ControlCount - 1 do
     TWebSpeedButton(Self.pnFormButtons.Controls[I]).Down := False;
+end;
+
+procedure TMainForm.SetButtonsEnabled;
+begin
+  Self.btnSchedule.Enabled := (Settings.GetInstance.AccessLevel > 0);
+  Self.btnPerson.Enabled := (Settings.GetInstance.AccessLevel > 0);
 end;
 
 procedure TMainForm.btnProcessClick(Sender: TObject);
@@ -103,6 +118,11 @@ begin
   if not Self.HasChildren(TfrmShift.ClassName) then
     frmShiftSettings := TfrmShift.Create(Self);
   UnselectFormButton
+end;
+
+procedure TMainForm.btnSettingsClick(Sender: TObject);
+begin
+  if frmSettings.ShowModal = mrOk then Self.SetButtonsEnabled;
 end;
 
 procedure TMainForm.btnPersonClick(Sender: TObject);

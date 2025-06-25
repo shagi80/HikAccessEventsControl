@@ -4,7 +4,7 @@ interface
 
 uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TheBreaks, TheShift,
   TheSchedule, TheSettings, TheDivisions, ThePersons, ExtCtrls, TWebButton,
-  TheHolyday;
+  TheHolyday, Dialogs;
 
 type
   TMDIChild = class(TForm)
@@ -23,7 +23,7 @@ type
     DivisionsList: TDivisionList;
     PersonsList: TPersonList;
     HolydaysList: THolydayList;
-    procedure LoadFromBD;
+    function LoadFromBD: boolean;
   public
     { Public declarations }
     property FormButton: TWebSpeedButton read FFormButton;
@@ -82,23 +82,28 @@ begin
   Action := caFree;
 end;
 
-procedure TMDIChild.LoadFromBD;
+function TMDIChild.LoadFromBD: boolean;
 var
   DBFileName: string;
 begin
   DBFileName := Settings.GetInstance.DBFileName;
-  BreaksList.LoadFromBD(DBFileName);
-  ShiftsList.LoadFromBD(DBFileName, BreaksList);
-  SchedulesList.LoadFromBD(DBFileName, ShiftsList);
-  DivisionsList.LoadFromBD(DBFileName, SchedulesList);
-  PersonsList.LoadFromBD(DBFileName, DivisionsList, SchedulesList);
-  HolydaysList.LoadFromBD(DBFileName, SchedulesList);
+  Result := False;
+  if not (BreaksList.LoadFromBD(DBFileName)
+    and ShiftsList.LoadFromBD(DBFileName, BreaksList)
+    and SchedulesList.LoadFromBD(DBFileName, ShiftsList)
+    and DivisionsList.LoadFromBD(DBFileName, SchedulesList)
+    and PersonsList.LoadFromBD(DBFileName, DivisionsList, SchedulesList)
+    and HolydaysList.LoadFromBD(DBFileName, SchedulesList)) then begin
+      MessageDlg('Ошибка соединения с базой данных !', mtError, [mbOk], 0);
+      Exit;
+    end;
   BreaksList.SortByTitle;
   ShiftsList.SortByTitle;
   SchedulesList.SortByTitle;
   DivisionsList.SortByTitle;
   PersonsList.SortByTitle;
   HolydaysList.SortByDateDesc;
+  Result := True;
 end;
 
 procedure TMDIChild.OnClickFormButton(Sender: TObject);

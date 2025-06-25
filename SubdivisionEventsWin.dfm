@@ -15,6 +15,7 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
   OldCreateOrder = False
   Visible = True
   WindowState = wsMaximized
+  OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
@@ -290,7 +291,7 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
       Align = alTop
       Style = csDropDownList
       Ctl3D = True
-      ItemHeight = 13
+      ItemHeight = 0
       ParentCtl3D = False
       TabOrder = 0
     end

@@ -44,7 +44,8 @@ uses
   TheHolyday in 'Models\TheHolyday.pas',
   DivisionEditWin in 'DialogWin\DivisionEditWin.pas' {frmDivisionEdit},
   ProgressWin in 'DialogWin\ProgressWin.pas' {frmProgress},
-  TheAnalysisByMinuteThread in 'Analysis\TheAnalysisByMinuteThread.pas';
+  TheAnalysisByMinuteThread in 'Analysis\TheAnalysisByMinuteThread.pas',
+  SettingsWin in 'DialogWin\SettingsWin.pas' {frmSettings};
 
 {$R *.RES}
 
@@ -62,5 +63,6 @@ begin
   Application.CreateForm(TfrmHolydayEdit, frmHolydayEdit);
   Application.CreateForm(TfrmDivisionEdit, frmDivisionEdit);
   Application.CreateForm(TfrmProgress, frmProgress);
+  Application.CreateForm(TfrmSettings, frmSettings);
   Application.Run;
 end.

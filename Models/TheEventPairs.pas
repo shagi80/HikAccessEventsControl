@@ -109,24 +109,33 @@ begin
     { ≈сли событие "выход" то возможны два варианта:
       - если мы ждем выход то тоже возможны два варианта:
         - врем€ выхода достаточно близко ко времени входа - сохран€ем пару
+        - врем€ выхода очень близко ко времени входа - игнорируем значение
         - врем€ выхода далекот от времени входа - сохран€ем пару времени входа
           с нулевым выходом и пару времени выхода с нулевым входом,
           все сбрасываем
       - еслимы не ждем выход - записываем врем€ выхода как пару нулевым входмо,
         все сбрасываем. }
-    if Direction = edOut then begin
+    if Direction = edOut then
       if WaitingOut then begin
           if HoursBetween(Table.FieldAsDouble(1), InTime) < FMaxShiftLength then
-              AddPair(InTime, Table.FieldAsDouble(1))
+              if SecondsBetween(Table.FieldAsDouble(1), InTime) < 60 then begin
+                  //
+                end else begin
+                  AddPair(InTime, Table.FieldAsDouble(1));
+                  InTime := 0;
+                  WaitingOut := False;
+                end
             else begin
               AddPair(InTime, 0);
               AddPair(0, Table.FieldAsDouble(1));
+              InTime := 0;
+              WaitingOut := False;
             end;
-        end else
+        end else begin
           AddPair(0, Table.FieldAsDouble(1));
-      InTime := 0;
-      WaitingOut := False;
-    end;
+          InTime := 0;
+          WaitingOut := False;
+        end;
     Table.Next;
   end;
     Result := High(Self.FPairs) + 1;
