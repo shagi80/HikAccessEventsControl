@@ -130,7 +130,7 @@ begin
   SetLength(FMinuteState[PersonInd].StateArray, MinutesBetween(FStartDate, FEndDate));
   FMinuteState[PersonInd].Pairs := TEmplPairs.Create(PersonId, FMaxShiftLen);
   FMinuteState[PersonInd].Pairs.CreatePairsFromBD(Settings.GetInstance.DBFileName,FStartDate,
-    FEndDate);
+    IncDay(FEndDate, 1));
   for I := 0 to FMinuteState[PersonInd].Pairs.Count - 1 do begin
     if FMinuteState[PersonInd].Pairs.Pair[I].State = psNormal then begin
       StartMin := MinutesBetween(FStartDate,
@@ -140,7 +140,8 @@ begin
       if EndMin > High(Self.FMinuteState[PersonInd].StateArray) then
         EndMin := High(FMinuteState[PersonInd].StateArray);
       for Min := StartMin to EndMin do
-        Self.FMinuteState[PersonInd].StateArray[Min].Presence := True;
+        if Min <= High(FMinuteState[PersonInd].StateArray) then
+          Self.FMinuteState[PersonInd].StateArray[Min].Presence := True;
       Result := True;
     end;
   end;
