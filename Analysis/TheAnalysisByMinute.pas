@@ -192,7 +192,7 @@ var
 begin
   for DayNum := 1 to Self.DayCount do begin
     Date := DateOf(IncDay(FStartDate, DayNum));
-    Holyday := Self.FHolydayList.Items[Date];
+    Holyday := Self.FHolydayList.HolydayFor(Date, Self.FScheduleTemplate);
     if (not Assigned(Holyday)) or ((Holyday.Schedule <> nil)
       and (Holyday.Schedule <> Self.FScheduleTemplate)) then Continue;
     MinCount := MinutesBetween(Holyday.StartTime, Holyday.EndTime);

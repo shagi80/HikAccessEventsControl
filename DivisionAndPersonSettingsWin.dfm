@@ -707,8 +707,8 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
             Font.Style = []
             ParentFont = False
             Layout = tlCenter
-            ExplicitWidth = 354
-            ExplicitHeight = 22
+            ExplicitWidth = 92
+            ExplicitHeight = 16
           end
         end
         object sgPerson: TStringGrid
@@ -730,8 +730,6 @@ object frmDivisionAndPersonSettings: TfrmDivisionAndPersonSettings
           TabOrder = 1
           OnDblClick = btnEditClick
           OnMouseDown = sgPersonMouseDown
-          ExplicitTop = 31
-          ExplicitHeight = 300
           ColWidths = (
             198
             103

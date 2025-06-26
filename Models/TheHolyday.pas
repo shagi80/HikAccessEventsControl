@@ -27,19 +27,15 @@ type
   THolydayList = class(TObjectList)
   protected
     function GetIndexByGUID(GUID: TGUID): integer;
-    function GetIndexByDate(Date: TDate): integer;
     function GetItem(Index: Integer): THolyday; overload;
     procedure SetItem(Index: Integer; AObject: THolyday); overload;
     function GetItem(GUID: TGUID): THolyday; overload;
     procedure SetItem(GUID: TGUID; AObject: THolyday);  overload;
-    function GetItem(Date: TDate): THolyday; overload;
-    procedure SetItem(Date: TDate; AObject: THolyday);  overload;
   public
     constructor Create(CanDestroyItem: boolean);
     destructor Destroy; override;
     property Items[GUID: TGUID]: THolyday read GetItem write SetItem; default;
     property Items[Index: Integer]: THolyday read GetItem write SetItem; default;
-    property Items[Date: TDate]: THolyday read GetItem write SetItem; default;
     function First: THolyday;
     function Last: THolyday;
     function Extract(Item: TObject): THolyday;
@@ -48,6 +44,7 @@ type
     function LoadFromBD(DBFileName: string; ScheduleList: TScheduleList): boolean;
     procedure SortByDateDesc;
     function SaveToBD(DBFileName: string): boolean;
+    function HolydayFor(Date: TDate; Schedule: TSchedule):THolyday;
   end;
 
 implementation
@@ -120,37 +117,6 @@ begin
   index := GetIndexByGUID(GUID);
   if index >= 0  then inherited SetITem(index, AObject)
     else raise EAccessViolation.Create('Item GUID out of list !');
-end;
-
-function THolydayList.GetIndexByDate(Date: TDate): integer;
-var
-  i: integer;
-begin
-  Result := -1;
-  i := 0;
-  while (i < self.Count) and
-     (DaysBetween(DateOf(THolyday(inherited Items[i]).FStartTime), Date) <> 0) do inc(i);
-  if (i < self.Count) and
-    (DaysBetween(DateOf(THolyday(inherited Items[i]).FStartTime), Date) = 0) then
-      Result := i;
-end;
-
-function THolydayList.GetItem(Date: TDate): THolyday;
-var
-  index: integer;
-begin
-  index := GetIndexByDate(Date);
-  if index >= 0  then Result := THolyday(inherited GetItem(index))
-    else Result := nil;
-end;
-
-procedure THolydayList.SetItem(Date: TDate; AObject: THolyday);
-var
-  index: integer;
-begin
-  index := GetIndexByDate(Date);
-  if index >= 0  then inherited SetITem(index, AObject)
-    else raise EAccessViolation.Create('Item Date out of list !');
 end;
 
 function THolydayList.First: THolyday;
@@ -257,5 +223,22 @@ begin
     DB.Free
   end;
 end;
+
+function THolydayList.HolydayFor(Date: TDate; Schedule: TSchedule): THolyday;
+var
+  I: integer;
+  Holyday: THolyday;
+begin
+  Result := nil;
+  for I := 0 to Self.Count - 1 do begin
+    Holyday := Self.Items[I];
+    if (DateOf(Holyday.FStartTime) = DateOf(Date))
+      and ((Holyday.Schedule = nil) or (Holyday.Schedule = Schedule)) then begin
+        Result := Holyday;
+        Exit;
+      end;
+  end;
+end;
+
 
 end.

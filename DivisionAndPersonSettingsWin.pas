@@ -169,11 +169,33 @@ begin
 end;
 
 procedure TfrmDivisionAndPersonSettings.btnUpdateClick(Sender: TObject);
+var
+  SelectedGUID: TGUID;
+  I: integer;
+  Division: TDivision;
 begin
-  Self.LoadFromBD;
+  { Код до "case" нужен что бы после обновления оказалось выбранным
+    тоже самое подразделение и соответствующим образом был обновлен
+    график и список сотрудников}
+  Division := TDivision(tvDivision.Items.Item[0].Data);
+  if Assigned(tvDivision.Selected.Data) then begin
+    SelectedGUID := TDivision(tvDivision.Selected.Data).GUID;
+    Self.LoadFromBD;
+    Self.UpdateDivisionsTV(Self.tvDivision);
+    for I := 0 to tvDivision.Items.Count - 1 do
+      if IsEqualGUID(TDivision(tvDivision.Items[I].Data).GUID, SelectedGUID) then begin
+        tvDivision.Selected := tvDivision.Items[I];
+        Division := TDivision(tvDivision.Items[I].Data);
+        Break;
+      end;
+  end else begin
+    Self.LoadFromBD;
+    Self.UpdateDivisionsTV(Self.tvDivision);
+    tvDivision.Selected := tvDivision.Items[0];
+  end;
   case pcPages.ActivePageIndex of
     0: Self.UpdateDivisionPage(Self);
-    1: Self.UpdatePersonPage(Self);
+    1: Self.UpdatePersonList(Division);
   end;
   Self.SetModified(False);
 end;
