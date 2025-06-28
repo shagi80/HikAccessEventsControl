@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls, TWebButton, ExtCtrls, TheAPIThreadEventsLoader,
-  TheAPIThreadStateLoader, Grids;
+  TheAPIThreadStateLoader, Grids, TheBaseBlockManager;
 
 type
   TfrmProcess = class(TForm)
@@ -30,6 +30,7 @@ type
     FDevStatuses: TDeviceStatuses;
     StateLoader: TAPIStateLoader;
     EventsLoader: TAPIThreadEventsLoader;
+    BaseBlockManger: TBaseBlockManager;
     procedure ResponseState(Sender: TObject);
     procedure ResponseEvents(Sender: TObject);
     procedure StopResponse(Sender: TObject);
@@ -49,7 +50,7 @@ implementation
 {$R *.dfm}
 
 uses
-  DateUtils;
+  DateUtils, TheSettings;
 
 
 procedure TfrmProcess.FormShow(Sender: TObject);
@@ -106,6 +107,7 @@ begin
   pbProcess.Max := 100;
   tmProgress.Enabled := True;
   StateLoader := TAPIStateLoader.Create(FEndTime);
+  StateLoader.FreeOnTerminate := True;
   StateLoader.OnGetdata := Self.OnGetState;
   StateLoader.Resume;
 end;
@@ -122,6 +124,10 @@ begin
     EventsLoader.OnGetAll := nil;
     EventsLoader.Terminate;
     EventsLoader := nil;
+    if Assigned(BaseBlockManger) then begin
+      BaseBlockManger.Free;
+      BaseBlockManger := nil;
+    end;
   end;
   SetLength(FDevStatuses, 0);
   lbProcess.Font.Color := clRed;
@@ -148,12 +154,28 @@ begin
 end;
 
 procedure TfrmProcess.ResponseEvents(Sender: TObject);
+var
+  BlockEndTime: integer;
+  Text: string;
 begin
+  // Проверяем, что файл базы данных не заблокирован для записи
+  BaseBlockManger := TBaseBlockManager.Create(Settings.GetInstance.DBFileName);
+  if BaseBlockManger.CheckBlock(BlockEndTime) then begin
+    Text := 'Файл базы данных заблокирован !' + chr(13)
+      + 'Очевидно, какой-то другой пользователь уже производит чтение событий.'
+      + chr(13) + 'Подолждите еще ' + IntToStr(BlockEndTime)
+      + ' минут и проробуйте снова. Не забудьте обновить данные.';
+    MessageDlg(Text, mtWarning, [mbOk], 0);
+    BaseBlockManger.Free;
+    Exit;
+  end;
+  BaseBlockManger.SetBlock(now);
   PrepareBtnForStop;
   lbProcess.Font.Color := clNavy;
   lbProcess.Caption := 'Начинается получение данных ...';
   pbProcess.Position := 0;
   EventsLoader := TAPIThreadEventsLoader.Create(FEndTime);
+  EventsLoader.FreeOnTerminate := True;
   EventsLoader.OnGetPortion := Self.OndGetPortion;
   EventsLoader.OnGetAll := Self.OnGetAll;
   EventsLoader.Resume;
@@ -165,6 +187,7 @@ var
   AllDevEnabled: boolean;
   LastEventDateTime: TDateTime;
 begin
+  StateLoader := nil;
   tmProgress.Enabled := False;
   AllDevEnabled := True;
   FEventsCount := 0;
@@ -220,6 +243,9 @@ end;
 
 procedure TfrmProcess.OnGetAll(Count: integer);
 begin
+  BaseBlockManger.Free;
+  BaseBlockManger := nil;
+  EventsLoader := nil;
   lbProcess.Font.Color := clGreen;
   lbProcess.Caption := 'Все события успешно получены !';
   PrepareBtnForBegin;

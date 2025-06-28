@@ -45,7 +45,8 @@ uses
   DivisionEditWin in 'DialogWin\DivisionEditWin.pas' {frmDivisionEdit},
   ProgressWin in 'DialogWin\ProgressWin.pas' {frmProgress},
   TheAnalysisByMinuteThread in 'Analysis\TheAnalysisByMinuteThread.pas',
-  SettingsWin in 'DialogWin\SettingsWin.pas' {frmSettings};
+  SettingsWin in 'DialogWin\SettingsWin.pas' {frmSettings},
+  TheBaseBlockManager in 'HikAPI\TheBaseBlockManager.pas';
 
 {$R *.RES}
 
