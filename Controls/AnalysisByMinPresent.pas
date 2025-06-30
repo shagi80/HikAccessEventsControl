@@ -310,6 +310,7 @@ begin
     case PersonState.StateArray[I].EventState of
       esHooky, esEarlyFromShiftOrBreak, esLateToShift, esLateFromBreak: AColor := clRed;
       esWork: AColor := clGreen;
+      esWorkOnBreak: AColor := $008AC49B;
       esOvertime: AColor := clYellow;
     end;
     DrawLine(I, EventY, 10, AColor);

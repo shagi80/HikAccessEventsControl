@@ -7,7 +7,8 @@ uses SysUtils, Contnrs, Controls, Classes, SQLiteTable3, StdCtrls, TheSchedule,
 
 type
   TEventState = (esNone, esRest, esOvertime, esWork, esEarlyBreak,
-    esEarlyFromShiftOrBreak, esLateFromBreak, esLateToShift, esBreak, esHooky);
+    esEarlyFromShiftOrBreak, esLateFromBreak, esLateToShift, esBreak, esHooky,
+    esWorkOnBreak);
 
   TMinuteState = record
     Presence: boolean;
@@ -235,6 +236,8 @@ begin
       ScheduleState := FScheduleStateArray[MinuteInd];
       Presence := FMinuteState[PersonInd].StateArray[MinuteInd].Presence;
       EventState := esRest;
+      if (MinuteInd > 0) then
+        PrevEventState := FMinuteState[PersonInd].StateArray[MinuteInd - 1].EventState;
       case ScheduleState of
         // ≈сли в графике пусто, а по факту работа - значит переработка
         ssNone: if Presence then EventState := esOvertime
@@ -246,7 +249,6 @@ begin
             // детализации смотрим предыдущие событи€
             EventState := esHooky;
             if (MinuteInd > 0) then begin
-              PrevEventState := FMinuteState[PersonInd].StateArray[MinuteInd - 1].EventState;
               case PrevEventState of
                 // ≈сли перед эти работал или ушел раньше - значит ушел раньше
                 esWork, esEarlyFromShiftOrBreak: EventState := esEarlyFromShiftOrBreak;
@@ -258,7 +260,9 @@ begin
             end;
           end;
         // ѕерерыв - всегда перерыв
-        ssBreak: EventState := esBreak;
+        //ssBreak: EventState := esBreak;
+        ssBreak: if Presence then EventState := esWorkOnBreak
+          else EventState := esBreak;
         // ¬ допустимые периоды опозданий отсутсвие засчитываетс€ как отдых
         // или перерыв
         ssEarlyFromShist, ssLateToShift: if Presence then EventState := esWork
