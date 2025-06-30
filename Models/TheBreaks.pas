@@ -86,6 +86,10 @@ begin
   StartMin := MinuteOfTheDay(Self.FStartTime);
   EndMin := StartMin + Self.GetLengthOfMinutes;
   Result := ssNone;
+  if (MinNum >= StartMin) and (MinNum <= EndMin) then begin
+    Result := ssBreak;
+    Exit;
+  end;
   if Self.FLateness > 0 then begin
     if (MinNum > EndMin) and ((MinNum - EndMin) < Self.FLateness) then begin
       Result := ssLateFromBreak;
@@ -95,10 +99,7 @@ begin
       Result := ssEarlyToBreak;
       Exit;
     end;
-    Dec(StartMin, - Self.FLateness);
-    Inc(EndMin,Self.FLateness);
   end;
-  if (MinNum >= StartMin) and (MinNum <= EndMin) then Result := ssBreak;
 end;
 
 
