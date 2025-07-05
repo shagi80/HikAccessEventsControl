@@ -23,9 +23,14 @@ type
     btnUpdate: TWebSpeedButton;
     btnPreviosMonth: TWebSpeedButton;
     pnMain: TPanel;
+    Panel3: TPanel;
     Panel2: TPanel;
     lbMessage: TLabel;
     btnClose: TWebSpeedButton;
+    lbWorkToBreak: TLabel;
+    lbOvertime: TLabel;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
     procedure btnCloseClick(Sender: TObject);
     procedure btnUpdateClick(Sender: TObject);
     procedure btnPreviosMonthClick(Sender: TObject);
@@ -161,6 +166,7 @@ var
   Division: TDivision;
   Person: TPerson;
   I: integer;
+  Str: string;
 begin
   FAnalysisByMinPresent.Visible := False;
   if cbDivision.ItemIndex < 0 then begin
@@ -189,10 +195,23 @@ begin
   end;
   //
   lbMessage.Font.Color := clNavy;
-  lbMessage.Caption := Format('График для подразделения "%s": %s',
+  lbMessage.Caption := Format('Подразделение "%s". График "%s"',
       [Division.Title, Division.Schedule.Title]);
   Self.ChangeTitle(Division.Title + ' c ' + DateToStr(dtpStartDate.Date)
         + ' по ' + DateToStr(dtpEndDate.Date));
+  Str := 'Переработка не учитывается.';
+  if Division.Schedule.CanOvertime then begin
+    if Division.Schedule.OvertimeMin = 0 then
+      Str := 'Учитывается любая переработка.'
+        else Str := 'Учитывается переработка более '
+          + IntToStr(Division.Schedule.OvertimeMin) + ' минут.';
+      if Division.Schedule.UseOvertimeForHooky then Str := Str
+        + ' Переработка компенсирует опоздания.';
+  end;
+  lbOvertime.Caption := Str;
+  if not Division.Schedule.CanWorkToBreak then lbWorkToBreak.Caption := ''
+    else lbWorkToBreak.Caption := 'Разрешено работать в перерывы.';
+  //
   FAnalysisByMinute.SetParametrs(PersonList, Division.Schedule,
     dtpStartDate.Date, dtpEndDate.Date, HolydaysList);
   Thread := TAnalysisByMinuteThread.Create(True);

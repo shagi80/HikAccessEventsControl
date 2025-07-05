@@ -237,15 +237,21 @@ var
   Str: string;
   ShiftTitles: TStringList;
 begin
-  grGrid.ColCount := 5;
+  grGrid.ColCount := 7;
   grGrid.Cells[0, 0] := 'Название';
   grGrid.Cells[1, 0] := 'Дата начала';
   grGrid.Cells[2, 0] := 'Тип';
   grGrid.Cells[3, 0] := 'Цикличность';
   grGrid.Cells[4, 0] := 'Смены в графике';
-  grGrid.ColWidths[0] := 250;
-  for I := 2 to 3 do grGrid.ColWidths[i] := 150;
-  grGrid.ColWidths[4] := 400;
+  grGrid.Cells[5, 0] := 'Работа в перерыв';
+  grGrid.Cells[6, 0] := 'Переработка';
+  grGrid.ColWidths[0] := 220;
+  grGrid.ColWidths[1] := 80;
+  grGrid.ColWidths[2] := 100;
+  grGrid.ColWidths[3] := 90;
+  grGrid.ColWidths[4] := 350;
+  grGrid.ColWidths[5] := 100;
+  grGrid.ColWidths[6] := 400;
   if SchedulesList.Count = 0 then begin
     grGrid.RowCount := 2;
     Exit;
@@ -279,6 +285,17 @@ begin
     end;
     grGrid.Cells[4, I + 1] := Str;
     ShiftTitles.Free;
+    if Schedule.CanWorkToBreak then grGrid.Cells[5, I + 1] := 'разрешено'
+      else  grGrid.Cells[5, I + 1] := 'не разрешено';
+    Str := 'не учитывается';
+    if Schedule.CanOvertime then begin
+      if Schedule.OvertimeMin = 0 then Str := 'учитывается любая'
+        else Str := 'более ' + IntToStr(Schedule.OvertimeMin)
+          + ' минут';
+      if Schedule.UseOvertimeForHooky then Str := Str
+        + ', используется для компенсации опозданий';
+    end;
+    grGrid.Cells[6, I + 1] := Str;
     grGrid.Objects[0, I + 1] := Schedule;
   end
 

@@ -64,5 +64,7 @@
     <Transaction>2025.06.24 18:46:06.128.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\DialogWin\SettingsWin.pas</Transaction>
     <Transaction>2025.06.24 18:46:06.128.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\DialogWin\SettingsWin.dfm</Transaction>
     <Transaction>2025.06.28 20:10:20.757.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\HikAPI\TheBaseBlockManager.pas</Transaction>
+    <Transaction>2025.07.02 18:27:18.053.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Analysis\TheTotalTimeCalculator.pas</Transaction>
+    <Transaction>2025.07.04 19:15:31.874.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Analysis\TheTotalTimeCalculator.pas=</Transaction>
   </Transactions>
 </BorlandProject>

@@ -132,6 +132,7 @@ begin
   frmProcess := TfrmProcess.Create(Self);
   frmProcess.ShowModal;
   frmProcess.Free;
+  SetButtonsEnabled;
 end;
 
 procedure TMainForm.btnDivisionReportClick(Sender: TObject);

@@ -3,7 +3,7 @@ object frmScheduleEdit: TfrmScheduleEdit
   Top = 0
   BorderStyle = bsDialog
   Caption = #1064#1072#1073#1083#1086#1085' '#1075#1088#1072#1092#1080#1082#1072
-  ClientHeight = 312
+  ClientHeight = 376
   ClientWidth = 819
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
@@ -35,7 +35,7 @@ object frmScheduleEdit: TfrmScheduleEdit
     Left = 681
     Top = 0
     Width = 138
-    Height = 312
+    Height = 376
     Align = alRight
     Brush.Color = clBlack
     ExplicitHeight = 320
@@ -139,31 +139,38 @@ object frmScheduleEdit: TfrmScheduleEdit
     SpaceWidth = 5
   end
   object Label5: TLabel
-    Left = 312
-    Top = 61
+    Left = 23
+    Top = 99
     Width = 65
     Height = 13
     Caption = #1044#1072#1090#1072' '#1085#1072#1095#1072#1083#1072
   end
   object Label1: TLabel
-    Left = 24
-    Top = 96
+    Left = 23
+    Top = 136
     Width = 38
     Height = 13
     Caption = #1055#1077#1088#1080#1086#1076
   end
+  object lbOvertimeMin: TLabel
+    Left = 370
+    Top = 99
+    Width = 118
+    Height = 13
+    Caption = #1055#1088#1077#1088#1077#1073#1086#1090#1082#1072' '#1087#1086#1089#1083#1077', '#1084#1080#1085
+  end
   object edTitle: TEdit
     Left = 120
     Top = 23
-    Width = 385
+    Width = 521
     Height = 21
     TabOrder = 0
     Text = 'edTitle'
     OnChange = edTitleChange
   end
   object dtpStartDate: TDateTimePicker
-    Left = 408
-    Top = 58
+    Left = 119
+    Top = 96
     Width = 97
     Height = 21
     Date = 45798.834614710650000000
@@ -171,8 +178,8 @@ object frmScheduleEdit: TfrmScheduleEdit
     TabOrder = 1
   end
   object edLateness: TEdit
-    Left = 120
-    Top = 93
+    Left = 119
+    Top = 133
     Width = 49
     Height = 21
     TabOrder = 2
@@ -195,8 +202,8 @@ object frmScheduleEdit: TfrmScheduleEdit
   end
   object pnPicture: TScrollBox
     Left = 24
-    Top = 144
-    Width = 625
+    Top = 208
+    Width = 617
     Height = 145
     BevelInner = bvNone
     BevelOuter = bvNone
@@ -204,5 +211,41 @@ object frmScheduleEdit: TfrmScheduleEdit
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 4
+  end
+  object cbCanOvertime: TCheckBox
+    Left = 368
+    Top = 60
+    Width = 273
+    Height = 17
+    Alignment = taLeftJustify
+    Caption = #1059#1095#1080#1090#1099#1074#1072#1090#1100' '#1087#1077#1088#1077#1088#1072#1073#1086#1090#1082#1091
+    TabOrder = 5
+    OnClick = SetEnabledOvertimeControl
+  end
+  object edOvertimeMin: TEdit
+    Left = 560
+    Top = 96
+    Width = 81
+    Height = 21
+    TabOrder = 6
+    Text = 'edOvertimeMin'
+  end
+  object cbOvertimeForHooky: TCheckBox
+    Left = 368
+    Top = 135
+    Width = 273
+    Height = 17
+    Alignment = taLeftJustify
+    Caption = #1050#1086#1084#1087#1077#1085#1089#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1086#1075#1091#1083#1099
+    TabOrder = 7
+  end
+  object cbWorkInBreak: TCheckBox
+    Left = 368
+    Top = 172
+    Width = 273
+    Height = 17
+    Alignment = taLeftJustify
+    Caption = #1052#1086#1078#1085#1086' '#1088#1072#1073#1086#1090#1072#1090#1100' '#1074' '#1087#1077#1088#1077#1088#1099#1074#1099
+    TabOrder = 8
   end
 end

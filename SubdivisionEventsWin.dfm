@@ -3,7 +3,7 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
   Top = 0
   Caption = #1054#1090#1095#1077#1090' '#1087#1086' '#1087#1086#1076#1088#1072#1079#1076#1077#1083#1077#1085#1080#1102
   ClientHeight = 441
-  ClientWidth = 624
+  ClientWidth = 959
   Color = clWhite
   Constraints.MinHeight = 480
   Constraints.MinWidth = 640
@@ -20,6 +20,12 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object Bevel1: TBevel
+    Left = 448
+    Top = 56
+    Width = 50
+    Height = 50
+  end
   object Panel1: TPanel
     Left = 0
     Top = 0
@@ -345,7 +351,7 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
   object pnMain: TPanel
     Left = 161
     Top = 0
-    Width = 463
+    Width = 798
     Height = 441
     Align = alClient
     BevelOuter = bvNone
@@ -359,83 +365,137 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
     Font.Style = []
     ParentFont = False
     TabOrder = 1
-    object Panel2: TPanel
+    object Panel3: TPanel
       AlignWithMargins = True
-      Left = 10
-      Top = 10
-      Width = 443
-      Height = 33
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
+      Left = 13
+      Top = 13
+      Width = 772
+      Height = 50
       Margins.Bottom = 10
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite
       TabOrder = 0
-      object lbMessage: TLabel
-        Left = 0
-        Top = 0
-        Width = 4
-        Height = 33
+      object lbWorkToBreak: TLabel
+        Left = 29
+        Top = 32
+        Width = 3
+        Height = 18
         Align = alLeft
+        Color = clWhite
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Height = -13
+        Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
+        ParentColor = False
         ParentFont = False
-        Layout = tlCenter
+        ExplicitHeight = 13
+      end
+      object lbOvertime: TLabel
+        Left = 0
+        Top = 32
+        Width = 3
+        Height = 18
+        Align = alLeft
+        Color = clWhite
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        ExplicitHeight = 13
+      end
+      object Bevel2: TBevel
+        Left = 3
+        Top = 32
+        Width = 26
+        Height = 18
+        Align = alLeft
+        Shape = bsSpacer
+        Style = bsRaised
+        ExplicitLeft = 31
+        ExplicitTop = 34
         ExplicitHeight = 16
       end
-      object btnClose: TWebSpeedButton
-        AlignWithMargins = True
-        Left = 403
+      object Panel2: TPanel
+        Left = 0
         Top = 0
-        Width = 40
-        Height = 33
+        Width = 772
+        Height = 32
+        Margins.Left = 0
         Margins.Top = 0
         Margins.Right = 0
-        Margins.Bottom = 0
-        Aligment = taCenter
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE3E3E3232323ACACACFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFACACAC232323E3E3E3FFFFFFFFFFFFFFFFFFE7E7E7
-          1F1F1F333333181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFACACAC1818183333
-          331F1F1FE7E7E7FFFFFFFFFFFF919191333333FDFDFDA3A3A3181818ACACACFF
-          FFFFFFFFFFACACAC181818A3A3A3FDFDFD333333919191FFFFFFFFFFFFFCFCFC
-          3B3B3B9E9E9EFFFFFFA3A3A3151515A5A5A5ACACAC1616169B9B9BFFFFFFA6A6
-          A6353535FAFAFAFFFFFFFFFFFFFFFFFFFDFDFD464646A3A3A3FFFFFFA3A3A318
-          1818161616A1A1A1FFFFFFA6A6A6474747FDFDFDFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFDFDFD515151A3A3A3FFFFFFA7A7A7A7A7A7FFFFFFA3A3A3505050FDFD
-          FDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFD414141A7A7A7FF
-          FFFFFFFFFFA9A9A9414141FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFACACAC161616A5A5A5FFFFFFFFFFFFA6A6A6171717A6A6A6FFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACACAC181818A3A3A3FFFFFFA7
-          A7A7A7A7A7FFFFFFA3A3A3181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          ACACAC161616A1A1A1FFFFFFA6A6A65A5A5A5B5B5BA3A3A3FFFFFFA3A3A31717
-          17A6A6A6FFFFFFFFFFFFFFFFFFC9C9C91616169B9B9BFFFFFFA6A6A6565656FC
-          FCFCFDFDFD5A5A5A9E9E9EFFFFFFA3A3A3151515C9C9C9FFFFFFFFFFFFA9A9A9
-          343434FDFDFDA3A3A35B5B5BFDFDFDFFFFFFFFFFFFFDFDFD5B5B5BA3A3A3FDFD
-          FD343434A9A9A9FFFFFFFFFFFFFFFFFF9E9E9E3C3C3C5B5B5BFDFDFDFFFFFFFF
-          FFFFFFFFFFFFFFFFFDFDFD5B5B5B3D3D3D9F9F9FFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFD1D1D1FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDD1D1
-          D1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-        Color = 10329087
-        SelectColor = 6579455
-        ActiveColor = clMedGray
-        DisableFontColor = clGray
-        SelectFontColor = clBlack
-        ActiveFontColor = clBlack
-        OnClick = btnCloseClick
-        Margin = 0
-        Align = alRight
-        SpaceWidth = 2
-        ExplicitLeft = 736
+        Margins.Bottom = 2
+        Align = alTop
+        BevelOuter = bvNone
+        Color = clWhite
+        TabOrder = 0
+        object lbMessage: TLabel
+          Left = 0
+          Top = 0
+          Width = 4
+          Height = 32
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Layout = tlCenter
+          ExplicitHeight = 16
+        end
+        object btnClose: TWebSpeedButton
+          AlignWithMargins = True
+          Left = 736
+          Top = 0
+          Width = 36
+          Height = 32
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          Aligment = taCenter
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE3E3E3232323ACACACFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFACACAC232323E3E3E3FFFFFFFFFFFFFFFFFFE7E7E7
+            1F1F1F333333181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFACACAC1818183333
+            331F1F1FE7E7E7FFFFFFFFFFFF919191333333FDFDFDA3A3A3181818ACACACFF
+            FFFFFFFFFFACACAC181818A3A3A3FDFDFD333333919191FFFFFFFFFFFFFCFCFC
+            3B3B3B9E9E9EFFFFFFA3A3A3151515A5A5A5ACACAC1616169B9B9BFFFFFFA6A6
+            A6353535FAFAFAFFFFFFFFFFFFFFFFFFFDFDFD464646A3A3A3FFFFFFA3A3A318
+            1818161616A1A1A1FFFFFFA6A6A6474747FDFDFDFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFDFDFD515151A3A3A3FFFFFFA7A7A7A7A7A7FFFFFFA3A3A3505050FDFD
+            FDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFD414141A7A7A7FF
+            FFFFFFFFFFA9A9A9414141FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFACACAC161616A5A5A5FFFFFFFFFFFFA6A6A6171717A6A6A6FFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACACAC181818A3A3A3FFFFFFA7
+            A7A7A7A7A7FFFFFFA3A3A3181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            ACACAC161616A1A1A1FFFFFFA6A6A65A5A5A5B5B5BA3A3A3FFFFFFA3A3A31717
+            17A6A6A6FFFFFFFFFFFFFFFFFFC9C9C91616169B9B9BFFFFFFA6A6A6565656FC
+            FCFCFDFDFD5A5A5A9E9E9EFFFFFFA3A3A3151515C9C9C9FFFFFFFFFFFFA9A9A9
+            343434FDFDFDA3A3A35B5B5BFDFDFDFFFFFFFFFFFFFDFDFD5B5B5BA3A3A3FDFD
+            FD343434A9A9A9FFFFFFFFFFFFFFFFFF9E9E9E3C3C3C5B5B5BFDFDFDFFFFFFFF
+            FFFFFFFFFFFFFFFFFDFDFD5B5B5B3D3D3D9F9F9FFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFD1D1D1FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDD1D1
+            D1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+          Color = 10329087
+          SelectColor = 6579455
+          ActiveColor = clMedGray
+          DisableFontColor = clGray
+          SelectFontColor = clBlack
+          ActiveFontColor = clBlack
+          OnClick = btnCloseClick
+          Margin = 0
+          Align = alRight
+          SpaceWidth = 2
+        end
       end
     end
   end

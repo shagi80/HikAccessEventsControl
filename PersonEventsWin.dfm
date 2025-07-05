@@ -53,7 +53,7 @@ object frmPervonEvents: TfrmPervonEvents
         Left = 0
         Top = 0
         Width = 4
-        Height = 33
+        Height = 16
         Align = alLeft
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -62,7 +62,6 @@ object frmPervonEvents: TfrmPervonEvents
         Font.Style = []
         ParentFont = False
         Layout = tlCenter
-        ExplicitHeight = 16
       end
       object btnClose: TWebSpeedButton
         AlignWithMargins = True
@@ -135,7 +134,7 @@ object frmPervonEvents: TfrmPervonEvents
         AlignWithMargins = True
         Left = 13
         Top = 13
-        Width = 269
+        Width = 68
         Height = 16
         Margins.Bottom = 10
         Align = alTop
@@ -146,7 +145,6 @@ object frmPervonEvents: TfrmPervonEvents
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        ExplicitWidth = 68
       end
       object lbPerson: TListBox
         AlignWithMargins = True
@@ -189,10 +187,6 @@ object frmPervonEvents: TfrmPervonEvents
         Lines.Strings = (
           'reEvents')
         TabOrder = 0
-        ExplicitLeft = 144
-        ExplicitTop = 152
-        ExplicitWidth = 185
-        ExplicitHeight = 89
       end
     end
   end
@@ -210,7 +204,7 @@ object frmPervonEvents: TfrmPervonEvents
       AlignWithMargins = True
       Left = 20
       Top = 20
-      Width = 131
+      Width = 80
       Height = 13
       Margins.Left = 20
       Margins.Top = 20
@@ -223,13 +217,12 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      ExplicitWidth = 80
     end
     object Label6: TLabel
       AlignWithMargins = True
       Left = 20
       Top = 120
-      Width = 131
+      Width = 83
       Height = 13
       Margins.Left = 20
       Margins.Top = 10
@@ -242,13 +235,12 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      ExplicitWidth = 83
     end
     object Label7: TLabel
       AlignWithMargins = True
       Left = 20
       Top = 70
-      Width = 131
+      Width = 65
       Height = 13
       Margins.Left = 20
       Margins.Top = 10
@@ -261,13 +253,12 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      ExplicitWidth = 65
     end
     object Label8: TLabel
       AlignWithMargins = True
       Left = 20
       Top = 388
-      Width = 131
+      Width = 116
       Height = 13
       Margins.Left = 20
       Margins.Top = 70
@@ -280,8 +271,6 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      ExplicitTop = 357
-      ExplicitWidth = 116
     end
     object btnCurrentMonth: TWebSpeedButton
       Tag = 3
@@ -468,7 +457,7 @@ object frmPervonEvents: TfrmPervonEvents
       Align = alTop
       Style = csDropDownList
       Ctl3D = True
-      ItemHeight = 13
+      ItemHeight = 0
       ParentCtl3D = False
       TabOrder = 0
       OnChange = cbDivisionChange

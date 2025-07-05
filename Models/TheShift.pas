@@ -177,12 +177,25 @@ end;
 function TShift.GetScheduleState(MinNum: integer): TScheduleState;
 var
   StartMin, EndMin: integer;
+  StartIn, EndOut: integer;
   BreakState: TScheduleState;
   I: integer;
 begin
   StartMin := MinuteOfTheDay(Self.FStartTime);
-  EndMin := StartMin + Self.GetLengthOfMinutes;
+  EndMin := StartMin + Self.GetLengthOfMinutes - 1;
+  StartIn := MinuteOfTheDay(Self.FInStart);
+  EndOut := MinuteOfTheDay(Self.FOutFinish);
   Result := ssNone;
+  // Если попадаем во время входа или выхода
+  if (MinNum < StartMin) and (MinNum >= StartIn) then begin
+    Result := ssInTime;
+    Exit;
+  end;
+  if (MinNum > EndMin) and (MinNum <= EndOut) then begin
+    Result := ssOutTime;
+    Exit;
+  end; 
+  // Усли попадаем в периоды допустимых отклонений
   if Self.FLateness > 0 then begin
     if (MinNum > StartMin) and ((MinNum - StartMin) < Self.FLateness) then begin
       Result := ssLateToShift;
@@ -195,6 +208,7 @@ begin
     Inc(StartMin, Self.FLateness);
     Dec(EndMin, - Self.FLateness);
   end;
+  // Если попадаем в смену
   if (MinNum >= StartMin) and (MinNum <= EndMin) then
     Result := ssWork;
   for I := 0 to Self.FBreaks.Count - 1 do begin

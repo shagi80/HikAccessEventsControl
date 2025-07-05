@@ -21,6 +21,11 @@ type
     Label1: TLabel;
     cbType: TComboBox;
     pnPicture: TScrollBox;
+    cbCanOvertime: TCheckBox;
+    lbOvertimeMin: TLabel;
+    edOvertimeMin: TEdit;
+    cbOvertimeForHooky: TCheckBox;
+    cbWorkInBreak: TCheckBox;
     procedure edTitleChange(Sender: TObject);
     procedure cbTypeChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -29,6 +34,7 @@ type
     procedure btnsaveClick(Sender: TObject);
     procedure edLatenessChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure SetEnabledOvertimeControl(Sender: TObject);
   private
     { Private declarations }
     FSchedule: TSchedule;
@@ -70,6 +76,13 @@ begin
   FPresent.Free;
 end;
 
+procedure TfrmScheduleEdit.SetEnabledOvertimeControl(Sender: TObject);
+begin
+  lbOvertimeMin.Enabled := cbCanOvertime.Checked;
+  edOvertimeMin.Enabled := cbCanOvertime.Checked;
+  cbOvertimeForHooky.Enabled := cbCanOvertime.Checked;
+end;
+
 { Основная процедура. }
 
 function TfrmScheduleEdit.Edit(var Schedule: TSchedule; ShiftList: TShiftList): boolean;
@@ -81,11 +94,20 @@ begin
   edLateness.Text := IntToStr(FSchedule.DayCount);
   FPresent.Schedule := FSchedule;
   cbType.ItemIndex := Ord(FSchedule.ScheduleType);
+  cbCanOvertime.Checked := FSchedule.CanOvertime;
+  edOvertimeMin.Text := IntToStr(FSchedule.OvertimeMin);
+  cbOvertimeForHooky.Checked := FSchedule.UseOvertimeForHooky;
+  cbWorkInBreak.Checked := FSchedule.CanWorkToBreak;
   SetSaveBtnEnabled;
+  SetEnabledOvertimeControl(Self);
 
   Result := (Self.ShowModal = mrOk);
   if Result then begin
     FSchedule.StartDate := DateOf(dtpStartDate.Date);
+    FSchedule.CanOvertime:= cbCanOvertime.Checked;
+    FSchedule.OvertimeMin := StrToIntDef(edOvertimeMin.Text, 0);
+    FSchedule.UseOvertimeForHooky := cbOvertimeForHooky.Checked;
+    FSchedule.CanWorkToBreak := cbWorkInBreak.Checked;
     Schedule.Copy(FSchedule);
   end;
 end;

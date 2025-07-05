@@ -2145,7 +2145,6 @@ object MainForm: TMainForm
       Font.Style = []
       ParentColor = False
       ParentFont = False
-      ExplicitLeft = 757
       ExplicitHeight = 13
     end
   end

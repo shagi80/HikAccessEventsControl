@@ -8,7 +8,7 @@ uses
 
 type
   TScheduleState = (ssNone, ssWork, ssBreak, ssEarlyToBreak, ssEarlyFromShist,
-    ssLateFromBreak, ssLateToShift);
+    ssLateFromBreak, ssLateToShift, ssInTime, ssOutTime);
 
   TScheduleStateArray = array of TScheduleState;
 
@@ -84,22 +84,22 @@ var
   StartMin, EndMin: integer;
 begin
   StartMin := MinuteOfTheDay(Self.FStartTime);
-  EndMin := StartMin + Self.GetLengthOfMinutes;
+  EndMin := StartMin + Self.GetLengthOfMinutes - 1;
   Result := ssNone;
   if (MinNum >= StartMin) and (MinNum <= EndMin) then begin
     Result := ssBreak;
     Exit;
   end;
   if Self.FLateness > 0 then begin
-    if (MinNum > EndMin) and ((MinNum - EndMin) < Self.FLateness) then begin
+    if (MinNum > EndMin) and ((MinNum - EndMin) <= Self.FLateness) then begin
       Result := ssLateFromBreak;
       Exit;
     end;
-    if (MinNum < StartMin) and ((StartMin - MinNum) < Self.FLateness) then begin
+    if (MinNum < StartMin) and ((StartMin - MinNum) <= Self.FLateness) then begin
       Result := ssEarlyToBreak;
       Exit;
     end;
-  end;
+  end; 
 end;
 
 

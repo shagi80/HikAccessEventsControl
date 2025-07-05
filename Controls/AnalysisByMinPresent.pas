@@ -35,8 +35,8 @@ type
     procedure SetMinPerPixel(Value: integer);
     procedure SetShowHours;
     procedure PrepareDayBitMap(ACol, ARow: integer; var TargetBmp: Graphics.TBitmap);
-    procedure CalculateDayState(DayNum, PersonInd: integer;
-      var TotalTime: TEventsTotalTime; var ScheduleTime: integer);
+    procedure WriteTotalTime(TotalDayResylt: TPersonResult; ARow: integer);
+    procedure DrawDayMark(DayNum, PersonInd: integer; Rct: TRect);
   protected
     procedure DrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState); override;
     procedure DblClick; override;
@@ -140,7 +140,8 @@ begin
   end;
 end;
 
-procedure TAnalysisByMinPresent.UpdateAnalys;
+procedure TAnalysisByMinPresent.WriteTotalTime(TotalDayResylt: TPersonResult;
+  ARow: integer);
 
   function FormatMinutes(Value: integer): string;
   var
@@ -151,9 +152,19 @@ procedure TAnalysisByMinPresent.UpdateAnalys;
     Result := IntToStr(h) + ' ч ' + FormatFloat('00', m) + ' мин';
   end;
 
+begin
+  Self.Cells[1, ARow] := FormatMinutes(TotalDayResylt.Schedule);
+  Self.Cells[2, ARow] := FormatMinutes(TotalDayResylt.TotalWork); 
+  if TotalDayResylt.Hooky = 0 then Self.Cells[3, ARow] := 'нет'
+    else Self.Cells[3, ARow] := FormatMinutes(TotalDayResylt.Hooky);
+  if TotalDayResylt.Overtime > 0 then
+    Self.Cells[4, ARow] := FormatMinutes(TotalDayResylt.Overtime)
+      else Self.Cells[4, ARow] := 'нет'; 
+end;
+
+procedure TAnalysisByMinPresent.UpdateAnalys;
 var
   ARow: integer;
-  HookyTime, Overtime: integer;
   PersonStateHandler: TPersonStateHandler;
 begin
   Self.Enabled := False;
@@ -168,7 +179,7 @@ begin
   Self.Enabled := True;
   Self.Cells[0, 0] := 'ФИО сотрудника';
   Self.Cells[1, 0] := 'Время по графику';
-  Self.Cells[2, 0] := 'Отработанное время (без перерывов)';
+  Self.Cells[2, 0] := 'Отработанно по норме';
   Self.Cells[3, 0] := 'Прогулы, нарушения';
   Self.Cells[4, 0] := 'Переработка';
   Self.RowCount := FAnalysis.PersonCount + Self.FixedRows;
@@ -181,22 +192,10 @@ begin
   for ARow := FixedRows to RowCount - 1 do begin
     Self.Cells[0, ARow] := FAnalysis.PersonState[ARow - FixedRows].PersonName;
     Self.Objects[0, ARow] := Self.CreatePersonBitmap(ARow);
-    Self.Cells[1, ARow] := FormatMinutes(FAnalysis.ScheduleTotalTime);
-    Self.Cells[2, ARow] := FormatMinutes(FAnalysis.PersonState[ARow - 1].TotalTime.TotalWork);
-    HookyTime := FAnalysis.PersonState[ARow - 1].TotalTime.EarlyFromShiftOrBreak
-      + FAnalysis.PersonState[ARow - 1].TotalTime.LateToShift
-      + FAnalysis.PersonState[ARow - 1].TotalTime.LateFromBreak
-      + FAnalysis.PersonState[ARow - 1].TotalTime.Hooky;
-    if HookyTime = 0 then Self.Cells[3, ARow] := 'нет'
-      else Self.Cells[3, ARow] := FormatMinutes(HookyTime);
-    Overtime := FAnalysis.PersonState[ARow - 1].TotalTime.TotalWork
-      - FAnalysis.ScheduleTotalTime;
-    if Overtime > 0 then Self.Cells[4, ARow] := FormatMinutes(Overtime)
-      else Self.Cells[4, ARow] := 'нет';
+    Self.WriteTotalTime(FAnalysis.PersonState[ARow - 1].TotalDayResult, ARow);
     PersonStateHandler := TPersonStateHandler.Create(FAnalysis.PersonState[ARow - 1]);
     Self.Objects[Self.FTexColCount, ARow] := PersonStateHandler;
     if Assigned(Self.FTikEvent) then Self.FTikEvent(Self);
-    
   end;
   if self.Visible then Self.Repaint;
 end;
@@ -260,7 +259,8 @@ begin
       ssWork: DrawLine(I, rgb(119, 180, 219));
       ssEarlyToBreak, ssEarlyFromShist, ssLateFromBreak,
         ssLateToShift: DrawLine(I, rgb(154, 214, 254));
-      ssBreak: DrawLine(I, rgb(182, 209, 229));
+      ssBreak: DrawLine(I, rgb(214, 214, 214));
+      ssInTime, ssOutTime: DrawLine(I, rgb(214, 214, 214));
     end;
   //
   Rct := HeaderBitmap.Canvas.ClipRect;
@@ -318,6 +318,20 @@ begin
   Result := Buf;
 end;
 
+procedure TAnalysisByMinPresent.DrawDayMark(DayNum, PersonInd: integer; Rct: TRect);
+var
+  DayResult: TDayResult;
+begin
+  DayResult := FAnalysis.PersonState[PersonInd].DayResult[DayNum - 1];
+  if DayResult.State = dsNormal then Exit;
+  Rct.Left := Rct.Right - 6;
+  Rct.Bottom := Rct.top + 6;
+  OffsetRect(Rct, -1, 1);
+  if DayResult.State = dsHooky then Canvas.Brush.Color := clRed;
+  if DayResult.State = dsOvertime then Canvas.Brush.Color := clYellow;
+  Canvas.Ellipse(Rct);
+end;
+
 procedure TAnalysisByMinPresent.DrawCell(ACol, ARow: Longint; ARect: TRect;
   AState: TGridDrawState);
 var
@@ -337,6 +351,7 @@ begin
       Rct.Bottom := Bmp.Height;
       Canvas.CopyRect(ARect, Bmp.Canvas, Rct);
       if (ARow = 0)then DrawColHeader(ACol, ARect);
+      if (ARow > 0) then DrawDayMark(DayNum, (ARow - Self.FixedRows), ARect);
     end;
   if (ACol < Self.FTexColCount) then begin
     if ARow = 0 then Canvas.Brush.Color := Self.FixedColor
@@ -412,29 +427,12 @@ begin
   TargetBmp.Canvas.LineTo(TargetRct.Right, TargetRct.Top);
 end;
 
-procedure TAnalysisByMinPresent.CalculateDayState(DayNum, PersonInd: integer;
-  var TotalTime: TEventsTotalTime; var ScheduleTime: integer);
-var
-  I, StartMin, EndMin: integer;
-begin
-  StartMin := DayNum * 60 * 24;
-  EndMin := StartMin  + 60 * 24 - 1;
-  for I := StartMin to EndMin do begin
-    Self.FAnalysis.IncEventsTotalTime(
-      FAnalysis.PersonState[PersonInd].StateArray[I].EventState,
-      TotalTime);
-    if not(FAnalysis.ScheduleState[I] in [ssNone, ssBreak]) then
-      Inc(ScheduleTime);
-  end;
-end;
-
 procedure TAnalysisByMinPresent.DblClick;
 var
   Day: TDate;
   PersonStateHandler: TPersonStateHandler;
   TargetBmp: Graphics.TBitMap;
-  DayTotalTime: TEventsTotalTime;
-  DayScheduleTime: integer;
+  DayResult: TDayResult;
 begin
   if (Self.Row <= 0) or (Self.Col < Self.FTexColCount)
     or (not Assigned(Self.Objects[Self.FTexColCount, Self.Row])) then Exit;
@@ -443,16 +441,11 @@ begin
   Day := IncDay(FAnalysis.StartDate, Self.Col - Self.FTexColCount + 1);
   PersonStateHandler := TPersonStateHandler(
     Self.Objects[Self.FTexColCount, Self.Row]);
-  DayTotalTime.TotalWork := 0;
-  DayTotalTime.EarlyFromShiftOrBreak := 0;
-  DayTotalTime.LateFromBreak := 0;
-  DayTotalTime.LateToShift := 0;
-  DayTotalTime.Hooky := 0;
-  DayScheduleTime := 0;
-  CalculateDayState((Self.Col - Self.FTexColCount + 1), (Self.Row - 1),
-    DayTotalTime, DayScheduleTime);
-  frmPersonMinuteAnalysis.ShowAnalysis(PersonStateHandler.PersonState,
-    TargetBmp, Day, DayTotalTime, DayScheduleTime);
+  DayResult := PersonStateHandler.PersonState.DayResult[Self.Col
+    - Self.FTexColCount];
+  frmPersonMinuteAnalysis.ShowAnalysis(TargetBmp, Day, DayResult,
+    PersonStateHandler.PersonState.PersonName,
+    PersonStateHandler.PersonState.Pairs);
   TargetBmp.Free;
 end;
 

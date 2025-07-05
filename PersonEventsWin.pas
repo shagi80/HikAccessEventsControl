@@ -113,7 +113,6 @@ end;
 
 procedure TfrmPervonEvents.cbDivisionChange(Sender: TObject);
 var
-  PersonList: TStringList;
   Division: TDivision;
   Person: TPerson;
   I: integer;
@@ -191,8 +190,6 @@ var
   PersonList: TStringList;
   Division: TDivision;
   ADate: TDate;
-  DayNum: integer;
-  Total: TEventsTotalTime;
 begin
   if not Self.lbPerson.Visible then Exit; 
   if lbPerson.ItemIndex < 0 then begin
@@ -217,18 +214,18 @@ begin
     FAnalysisByMinute.SetParametrs(PersonList, Division.Schedule,
       ADate, ADate, HolydaysList);
     FAnalysisByMinute.Analysis;
-    Total := FAnalysisByMinute.PersonState[0].TotalTime;
+    //Total := FAnalysisByMinute.PersonState[0].TotalTime;
     if FAnalysisByMinute.ScheduleTotalTime = 0 then begin
       ADate := IncDay(ADate, 1);
       Continue;
     end;
     reEvents.Lines.Add(DateToStr(ADate));
-    reEvents.Lines.Add('Всего: ' + IntToStr(Total.TotalWork));
+    {reEvents.Lines.Add('Всего: ' + IntToStr(Total.TotalWork));
     reEvents.Lines.Add('Ушел раньше: ' + IntToStr(Total.EarlyFromShiftOrBreak));
     reEvents.Lines.Add('Опоздал на смену: ' + IntToStr(Total.LateToShift));
     reEvents.Lines.Add('Опоздал с перерыва: ' + IntToStr(Total.LateFromBreak));
     reEvents.Lines.Add('Прогул: ' + IntToStr(Total.Hooky));
-
+     }
     ADate := IncDay(ADate, 1);
   end;
 

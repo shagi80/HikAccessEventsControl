@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, TWebButton, TheAnalysisByMinute, Grids,
-  TheEventPairs;
+  TheEventPairs, TheSchedule;
 
 type
   TfrmPersonMinuteAnalysis = class(TForm)
@@ -25,17 +25,18 @@ type
     lbTotalWorkTime: TLabel;
     lbHookyTime: TLabel;
     lbOvertime: TLabel;
+    Label5: TLabel;
+    lbWorkToReport: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure WritePairs(Pairs: TEmplPairs; Date: TDate);
-    procedure WriteTotalTime(ScheduleTime: integer;
-      TotalTime: TEventsTotalTime);
+    procedure WriteTotalTime;
   private
     { Private declarations }
+    FDayResult: TDayResult;
   public
     { Public declarations }
-    procedure ShowAnalysis(PersonMinuteState: TPersonMinuteState;
-      AnalysisBitMap: Graphics.TBitMap; Date: TDate;
-      TotalTime: TEventsTotalTime; ScheduleTime: integer);
+    procedure ShowAnalysis(AnalysisBitMap: Graphics.TBitMap; Date: TDate;
+      DayResult: TDayResult; PersonName: string; Pairs: TEmplPairs);
   end;
 
 var
@@ -72,8 +73,7 @@ begin
   sgPairs.Cells[1, 0] := '  Выход';
 end;
 
-procedure TfrmPersonMinuteAnalysis.WriteTotalTime(ScheduleTime: integer;
-  TotalTime: TEventsTotalTime);
+procedure TfrmPersonMinuteAnalysis.WriteTotalTime;
 
   function FormatMinutes(Value: integer): string;
   var
@@ -84,35 +84,32 @@ procedure TfrmPersonMinuteAnalysis.WriteTotalTime(ScheduleTime: integer;
     Result := IntToStr(h) + ' ч ' + FormatFloat('00', m) + ' мин';
   end;
 
-var
-  HookyTime, Overtime: integer;
 begin
-  lbScheduleTime.Caption := FormatMinutes(ScheduleTime);
-  lbTotalWorkTime.Caption := FormatMinutes(TotalTime.TotalWork);
-  HookyTime := TotalTime.EarlyFromShiftOrBreak
-    + TotalTime.LateToShift + TotalTime.LateFromBreak + TotalTime.Hooky;
-  if HookyTime = 0 then lbHookyTime.Caption := 'нет'
-    else lbHookyTime.Caption := FormatMinutes(HookyTime);
-  Overtime := TotalTime.TotalWork - ScheduleTime;
-  if Overtime > 0 then lbOvertime.Caption := FormatMinutes(Overtime)
-    else lbOvertime.Caption := 'нет';
+  lbScheduleTime.Caption := FormatMinutes(FDayResult.Schedule);
+  lbTotalWorkTime.Caption := FormatMinutes(FDayResult.Present);
+  if FDayResult.Hooky = 0 then begin
+      if not FDayResult.HookyComps then lbHookyTime.Caption := 'нет'
+        else lbHookyTime.Caption := 'компенсированы';
+    end else lbHookyTime.Caption := FormatMinutes(FDayResult.Hooky);
+  if FDayResult.Overtime = 0 then lbOvertime.Caption := 'нет'
+    else lbOvertime.Caption := FormatMinutes(FDayResult.Overtime);
+  lbWorkToReport.Caption := FormatMinutes(FDayResult.TotalWork);
 end;
 
-procedure TfrmPersonMinuteAnalysis.ShowAnalysis(PersonMinuteState: TPersonMinuteState;
-  AnalysisBitMap: Graphics.TBitMap; Date: TDate; TotalTime: TEventsTotalTime;
-  ScheduleTime: integer);
+procedure TfrmPersonMinuteAnalysis.ShowAnalysis(AnalysisBitMap: Graphics.TBitMap;
+  Date: TDate; DayResult: TDayResult; PersonName: string; Pairs: TEmplPairs);
 begin
+  FDayResult := DayResult;
   lbDate.Caption := DateToStr(Date) + ' (' + FormatDateTime('dddd', Date) + ')';
-  lbPerson.Caption := PersonMinuteState.PersonName;
+  lbPerson.Caption := PersonName;
   imgBmp.Width := AnalysisBitMap.Width;
   imgBmp.Height := AnalysisBitMap.Height;
   imgBmp.Picture.Bitmap.Assign(AnalysisBitMap);
-  WritePairs(PersonMinuteState.Pairs, DateOf(Date));
-  WriteTotalTime(ScheduleTime, TotalTime);
+  WritePairs(Pairs, DateOf(Date));
+  WriteTotalTime;
   //
   Self.ShowModal;
 end;
-
 
 
 end.

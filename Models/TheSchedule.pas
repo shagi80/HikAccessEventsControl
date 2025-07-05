@@ -8,7 +8,6 @@ uses TheShift, SysUtils, DateUtils, Contnrs, Controls, Classes, SQLiteTable3,
 type
   TScheduleType = (stWeek, stPeriod);
 
-
   TSchedule = class(TOBject)
   private
     FGUID: TGUID;
@@ -16,6 +15,10 @@ type
     FType: TScheduleType;
     FDays: array of TShiftList;
     FStartDate: TDate;
+    FCanOvertime: boolean;
+    FOvertimeMin: integer;
+    FUseOvertimeForHooky: boolean;
+    FCanWorkToBreak: boolean;
     function GetDayCount: integer;
     procedure SetDayCount(Cnt: integer);
     function GetDay(Ind: integer): TShiftList;
@@ -33,6 +36,12 @@ type
     property MaxShiftCount: integer read GetMaxShiftCount;
     procedure Copy(Schedule: TSchedule);
     function GetDayNumber(Date: TDate): integer;
+    property CanOvertime: boolean read FCanOvertime write FCanOvertime;
+    property OvertimeMin: integer read FOvertimeMin write FOvertimeMin;
+    property UseOvertimeForHooky: boolean read FUseOvertimeForHooky
+      write FUseOvertimeForHooky;
+    property CanWorkToBreak: boolean read FCanWorkToBreak
+      write FCanWorkToBreak;
   end;
 
   TScheduleList = class(TObjectList)
@@ -75,6 +84,10 @@ begin
   CreateGUID(FGUID);
   Self.SetDayCount(7);
   FStartDate := DateUtils.DateOf(now);
+  FCanOvertime := True;
+  FOvertimeMin := 60;
+  FCanWorkToBreak := False;
+  FUseOvertimeForHooky := True;
 end;
 
 destructor TSchedule.Destroy;
@@ -138,6 +151,10 @@ begin
   for I := 0 to Schedule.DayCount - 1 do
     for J := 0 to Schedule.Day[i].Count - 1 do
       Self.Day[i].Add(Schedule.Day[i].Items[j]);
+  Self.FCanOvertime := Schedule.FCanOvertime;
+  Self.FOvertimeMin := Schedule.FOvertimeMin;
+  Self.FUseOvertimeForHooky := Schedule.FUseOvertimeForHooky;
+  Self.FCanWorkToBreak := Schedule.FCanWorkToBreak;
 end;
 
 function TSchedule.GetDayNumber(Date: TDate): integer;
@@ -304,6 +321,10 @@ begin
         if not LoadScheduleDay(DB, Schedule, ShiftList) then
           raise Exception.Create('Error load Schedule days for "'
             + Schedule.Title + '" !');
+      Schedule.CanOvertime := boolean(Table.FieldAsInteger(5));
+      Schedule.OvertimeMin := Table.FieldAsInteger(6);
+      Schedule.UseOvertimeForHooky := boolean(Table.FieldAsInteger(7));
+      Schedule.CanWorkToBreak := boolean(Table.FieldAsInteger(8));
       Self.Add(Schedule);
       Table.Next;
     end;
@@ -393,11 +414,14 @@ begin
     DB.BeginTransaction;
     for I := 0 to Self.Count - 1 do begin
       Schedule := Self.Items[i];
-      SQL := 'INSERT INTO Schedules (GUID, title, start_date, type, day_count)'
-        + ' VALUES (?, ?, ?, ?, ?)';
+      SQL := 'INSERT INTO Schedules (GUID, title, start_date, type, day_count,'
+        + ' can_overtime, overtime_min, overtime_to_hooky, work_in_break)'
+        + ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
       DB.ExecSQL(SQL, [GuidToString(Schedule.FGUID), UTF8Encode(Schedule.FTitle),
         Schedule.FStartDate, IntToStr(Ord(Schedule.FType) + 1),
-        Schedule.DayCount]);
+        Schedule.DayCount, integer(Schedule.CanOvertime),
+        IntToStr(Schedule.OvertimeMin), integer(Schedule.UseOvertimeForHooky),
+        integer(Schedule.CanWorkToBreak)]);
       Result := Self.SaveScheduleDays(DB, Schedule);
       if not Result then begin
         DB.Commit;
