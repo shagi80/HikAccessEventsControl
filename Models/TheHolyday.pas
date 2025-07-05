@@ -185,8 +185,8 @@ procedure THolydayList.SortByDateDesc;
 
   function CompareStartTime(Item1, Item2: Pointer): integer;
   begin
-    Result := CompareTime(THolyday(Item1).FStartTime,
-      THolyday(Item2).FStartTime);
+    Result := - CompareDate(DateOf(THolyday(Item1).FStartTime),
+      DateOf(THolyday(Item2).FStartTime));
   end;
 
 begin
