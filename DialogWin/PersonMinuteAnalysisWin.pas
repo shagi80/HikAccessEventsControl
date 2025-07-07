@@ -27,6 +27,8 @@ type
     lbOvertime: TLabel;
     Label5: TLabel;
     lbWorkToReport: TLabel;
+    Label6: TLabel;
+    lbLateToShift: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure WritePairs(Pairs: TEmplPairs; Date: TDate);
     procedure WriteTotalTime;
@@ -87,13 +89,35 @@ procedure TfrmPersonMinuteAnalysis.WriteTotalTime;
 begin
   lbScheduleTime.Caption := FormatMinutes(FDayResult.Schedule);
   lbTotalWorkTime.Caption := FormatMinutes(FDayResult.Present);
-  if FDayResult.Hooky = 0 then begin
-      if not FDayResult.HookyComps then lbHookyTime.Caption := 'нет'
-        else lbHookyTime.Caption := 'компенсированы';
-    end else lbHookyTime.Caption := FormatMinutes(FDayResult.Hooky);
-  if FDayResult.Overtime = 0 then lbOvertime.Caption := 'нет'
-    else lbOvertime.Caption := FormatMinutes(FDayResult.Overtime);
   lbWorkToReport.Caption := FormatMinutes(FDayResult.TotalWork);
+  //
+  lbOvertime.Font.Color := clGray;
+  if FDayResult.Overtime = 0 then lbOvertime.Caption := 'нет'
+    else begin
+      lbOvertime.Font.Color := clGreen;
+      lbOvertime.Caption := FormatMinutes(FDayResult.Overtime);
+    end;
+  //
+  lbHookyTime.Font.Color := clGray;
+  lbLateToShift.Font.Color := clGray;
+  if FDayResult.HookyComps then begin
+    lbHookyTime.Caption := 'компенсированы';
+    lbLateToShift.Caption := 'компенсированы';
+  end else begin
+    if FDayResult.LateToShift = 0 then lbLateToShift.Caption := 'нет'
+      else begin
+        lbLateToShift.Font.Color := clRed;
+        lbLateToShift.Caption := 'да' + ' / '
+          + FormatMinutes(FDayResult.LateToShift);
+      end;
+    if FDayResult.Hooky = 0 then lbHookyTime.Caption := 'нет'
+      else begin
+        lbHookyTime.Font.Color := clRed;
+        if FDayResult.Hooky >= FDayResult.Schedule then
+          lbHookyTime.Caption := 'прогул'
+            else lbHookyTime.Caption := FormatMinutes(FDayResult.Hooky);
+      end;
+  end;
 end;
 
 procedure TfrmPersonMinuteAnalysis.ShowAnalysis(AnalysisBitMap: Graphics.TBitMap;

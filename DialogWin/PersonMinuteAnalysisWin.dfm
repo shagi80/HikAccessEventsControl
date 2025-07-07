@@ -3,7 +3,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
   Top = 0
   BorderStyle = bsDialog
   Caption = #1047#1072' '#1086#1076#1080#1085' '#1076#1077#1085#1100
-  ClientHeight = 347
+  ClientHeight = 368
   ClientWidth = 794
   Color = clWhite
   Constraints.MinHeight = 200
@@ -20,9 +20,9 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
   TextHeight = 13
   object pnMain: TPanel
     Left = 0
-    Top = 185
+    Top = 201
     Width = 794
-    Height = 162
+    Height = 167
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 20
@@ -49,7 +49,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
     Left = 0
     Top = 0
     Width = 794
-    Height = 185
+    Height = 201
     Align = alTop
     BevelOuter = bvNone
     Color = clWhite
@@ -59,7 +59,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       Left = 506
       Top = 20
       Width = 268
-      Height = 165
+      Height = 181
       Margins.Left = 0
       Margins.Top = 20
       Margins.Right = 20
@@ -77,7 +77,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       Left = 20
       Top = 20
       Width = 483
-      Height = 165
+      Height = 181
       Margins.Left = 20
       Margins.Top = 20
       Margins.Bottom = 0
@@ -128,9 +128,9 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       object Label1: TLabel
         Left = 0
         Top = 58
-        Width = 160
+        Width = 130
         Height = 13
-        Caption = #1042#1089#1077#1075#1086' '#1076#1086#1083#1078#1085#1086' '#1073#1099#1090#1100' '#1087#1086' '#1075#1088#1072#1092#1080#1082#1091
+        Caption = #1044#1086#1083#1078#1085#1086' '#1073#1099#1090#1100' '#1087#1086' '#1075#1088#1072#1092#1080#1082#1091
       end
       object Label2: TLabel
         Left = 0
@@ -141,17 +141,17 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       end
       object Label3: TLabel
         Left = 0
-        Top = 121
-        Width = 107
+        Top = 167
+        Width = 76
         Height = 13
-        Caption = #1055#1088#1086#1075#1091#1083#1099', '#1085#1072#1088#1091#1096#1077#1085#1080#1103
+        Caption = #1042#1089#1077' '#1085#1072#1088#1091#1096#1077#1085#1080#1103
       end
       object Label4: TLabel
         Left = 0
-        Top = 142
-        Width = 67
+        Top = 123
+        Width = 140
         Height = 13
-        Caption = #1055#1077#1088#1077#1088#1072#1073#1086#1090#1082#1072
+        Caption = #1054#1090#1088#1072#1073#1086#1090#1072#1085#1086' '#1089#1074#1077#1088#1093' '#1075#1088#1072#1092#1080#1082#1072
       end
       object lbScheduleTime: TLabel
         Left = 280
@@ -175,7 +175,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       end
       object lbHookyTime: TLabel
         Left = 280
-        Top = 121
+        Top = 167
         Width = 60
         Height = 13
         Caption = 'lbHookyTime'
@@ -188,7 +188,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       end
       object lbOvertime: TLabel
         Left = 280
-        Top = 142
+        Top = 123
         Width = 52
         Height = 13
         Caption = 'lbOvertime'
@@ -201,14 +201,14 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       end
       object Label5: TLabel
         Left = 0
-        Top = 100
-        Width = 132
+        Top = 101
+        Width = 129
         Height = 13
-        Caption = #1059#1095#1090#1077#1085#1086' '#1088#1072#1073#1086#1095#1077#1075#1086' '#1074#1088#1077#1084#1077#1085#1080
+        Caption = #1054#1090#1088#1072#1073#1086#1090#1072#1085#1085#1086' '#1087#1086' '#1075#1088#1072#1092#1080#1082#1091
       end
       object lbWorkToReport: TLabel
         Left = 280
-        Top = 100
+        Top = 101
         Width = 93
         Height = 13
         Caption = 'lbWorkToReport'
@@ -218,6 +218,20 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+      end
+      object Label6: TLabel
+        Left = 0
+        Top = 145
+        Width = 103
+        Height = 13
+        Caption = #1054#1087#1086#1079#1076#1072#1085#1080#1103' '#1085#1072' '#1089#1084#1077#1085#1091
+      end
+      object lbLateToShift: TLabel
+        Left = 280
+        Top = 145
+        Width = 63
+        Height = 13
+        Caption = 'lbLateToShift'
       end
     end
   end
