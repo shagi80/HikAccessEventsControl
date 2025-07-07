@@ -331,7 +331,7 @@ begin
       + PersonState.DayResult[DayNum].TotalWork;
     // Подсчет количества опозданий
     if (PersonState.DayResult[DayNum].LateToShift > 0)
-      and (PersonState.TotalDayResult.TotalWork > 0) then
+      and (PersonState.DayResult[DayNum].WorkToSchedule > 0) then
         Inc(PersonState.TotalDayResult.LateCount);
   end;
 end;
