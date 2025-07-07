@@ -88,8 +88,8 @@ begin
   Table := nil;
   StartTimeStr := StringReplace(FloatToStr(StartTime), ',', '.', [rfReplaceAll]);
   EndTimeStr := StringReplace(FloatToStr(EndTime), ',', '.', [rfReplaceAll]);
-  SQL := 'SELECT device_direction, time FROM events WHERE employeeNoString='
-    + Self.FEmployeeId + ' AND time BETWEEN ' + StartTimeStr + ' AND '
+  SQL := 'SELECT device_direction, time FROM events WHERE employeeNoString="'
+    + Self.FEmployeeId + '" AND time BETWEEN ' + StartTimeStr + ' AND '
     + EndTimeStr + ' ORDER BY time';
   try
   Table := DB.GetUniTable(SQL);

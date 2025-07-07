@@ -39,6 +39,7 @@ type
     TotalWork: integer;
     Overtime: integer;
     Hooky: integer;
+    LateCount: integer;
   end;
 
   TPersonMinuteState = record
@@ -328,6 +329,10 @@ begin
       + PersonState.DayResult[DayNum].Hooky;
     PersonState.TotalDayResult.TotalWork := PersonState.TotalDayResult.TotalWork
       + PersonState.DayResult[DayNum].TotalWork;
+    // Подсчет количества опозданий
+    if (PersonState.DayResult[DayNum].LateToShift > 0)
+      and (PersonState.TotalDayResult.TotalWork > 0) then
+        Inc(PersonState.TotalDayResult.LateCount);
   end;
 end;
 
@@ -456,6 +461,7 @@ begin
   FPersonState[PersonInd].TotalDayResult.TotalWork := 0;
   FPersonState[PersonInd].TotalDayResult.Overtime := 0;
   FPersonState[PersonInd].TotalDayResult.Hooky := 0;
+  FPersonState[PersonInd].TotalDayResult.LateCount := 0;
 end;
 
 function TAnalysisByMinute.Analysis: boolean;

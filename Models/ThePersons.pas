@@ -15,11 +15,13 @@ type
     FName: string;
     FDivision: TDivision;
     FSchedule: TSchedule;
+    function NormaizePersonId(PersonId: string): string;
+    procedure SetPersonId(Value: string);
   public
     constructor Create;
     property GUID: TGUID read FGUID;
     property Name: string read FName write FName;
-    property PersonId: string read FPersonId write FPersonId;
+    property PersonId: string read FPersonId write SetPersonId;
     property Division: TDivision read FDivision write FDivision;
     property Schedule: TSchedule read FSchedule write FSchedule;
   end;
@@ -60,6 +62,21 @@ constructor TPerson.Create;
 begin
   inherited Create;
   CreateGUID(FGUID);
+end;
+
+function TPerson.NormaizePersonId(PersonId: string): string;
+var
+  I: integer;
+begin
+  I := 1;
+  while (I <= Length(PersonId)) and (PersonId[I] in ['0', ' ']) do Inc(I);
+  if I = 0 then Result := PersonId
+    else Result := Copy(PersonId, I, MaxInt);
+end;
+
+procedure TPerson.SetPersonId(Value: string);
+begin
+  Self.FPersonId := Self.NormaizePersonId(Value);
 end;
 
 { TPersonList }
@@ -248,7 +265,7 @@ begin
         ScheduleGUID := GuidToString(Person.FSchedule.GUID);
       SQL := 'INSERT INTO persons (GUID, person_id, title, divis_GUID, sched_GUID)'
         + ' VALUES (?, ?, ?, ?, ?)';
-      DB.ExecSQL(SQL, [GuidToString(Person.FGUID), UTF8Encode(Person.FPersonId),
+      DB.ExecSQL(SQL, [GuidToString(Person.FGUID), UTF8Encode(Person.NormaizePersonId(Person.FPersonId)),
         UTF8Encode(Person.FName), DivisionGUID, ScheduleGUID]);
     end;
     DB.Commit;

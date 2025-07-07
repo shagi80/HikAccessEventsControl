@@ -70,7 +70,7 @@ begin
   Self.FAnalysis := nil;
   Self.Ctl3D := False;
   Self.FixedCols := 1;
-  Self.FTexColCount := 5;
+  Self.FTexColCount := 8;
   Self.ColCount := FTexColCount + 1;
   Self.FixedRows := 1;
   Self.RowCount := 2;
@@ -152,14 +152,22 @@ procedure TAnalysisByMinPresent.WriteTotalTime(TotalDayResylt: TPersonResult;
     Result := IntToStr(h) + ' ч ' + FormatFloat('00', m) + ' мин';
   end;
 
+var
+  TotalTime: integer;
 begin
   Self.Cells[1, ARow] := FormatMinutes(TotalDayResylt.Schedule);
-  Self.Cells[2, ARow] := FormatMinutes(TotalDayResylt.TotalWork); 
-  if TotalDayResylt.Hooky = 0 then Self.Cells[3, ARow] := 'нет'
-    else Self.Cells[3, ARow] := FormatMinutes(TotalDayResylt.Hooky);
+  Self.Cells[2, ARow] := FormatMinutes(TotalDayResylt.TotalWork);
   if TotalDayResylt.Overtime > 0 then
-    Self.Cells[4, ARow] := FormatMinutes(TotalDayResylt.Overtime)
-      else Self.Cells[4, ARow] := 'нет'; 
+    Self.Cells[3, ARow] := FormatMinutes(TotalDayResylt.Overtime)
+      else Self.Cells[3, ARow] := 'no';
+  TotalTime := TotalDayResylt.TotalWork + TotalDayResylt.Overtime;
+  Self.Cells[4, ARow] := FormatMinutes(TotalTime);
+  if (TotalTime > TotalDayResylt.Schedule) then
+    Self.Cells[5, ARow] := 'yes' else Self.Cells[5, ARow] := 'no';
+  if TotalDayResylt.LateCount = 0 then Self.Cells[6, ARow] := 'no'
+    else Self.Cells[6, ARow] := IntToStr(TotalDayResylt.LateCount);
+  if TotalDayResylt.Hooky = 0 then Self.Cells[7, ARow] := 'no'
+    else Self.Cells[7, ARow] := FormatMinutes(TotalDayResylt.Hooky);
 end;
 
 procedure TAnalysisByMinPresent.UpdateAnalys;
@@ -179,9 +187,12 @@ begin
   Self.Enabled := True;
   Self.Cells[0, 0] := 'ФИО сотрудника';
   Self.Cells[1, 0] := 'Время по графику';
-  Self.Cells[2, 0] := 'Отработанно по норме';
-  Self.Cells[3, 0] := 'Прогулы, нарушения';
-  Self.Cells[4, 0] := 'Переработка';
+  Self.Cells[2, 0] := 'Отработанно по графику';
+  Self.Cells[3, 0] := 'Отработано вне графика';
+  Self.Cells[4, 0] := 'Отработанно всего';
+  Self.Cells[5, 0] := 'Выполнение нормы';
+  Self.Cells[6, 0] := 'Опоздания на смену';
+  Self.Cells[7, 0] := 'Все прогулы и нарушения';
   Self.RowCount := FAnalysis.PersonCount + Self.FixedRows;
   Self.ColCount := FTexColCount + FAnalysis.DayCount;
 
@@ -359,13 +370,24 @@ begin
     Canvas.FillRect(Rct);
     Canvas.Font.Color := clBlack;
     Text := Self.Cells[ACol, ARow];
+    if ACol = 4 then Canvas.Font.Style := [fsBold]
+      else Canvas.Font.Style := [];
     if ARow > 0 then
       case ACol of
-        3: if Text = 'нет' then Canvas.Font.Color := clGreen
+        5: if Text = 'yes' then Canvas.Font.Color := clGreen
           else Canvas.Font.Color := clRed;
-        4: if Text = 'нет' then Canvas.Font.Color := clSilver
+        3: if Text = 'no' then Canvas.Font.Color := clSilver
           else Canvas.Font.Color := clGreen;
+        6: if Text = 'no' then Canvas.Font.Color := clSilver
+          else begin
+            Canvas.Font.Color := clRed;
+            Text := 'да / ' + Text + ' дн';
+          end;
+        7: if Text = 'no' then Canvas.Font.Color := clSilver
+          else Canvas.Font.Color := clRed;
       end;
+    if Text = 'no' then Text := 'нет';
+    if Text = 'yes' then Text := 'да';
     Flag := DT_SINGLELINE or DT_VCENTER;
     if (ACol = 0) and (ARow > 0) then Flag := Flag or DT_LEFT
       else Flag := Flag or DT_CENTER;
