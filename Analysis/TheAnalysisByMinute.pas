@@ -351,11 +351,6 @@ begin
         // иначе - отдых
         ssInTime, ssOutTime, ssNone: if Presence and FScheduleTemplate.CanOvertime
           then EventState := esOvertime else EventState := esRest;
-        // В диапазон входа и выхода переработка считается только если
-        // это разрешено
-        {ssInTime, ssOutTime: if (Presence) and (FScheduleTemplate.OvertimeMode
-          in [ovtAll]) then EventState := esOvertime
-            else EventState := esRest;    }
         // Работа в рабочее время это работа
         ssWork: if Presence then EventState := esWork
           else begin
@@ -389,8 +384,8 @@ begin
         // это перерыв, но если в тот день совсем не равботал - прогул
         ssEarlyToBreak, ssLateFromBreak: if Presence then EventState := esWork
           else
-            if not WorkFlag then EventState := esHooky;
-              else EventState := esBreak;
+            if not WorkFlag then EventState := esHooky
+              else EventState := esBreak; 
       end;
       FPersonState[PersonInd].StateArray[MinuteInd].EventState := EventState;
       PrevEventState := EventState;
