@@ -54,7 +54,7 @@ uses about, DateUtils, APIProcessWin, TheSettings, TheEventPairs,
   PersonEventsWin, ScheduleEditWin, TheShift, TheSchedule,
   TheBreaks, ScheduleAndShiftSettingsWin, TheAnalysisByMinute,
   AnalysisByMinPresent, SubdivisionEventsWin, DivisionAndPersonSettingsWin,
-  SettingsWin, TheEventsLoader;
+  SettingsWin, TheEventsLoader, CHILDWIN;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
@@ -108,22 +108,25 @@ var
   Loader: TEventsLoader;
   Device: TDevice;
   I, J: integer;
-  DeviceTime: TDateTime;
+  DeviceTime, MinorTime: TDateTime;
 begin
   Result := False;
   Loader := TEventsLoader.Create(Settings.GetInstance.DBFileName);
   FLastTimeInBD := now;
   for I := 0 to Loader.DeviceCount - 1 do begin
     Device := Loader.Device[I];
+    DeviceTime := 0;
     for j := 0 to Loader.MinorEventCount - 1 do begin
-      DeviceTime := Loader.LastTimeInDB(I, J);
-      if DeviceTime < FLastTimeInBD then FLastTimeInBD := DeviceTime;
+      MinorTime := Loader.LastTimeInDB(I, J);
+      if MinorTime > DeviceTime then DeviceTime := MinorTime;
       Result := True;
     end;
+    if DeviceTime < FLastTimeInBD then FLastTimeInBD := DeviceTime;
   end;
   Loader.Free;
 end;
 
+//
 
 procedure TMainForm.btnProcessClick(Sender: TObject);
 var
@@ -140,18 +143,20 @@ var
   frmSubdivisionEvents: TfrmSubdivisionEvents;
 begin
   frmSubdivisionEvents := TfrmSubdivisionEvents.Create(Self);
-  frmSubdivisionEvents.ShowFomButton(pnFormButtons);
+  frmSubdivisionEvents.FormBtnParentPanel := pnFormButtons;
+  frmSubdivisionEvents.ShowFomButton(bsGrid);
   frmSubdivisionEvents.WindowState := wsMaximized;
 end;
 
 procedure TMainForm.btnPersonReportClick(Sender: TObject);
 var
-  frmPervonEvents: TfrmPervonEvents;
+  frmPersonEvents: TfrmPervonEvents;
 begin
   MessageDlg('Это еще не работает !', mtWarning, [mbOk], 0);
   Exit;
-  frmPervonEvents := TfrmPervonEvents.Create(Self);
-  frmPervonEvents.ShowFomButton(pnFormButtons);
+  frmPersonEvents := TfrmPervonEvents.Create(Self);
+  frmPersonEvents.FormBtnParentPanel := pnFormButtons;
+  frmPersonEvents.ShowFomButton(bsGrid);
 end;
 
 procedure TMainForm.btnScheduleClick(Sender: TObject);

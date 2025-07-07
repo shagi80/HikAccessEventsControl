@@ -31,6 +31,8 @@ type
     lbOvertime: TLabel;
     Bevel1: TBevel;
     Bevel2: TBevel;
+    btnPrint: TWebSpeedButton;
+    procedure btnPrintClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnUpdateClick(Sender: TObject);
     procedure btnPreviosMonthClick(Sender: TObject);
@@ -55,7 +57,7 @@ implementation
 
 {$R *.dfm}
 
-uses DateUtils, ThePersons, ProgressWin;
+uses DateUtils, ThePersons, ProgressWin, PrintWin;
 
 
 procedure TfrmSubdivisionEvents.FormCreate(Sender: TObject);
@@ -169,6 +171,10 @@ var
   Str: string;
 begin
   FAnalysisByMinPresent.Visible := False;
+  lbOvertime.Visible := FAnalysisByMinPresent.Visible;
+  lbWorkToBreak.Visible := FAnalysisByMinPresent.Visible;
+  tbScale.Enabled := FAnalysisByMinPresent.Visible;
+  btnPrint.Enabled := False;
   if cbDivision.ItemIndex < 0 then begin
     lbMessage.Font.Color := clRed;
     lbMessage.Caption := 'Подразделение не выбрано';
@@ -227,11 +233,25 @@ begin
   if not Result then begin
       lbMessage.Font.Color := clRed;
       lbMessage.Caption := 'Ошибка при выполнении анализа !';
-    end else begin
-      tbScale.Enabled := FAnalysisByMinPresent.Enabled;
+    end else
       FAnalysisByMinPresent.Visible := True;
-    end;
+  lbOvertime.Visible := FAnalysisByMinPresent.Visible;
+  lbWorkToBreak.Visible := FAnalysisByMinPresent.Visible;
+  btnPrint.Enabled := FAnalysisByMinPresent.Visible;
+  tbScale.Enabled := FAnalysisByMinPresent.Visible;
 end;
 
+//
+
+procedure TfrmSubdivisionEvents.btnPrintClick(Sender: TObject);
+var
+  ReportForm: TfrmReport;
+begin
+  ReportForm := TfrmReport.Create(Application.MainForm);
+  ReportForm.FormBtnParentPanel := Self.FormBtnParentPanel;
+  ReportForm.ShowFomButton(bsPrint);
+  if not ReportForm.PrintDivisionReport(FAnalysisByMinPresent,
+    Self.Caption) then ReportForm.Close;
+end;
 
 end.

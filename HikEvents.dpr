@@ -46,7 +46,8 @@ uses
   ProgressWin in 'DialogWin\ProgressWin.pas' {frmProgress},
   TheAnalysisByMinuteThread in 'Analysis\TheAnalysisByMinuteThread.pas',
   SettingsWin in 'DialogWin\SettingsWin.pas' {frmSettings},
-  TheBaseBlockManager in 'HikAPI\TheBaseBlockManager.pas';
+  TheBaseBlockManager in 'HikAPI\TheBaseBlockManager.pas',
+  PrintWin in 'PrintWin.pas' {frmReport};
 
 {$R *.RES}
 

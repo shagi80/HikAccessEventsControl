@@ -7,7 +7,11 @@ uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TheBreaks, TheShift,
   TheHolyday, Dialogs;
 
 type
+  TButtonStyle = (bsGrid, bsPrint);
+
   TMDIChild = class(TForm)
+    imrGrid: TImage;
+    imgPrint: TImage;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -27,8 +31,10 @@ type
   public
     { Public declarations }
     property FormButton: TWebSpeedButton read FFormButton;
+    property FormBtnParentPanel: TPanel read FFormBtnParentPanel
+      write FFormBtnParentPanel;
     procedure ChangeTitle(Value: string);
-    procedure ShowFomButton(ParentPanel: TPanel);
+    procedure ShowFomButton(BtnStyle: TButtonStyle);
   end;
 
 implementation
@@ -58,6 +64,7 @@ begin
   FFormButton.AlignWithMargins := True;
   FFormButton.Align := alLeft;
   FFormButton.Left := MaxInt;
+  FFormButton.SpaceWidth := 8;
 end;
 
 procedure TMDIChild.FormActivate(Sender: TObject);
@@ -118,17 +125,21 @@ begin
   Self.FFormButton.Caption := Self.Caption;
 end;
 
-procedure TMDIChild.ShowFomButton(ParentPanel: TPanel);
+procedure TMDIChild.ShowFomButton(BtnStyle: TButtonStyle);
 var
   I: integer;
 begin
-  FFormBtnParentPanel := ParentPanel;
+  if not Assigned(FFormBtnParentPanel) then Exit;
   if Assigned(FFormBtnParentPanel) then
     for I := 0 to FFormBtnParentPanel.ControlCount - 1 do
       TWebSpeedButton(FFormBtnParentPanel.Controls[I]).Down := False;
   FFormButton.Parent := FFormBtnParentPanel;
-  ParentPanel.Width := (FFormButton.Width + FFormButton.Margins.Left
-    + FFormButton.Margins.Right) * ParentPanel.ControlCount;
+  FFormBtnParentPanel.Width := (FFormButton.Width + FFormButton.Margins.Left
+    + FFormButton.Margins.Right) * FFormBtnParentPanel.ControlCount;
+  case BtnStyle of
+    bsGrid: FFormButton.Glyph := Self.imrGrid.Picture.Bitmap;
+    bsPrint: FFormButton.Glyph := Self.imgPrint.Picture.Bitmap;
+  end;
 end;
 
 end.

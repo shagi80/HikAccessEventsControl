@@ -162,7 +162,7 @@ begin
       else Self.Cells[3, ARow] := 'no';
   TotalTime := TotalDayResylt.TotalWork + TotalDayResylt.Overtime;
   Self.Cells[4, ARow] := FormatMinutes(TotalTime);
-  if (TotalTime > TotalDayResylt.Schedule) then
+  if (TotalTime >= TotalDayResylt.Schedule) then
     Self.Cells[5, ARow] := 'yes' else Self.Cells[5, ARow] := 'no';
   if TotalDayResylt.LateCount = 0 then Self.Cells[6, ARow] := 'no'
     else Self.Cells[6, ARow] := IntToStr(TotalDayResylt.LateCount);
