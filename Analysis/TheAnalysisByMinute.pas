@@ -229,7 +229,7 @@ end;
 procedure TAnalysisByMinute.SetHolydays;
 var
   Date: TDate;
-  DayNum, MinNum, I: integer;
+  DayNum, MinNum, I, DayNum_2: integer;
   StartMin, MinCount: integer;
   Holyday: THolyday;
   PersonInd, TimeSum: integer;
@@ -244,19 +244,31 @@ begin
     // Обнуляем время по графику за день
     TimeSum := 0;
     for MinNum := StartMin to (StartMin + MinCount + 1) do begin
-      I := MinNum + DayNum * 60 * 24;
+      I := DayNum * 60 * 24 + MinNum;
       if I <= High(FScheduleStateArray) then begin
-        if not (FScheduleStateArray[I] in [ssNone, ssBreak, ssInTime, ssOutTime]) then Inc(TimeSum);
-        FScheduleStateArray[MinNum + DayNum * 60 * 24] := ssNone;
+        { Если в графике эта минута отмечена как рабочая отмечаем как отдых
+          и уменьшаем время по гарфику для каждого сотрудника за этот день}
+        if (FScheduleStateArray[I] in [ssWork, ssEarlyToBreak, ssEarlyFromShist,
+          ssLateFromBreak, ssLateToShift]) then begin
+            // Считаем общее время что бы потом уменьшить общий итог
+            Inc(TimeSum);
+            if (DayNum > 0)  then begin
+              // Вычисляем номе дня и уменьшаем время по графику за день
+              DayNum_2 := (I div (60 * 24)) - 1;
+              for PersonInd := 0 to High(Self.FPersonState) do begin
+                FPersonState[PersonInd].DayResult[DayNum_2].Schedule :=
+                  FPersonState[PersonInd].DayResult[DayNum_2].Schedule - 1;
+                if FPersonState[PersonInd].DayResult[DayNum_2].Schedule < 0 then
+                  FPersonState[PersonInd].DayResult[DayNum_2].Schedule := 0;
+              end;
+            end;
+          end;
+        FScheduleStateArray[I] := ssNone;
       end;
     end;
-    // Уменьшаем время по графику для каждого сотрудника
+    // Уменьшаем ОБЩЕЕ время по графику для каждого сотрудника
     if DayNum > 0 then
       for PersonInd := 0 to High(Self.FPersonState) do begin
-        FPersonState[PersonInd].DayResult[DayNum - 1].Schedule :=
-          FPersonState[PersonInd].DayResult[DayNum - 1].Schedule - TimeSum;
-        if FPersonState[PersonInd].DayResult[DayNum - 1].Schedule < 0 then
-          FPersonState[PersonInd].DayResult[DayNum - 1].Schedule := 0;
         FPersonState[PersonInd].TotalDayResult.Schedule :=
           FPersonState[PersonInd].TotalDayResult.Schedule - TimeSum;
         if FPersonState[PersonInd].TotalDayResult.Schedule < 0 then
