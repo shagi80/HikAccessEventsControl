@@ -376,22 +376,6 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
       BevelOuter = bvNone
       Color = clWhite
       TabOrder = 0
-      object lbWorkToBreak: TLabel
-        Left = 29
-        Top = 32
-        Width = 3
-        Height = 18
-        Align = alLeft
-        Color = clWhite
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentColor = False
-        ParentFont = False
-        ExplicitHeight = 13
-      end
       object lbOvertime: TLabel
         Left = 0
         Top = 32
@@ -407,18 +391,6 @@ object frmSubdivisionEvents: TfrmSubdivisionEvents
         ParentColor = False
         ParentFont = False
         ExplicitHeight = 13
-      end
-      object Bevel2: TBevel
-        Left = 3
-        Top = 32
-        Width = 26
-        Height = 18
-        Align = alLeft
-        Shape = bsSpacer
-        Style = bsRaised
-        ExplicitLeft = 31
-        ExplicitTop = 34
-        ExplicitHeight = 16
       end
       object Panel2: TPanel
         Left = 0

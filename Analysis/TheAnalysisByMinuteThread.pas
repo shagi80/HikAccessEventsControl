@@ -6,7 +6,7 @@ uses
   Classes, TheAnalysisByMinute, AnalysisByMinPresent, ProgressWin;
 
 type
-  TAnalysisEnd = procedure (var Result: boolean) of object;
+  TAnalysisEnd = procedure (Result: boolean) of object;
 
   TAnalysisByMinuteThread = class(TThread)
   private

@@ -27,10 +27,8 @@ type
     Panel2: TPanel;
     lbMessage: TLabel;
     btnClose: TWebSpeedButton;
-    lbWorkToBreak: TLabel;
     lbOvertime: TLabel;
     Bevel1: TBevel;
-    Bevel2: TBevel;
     btnPrint: TWebSpeedButton;
     procedure btnPrintClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -47,7 +45,7 @@ type
     FAnalysisByMinute: TAnalysisByMinute;
     Thread: TAnalysisByMinuteThread;
     procedure UpdateDivisionListForPerson(CurDivision: TDivision);
-    procedure EndAnalysis(var Result: boolean);
+    procedure EndAnalysis(Result: boolean);
   public
     { Public declarations }
   end;
@@ -172,7 +170,6 @@ var
 begin
   FAnalysisByMinPresent.Visible := False;
   lbOvertime.Visible := FAnalysisByMinPresent.Visible;
-  lbWorkToBreak.Visible := FAnalysisByMinPresent.Visible;
   tbScale.Enabled := FAnalysisByMinPresent.Visible;
   btnPrint.Enabled := False;
   if cbDivision.ItemIndex < 0 then begin
@@ -214,12 +211,15 @@ begin
       if Division.Schedule.UseOvertimeForHooky then Str := Str
         + ' Переработка компенсирует опоздания.';
   end;
+  if Division.Schedule.CanWorkToBreak then
+    Str := Str + ' Разрешено работать в перерывы.';
   lbOvertime.Caption := Str;
-  if not Division.Schedule.CanWorkToBreak then lbWorkToBreak.Caption := ''
-    else lbWorkToBreak.Caption := 'Разрешено работать в перерывы.';
   //
   FAnalysisByMinute.SetParametrs(PersonList, Division.Schedule,
     dtpStartDate.Date, dtpEndDate.Date, HolydaysList);
+
+  //EndAnalysis(FAnalysisByMinute.Analysis);
+
   Thread := TAnalysisByMinuteThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.Analysis := Self.FAnalysisByMinute;
@@ -228,15 +228,16 @@ begin
   Thread.Resume;
 end;
 
-procedure TfrmSubdivisionEvents.EndAnalysis(var Result: boolean);
+procedure TfrmSubdivisionEvents.EndAnalysis(Result: boolean);
 begin
   if not Result then begin
       lbMessage.Font.Color := clRed;
       lbMessage.Caption := 'Ошибка при выполнении анализа !';
-    end else
+    end else begin
+      //FAnalysisByMinPresent.UpdateAnalys;
       FAnalysisByMinPresent.Visible := True;
+    end;
   lbOvertime.Visible := FAnalysisByMinPresent.Visible;
-  lbWorkToBreak.Visible := FAnalysisByMinPresent.Visible;
   btnPrint.Enabled := FAnalysisByMinPresent.Visible;
   tbScale.Enabled := FAnalysisByMinPresent.Visible;
 end;

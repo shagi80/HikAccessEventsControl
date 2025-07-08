@@ -97,26 +97,38 @@ begin
       lbOvertime.Font.Color := clGreen;
       lbOvertime.Caption := FormatMinutes(FDayResult.Overtime);
     end;
+  // Если все компенсировано
+  if (FDayResult.HookyComps) and (FDayResult.Hooky = 0) then begin
+    lbHookyTime.Font.Color := clGray;
+    lbLateToShift.Font.Color := clGray;
+    lbHookyTime.Caption := 'компенсировано полностью';
+    lbLateToShift.Caption := 'компенсировано полностью';
+    Exit;
+  end;
+  // Если прогул
+  if FDayResult.Hooky >= FDayResult.Schedule then begin
+    lbLateToShift.Font.Color := clRed;
+    lbHookyTime.Font.Color := clRed;
+    lbLateToShift.Caption := 'прогул';
+    lbHookyTime.Caption := 'прогул';
+    Exit;
+  end;
   //
-  lbHookyTime.Font.Color := clGray;
-  lbLateToShift.Font.Color := clGray;
-  if FDayResult.HookyComps then begin
-    lbHookyTime.Caption := 'компенсированы';
-    lbLateToShift.Caption := 'компенсированы';
+  if FDayResult.LateToShift = 0 then begin
+    lbLateToShift.Font.Color := clGray;
+    lbLateToShift.Caption := 'нет';
   end else begin
-    if FDayResult.LateToShift = 0 then lbLateToShift.Caption := 'нет'
-      else begin
-        lbLateToShift.Font.Color := clRed;
-        lbLateToShift.Caption := 'да' + ' / '
-          + FormatMinutes(FDayResult.LateToShift);
-      end;
-    if FDayResult.Hooky = 0 then lbHookyTime.Caption := 'нет'
-      else begin
-        lbHookyTime.Font.Color := clRed;
-        if FDayResult.Hooky >= FDayResult.Schedule then
-          lbHookyTime.Caption := 'прогул'
-            else lbHookyTime.Caption := FormatMinutes(FDayResult.Hooky);
-      end;
+    lbLateToShift.Font.Color := clRed;
+    lbLateToShift.Caption := 'да';
+  end;
+  if FDayResult.Hooky = 0 then begin
+    lbHookyTime.Font.Color := clGray;
+    lbHookyTime.Caption := 'нет'
+  end else begin
+    lbHookyTime.Font.Color := clRed;
+    lbHookyTime.Caption := FormatMinutes(FDayResult.Hooky);
+    if FDayResult.HookyComps then lbHookyTime.Caption :=
+      lbHookyTime.Caption + ' (часть компнсирована)';
   end;
 end;
 

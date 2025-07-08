@@ -183,7 +183,7 @@ begin
     Exit;
   end;
   if (not Assigned(FAnalysis)) or (FAnalysis.PersonCount = 0)
-    or (FAnalysis.DayCount = 0) then Exit;
+    or (FAnalysis.DayCnt = 0) then Exit;
   Self.Enabled := True;
   Self.Cells[0, 0] := 'ФИО сотрудника';
   Self.Cells[1, 0] := 'Время по графику';
@@ -194,7 +194,7 @@ begin
   Self.Cells[6, 0] := 'Опоздания на смену';
   Self.Cells[7, 0] := 'Все прогулы и нарушения';
   Self.RowCount := FAnalysis.PersonCount + Self.FixedRows;
-  Self.ColCount := FTexColCount + FAnalysis.DayCount;
+  Self.ColCount := FTexColCount + FAnalysis.DayCnt - 1;
 
 
   Self.SetDrawColWidth;
@@ -275,7 +275,7 @@ begin
     end;
   //
   Rct := HeaderBitmap.Canvas.ClipRect;
-  for DayNum := 0 to Self.FAnalysis.DayCount do begin
+  for DayNum := 0 to Self.FAnalysis.DayCnt - 1 do begin
     Rct.Left := Trunc(DayNum * 60 * 24);
     if DayNum > 0 then HeaderBitmap.Canvas.Pen.Color := clBlack
       else HeaderBitmap.Canvas.Pen.Color := clGray;

@@ -51,6 +51,8 @@ type
     TotalDayResult: TPersonResult;
   end;
 
+  THolydayStateArray = array of boolean;
+
   TAnalysisByMinute = class(TObject)
   private
     FStartDate: TDateTime;
@@ -69,12 +71,12 @@ type
     function GetMinuteState(Ind: integer): TPersonMinuteState;
     function GetScheduleState(Ind: integer): TScheduleState;
     function GetDayShifts(Date: TDate): TShiftList;
-    procedure PrepareScheduleStateArray;
-    procedure SetHolydays;
     procedure Clear;
     procedure ClearPersonDayResult(PersonInd: integer);
     procedure ClearPersonTotalResult(PersonInd: integer);
     function GetScheduleTotalTime: integer;
+    procedure PrepareHolydaysStateArray(var HolydayStates: THolydayStateArray);
+    procedure PrepareScheduleStateArrayNew;
   public
     constructor Create;
     destructor Destroy; override;
@@ -83,7 +85,7 @@ type
     function Analysis: boolean;
     procedure CalckDayResult(State: TEventState; var PersonState: TPersonMinuteState;
       DayNum: integer; CalckTotal: boolean);
-    property DayCount: integer read GetDayCount;
+    property DayCnt: integer read GetDayCount;
     property PersonCount: integer read FPersonCount;
     property MinuteCount: integer read GetMinCount;
     property ScheduleState[Ind: integer]: TScheduleState read GetScheduleState;
@@ -122,7 +124,7 @@ end;
 
 function TAnalysisByMinute.GetDayCount: integer;
 begin
-  Result := DaysBetween(FStartDate, FEndDate);
+  Result := DaysBetween(FStartDate, FEndDate) + 1;
 end;
 
 function TAnalysisByMinute.GetMinCount: integer;
@@ -188,92 +190,80 @@ begin
   Result := FScheduleTemplate.Day[SchedDayNum];
 end;
 
-procedure TAnalysisByMinute.PrepareScheduleStateArray;
+procedure TAnalysisByMinute.PrepareHolydaysStateArray
+  (var HolydayStates: THolydayStateArray);
 var
+  DayNum: integer;
   Date: TDate;
-  DayNum, ShiftNum, MinNum, I: integer;
-  StartMin, EndMin: integer;
-  ShiftList: TShiftList;
-  PersonInd, TimeSum: integer;
-begin
-  if Self.FScheduleTemplate = nil then Exit;
-  for DayNum := 0 to Self.DayCount do begin
-    Date := DateOf(IncDay(FStartDate, DayNum));
-    ShiftList := GetDayShifts(Date);
-    // Обнуляем время по графику за день
-    TimeSum := 0;
-    for ShiftNum := 0 to ShiftList.Count - 1 do begin
-      StartMin := MinuteOfTheDay(ShiftList.Items[ShiftNum].InStart);
-      EndMin := MinuteOfTheDay(ShiftList.Items[ShiftNum].OutFinish);
-      if EndMin < StartMin then EndMin := EndMin + 60 * 24; 
-      // Получаем и записываем статус каждой смены поминутно
-      for MinNum := StartMin to EndMin do begin
-        I := MinNum + DayNum * 60 *24;
-        if I <= High(FScheduleStateArray) then begin
-          FScheduleStateArray[I] := ShiftList.Items[ShiftNum].ScheduleState[MinNum];
-          if not(ShiftList.Items[ShiftNum].ScheduleState[MinNum] in [ssNone, ssBreak,
-            ssInTime, ssOutTime]) then Inc(TimeSum);
-        end;
-      end;
-    end;
-    // Записываем время по графику для каждого сотрудника
-    if (DayNum > 0) then
-      for PersonInd := 0 to High(Self.FPersonState) do begin
-        FPersonState[PersonInd].DayResult[DayNum - 1].Schedule := TimeSum;
-        FPersonState[PersonInd].TotalDayResult.Schedule :=
-          FPersonState[PersonInd].TotalDayResult.Schedule + TimeSum;
-      end;
-  end;
-end;
-
-procedure TAnalysisByMinute.SetHolydays;
-var
-  Date: TDate;
-  DayNum, MinNum, I, DayNum_2: integer;
-  StartMin, MinCount: integer;
+  MinNum, StartMin, EndMin: integer;
   Holyday: THolyday;
-  PersonInd, TimeSum: integer;
 begin
-  for DayNum := 1 to Self.DayCount do begin
+  for DayNum := 0 to Self.DayCnt - 1 do begin
     Date := DateOf(IncDay(FStartDate, DayNum));
     Holyday := Self.FHolydayList.HolydayFor(Date, Self.FScheduleTemplate);
     if (not Assigned(Holyday)) or ((Holyday.Schedule <> nil)
       and (Holyday.Schedule <> Self.FScheduleTemplate)) then Continue;
-    MinCount := MinutesBetween(Holyday.StartTime, Holyday.EndTime);
-    StartMin := MinuteOfTheDay(Holyday.StartTime);
-    // Обнуляем время по графику за день
-    TimeSum := 0;
-    for MinNum := StartMin to (StartMin + MinCount + 1) do begin
-      I := DayNum * 60 * 24 + MinNum;
-      if I <= High(FScheduleStateArray) then begin
-        { Если в графике эта минута отмечена как рабочая отмечаем как отдых
-          и уменьшаем время по гарфику для каждого сотрудника за этот день}
-        if (FScheduleStateArray[I] in [ssWork, ssEarlyToBreak, ssEarlyFromShist,
-          ssLateFromBreak, ssLateToShift]) then begin
-            // Считаем общее время что бы потом уменьшить общий итог
-            Inc(TimeSum);
-            if (DayNum > 0)  then begin
-              // Вычисляем номе дня и уменьшаем время по графику за день
-              DayNum_2 := (I div (60 * 24)) - 1;
-              for PersonInd := 0 to High(Self.FPersonState) do begin
-                FPersonState[PersonInd].DayResult[DayNum_2].Schedule :=
-                  FPersonState[PersonInd].DayResult[DayNum_2].Schedule - 1;
-                if FPersonState[PersonInd].DayResult[DayNum_2].Schedule < 0 then
-                  FPersonState[PersonInd].DayResult[DayNum_2].Schedule := 0;
-              end;
-            end;
+    StartMin := MinuteOfTheDay(Holyday.StartTime) + DayNum * 60 * 24;
+    EndMin := MinutesBetween(Holyday.StartTime, Holyday.EndTime)
+      + StartMin + 1;
+    for MinNum := StartMin to EndMin do
+      if MinNum <= High(HolydayStates) then HolydayStates[MinNum] := True;
+  end;
+end;
+
+procedure TAnalysisByMinute.PrepareScheduleStateArrayNew;
+var
+  HolydayStates: THolydayStateArray;
+  DayNum, ShiftScheduleTime: integer;
+  ShiftNum, MinNum, RealMinNum, PersonInd: integer;
+  StartMin, EndMin: integer;
+  Date: TDate;
+  ShiftList: TShiftList;
+  State: TScheduleState;
+begin
+  // Подготовливаем массив с отметкой о праздниках
+  SetLength(HolydayStates, High(Self.FScheduleStateArray) + 1);
+  PrepareHolydaysStateArray(HolydayStates);
+  for DayNum := 0 to Self.DayCnt - 1 do begin
+    Date := DateOf(IncDay(FStartDate, DayNum));
+    ShiftList := GetDayShifts(Date);
+    // Проходим по списку смен и записываем статус в массив графика
+    for ShiftNum := 0 to ShiftList.Count - 1 do begin
+      StartMin := MinuteOfTheDay(ShiftList.Items[ShiftNum].InStart);
+      EndMin := MinuteOfTheDay(ShiftList.Items[ShiftNum].OutFinish);
+      if EndMin < StartMin then EndMin := EndMin + 60 * 24;
+      // Получаем и записываем статус каждой смены поминутно
+      for MinNum := StartMin to EndMin do begin
+        RealMinNum := MinNum + DayNum * 60 * 24;
+        if (RealMinNum <= High(FScheduleStateArray))
+          and (not HolydayStates[RealMinNum]) then begin
+            State := ShiftList.Items[ShiftNum].ScheduleState[MinNum];
+            FScheduleStateArray[RealMinNum] := State;
           end;
-        FScheduleStateArray[I] := ssNone;
       end;
     end;
-    // Уменьшаем ОБЩЕЕ время по графику для каждого сотрудника
-    if DayNum > 0 then
-      for PersonInd := 0 to High(Self.FPersonState) do begin
-        FPersonState[PersonInd].TotalDayResult.Schedule :=
-          FPersonState[PersonInd].TotalDayResult.Schedule - TimeSum;
-        if FPersonState[PersonInd].TotalDayResult.Schedule < 0 then
-          FPersonState[PersonInd].TotalDayResult.Schedule := 0;
-      end;
+  end;
+  // Прходим получившийся массив для поденного подсчета кол-ва часов.
+  // В конце дня записываем данные о графике для каждого сотрудника
+  // начинаем с 1 дня тк один день добавлен в начало для учета
+  // возможных окончаний предыдущих смен
+  ShiftScheduleTime := 0;
+  for MinNum := 0 to High(FScheduleStateArray) do begin
+    State := FScheduleStateArray[MinNum];
+    if not(State in [ssNone, ssBreak, ssInTime, ssOutTime])
+      then Inc(ShiftScheduleTime);
+    if (MinNum > 0) and ((MinNum + 1) mod (60 * 24) = 0) then begin
+      DayNum := (MinNum + 1) div (60 * 24) - 1;
+      if (DayNum > 0) then
+        for PersonInd := 0 to High(Self.FPersonState) do begin
+          FPersonState[PersonInd].DayResult[DayNum - 1].Schedule :=
+            ShiftScheduleTime;
+          FPersonState[PersonInd].TotalDayResult.Schedule :=
+            FPersonState[PersonInd].TotalDayResult.Schedule
+              + ShiftScheduleTime;
+        end;
+      ShiftScheduleTime := 0;
+    end;
   end;
 end;
 
@@ -319,6 +309,13 @@ begin
             DayHookyTotal := DayHookyTotal - HookyCompinsation;
             DayOvertime := 0;
           end;
+    // Если все прогул компенсированы надо обнулить все состоавляюшие
+    if DayHookyTotal = 0 then begin
+      PersonState.DayResult[DayNum].EarlyFromShiftOrBreak := 0;
+      PersonState.DayResult[DayNum].LateFromBreak := 0;
+      PersonState.DayResult[DayNum].LateToShift := 0;
+      PersonState.DayResult[DayNum].Hooky := 0;
+    end;
     // Отбрасываем переработку меньши лимита
     if DayOvertime < FScheduleTemplate.OvertimeMin  then DayOvertime := 0;
     // Считаем все рабочее время за день (включая скомпенсированные прогулы)
@@ -331,9 +328,9 @@ begin
     PersonState.DayResult[DayNum].Overtime := DayOvertime;
     PersonState.DayResult[DayNum].Hooky := DayHookyTotal;
     PersonState.DayResult[DayNum].HookyComps :=(HookyCompinsation > 0);
-    if DayOvertime > 0 then PersonState.DayResult[DayNum].State := dsOvertime
-      else if DayHookyTotal > 0 then
-          PersonState.DayResult[DayNum].State := dsHooky;
+    if DayHookyTotal > 0 then PersonState.DayResult[DayNum].State := dsHooky
+      else if DayOvertime > 0 then
+        PersonState.DayResult[DayNum].State := dsOvertime;
     // Сумируем общий итог по сотруднику
     PersonState.TotalDayResult.Overtime := PersonState.TotalDayResult.Overtime
       + PersonState.DayResult[DayNum].Overtime;
@@ -342,8 +339,7 @@ begin
     PersonState.TotalDayResult.TotalWork := PersonState.TotalDayResult.TotalWork
       + PersonState.DayResult[DayNum].TotalWork;
     // Подсчет количества опозданий
-    if (not PersonState.DayResult[DayNum].HookyComps)
-      and (PersonState.DayResult[DayNum].LateToShift > 0)
+    if (PersonState.DayResult[DayNum].LateToShift > 0)
       and (PersonState.DayResult[DayNum].WorkToSchedule > 0) then
         Inc(PersonState.TotalDayResult.LateCount);
   end;
@@ -359,9 +355,9 @@ begin
   PrevEventState := esNone;
   EventState := esNone;
   for PersonInd := 0 to FPersonCount - 1 do
-    for MinuteInd := 0 to High(FPersonState[PersonInd].StateArray) do begin
+    for MinuteInd := 60 * 24 to High(FPersonState[PersonInd].StateArray) do begin
       DayNum := MinuteInd div (60 * 24);
-      WorkFlag := (FPersonState[PersonInd].DayResult[DayNum].Schedule > 0);
+      WorkFlag := (FPersonState[PersonInd].DayResult[DayNum - 1].Schedule > 0);
       ScheduleState := FScheduleStateArray[MinuteInd];
       Presence := FPersonState[PersonInd].StateArray[MinuteInd].Presence;
       case ScheduleState of
@@ -403,7 +399,7 @@ begin
         ssEarlyToBreak, ssLateFromBreak: if Presence then EventState := esWork
           else
             if not WorkFlag then EventState := esHooky
-              else EventState := esBreak; 
+              else EventState := esBreak;
       end;
       FPersonState[PersonInd].StateArray[MinuteInd].EventState := EventState;
       PrevEventState := EventState;
@@ -485,30 +481,29 @@ begin
   Result := False;
   if (not Assigned(FPersonList)) or (not Assigned(FScheduleTemplate))
     or (FPersonCount = 0) then Exit;
+  // Подготавливаем массив сотрудников
   SetLength(FPersonState, FPersonCount);
-  // Подготавливаем массив, в котором будем суммировать разные виды времени.
-  for I := 0 to High(FPersonState) do begin
-    SetLength(FPersonState[I].DayResult, Self.DayCount);
+  for I := 0 to FPersonCount - 1 do begin
+    PersonId := FPersonList.Names[I];
+    FPersonState[I].PersinId := PersonId;
+    FPersonState[I].PersonName := FPersonList.Values[PersonId];
+    // Для каждого одготавливаем массив, в котором будем суммировать
+    // разные виды времени.
+    SetLength(FPersonState[I].DayResult, Self.DayCnt - 1);
     ClearPersonDayResult(I);
     ClearPersonTotalResult(I);
     SetLength(FPersonState[I].StateArray,
-      MinutesBetween(FStartDate, FEndDate) + 2);
+      MinutesBetween(FStartDate, FEndDate) + 1);
+    // Загружаем явку
+    LoadPersonPairs(PersonId, I);
   end;
-  try
-    SetLength(FScheduleStateArray, MinutesBetween(FStartDate, FEndDate) + 1);
-    PrepareScheduleStateArray;
-    SetHolydays;
-    for I := 0 to FPersonCount - 1 do begin
-      PersonId := FPersonList.Names[I];
-      FPersonState[I].PersinId := PersonId;
-      FPersonState[I].PersonName := FPersonList.Values[PersonId];
-      LoadPersonPairs(PersonId, I);
-    end;
-    AnalysisEvent;
-    Result := True;
-  finally
-    FPersonList.Free;
-  end;
+  // Инициализация массива минут графика
+  SetLength(FScheduleStateArray, MinutesBetween(FStartDate, FEndDate) + 1);
+  PrepareScheduleStateArrayNew;
+  // Сравнение графика и явки
+  AnalysisEvent;
+  Result := True;
+  FPersonList.Free;
 end;
 
 

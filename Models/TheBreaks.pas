@@ -7,7 +7,7 @@ uses
 
 
 type
-  TScheduleState = (ssNone, ssWork, ssBreak, ssEarlyToBreak, ssEarlyFromShist,
+  TScheduleState = (ssNone,ssWork, ssBreak, ssEarlyToBreak, ssEarlyFromShist,
     ssLateFromBreak, ssLateToShift, ssInTime, ssOutTime);
 
   TScheduleStateArray = array of TScheduleState;
