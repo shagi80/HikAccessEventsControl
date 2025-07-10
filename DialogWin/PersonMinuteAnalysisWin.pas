@@ -106,12 +106,14 @@ begin
     Exit;
   end;
   // ≈сли прогул
-  if FDayResult.Hooky >= FDayResult.Schedule then begin
-    lbLateToShift.Font.Color := clRed;
-    lbHookyTime.Font.Color := clRed;
-    lbLateToShift.Caption := 'прогул';
-    lbHookyTime.Caption := 'прогул';
-    Exit;
+  if (FDayResult.Schedule > 0)
+    and (FDayResult.TotalWork = 0)
+    and (FDayResult.Overtime = 0) then begin
+      lbLateToShift.Font.Color := clRed;
+      lbHookyTime.Font.Color := clRed;
+      lbLateToShift.Caption := 'прогул';
+      lbHookyTime.Caption := 'прогул';
+      Exit;
   end;
   //
   if FDayResult.LateToShift = 0 then begin

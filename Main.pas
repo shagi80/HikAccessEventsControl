@@ -152,8 +152,8 @@ procedure TMainForm.btnPersonReportClick(Sender: TObject);
 var
   frmPersonEvents: TfrmPervonEvents;
 begin
-  MessageDlg('Это еще не работает !', mtWarning, [mbOk], 0);
-  Exit;
+  //MessageDlg('Это еще не работает !', mtWarning, [mbOk], 0);
+  //Exit;
   frmPersonEvents := TfrmPervonEvents.Create(Self);
   frmPersonEvents.FormBtnParentPanel := pnFormButtons;
   frmPersonEvents.ShowFomButton(bsGrid);

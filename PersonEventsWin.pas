@@ -4,7 +4,7 @@ interface
 
 uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TWebButton,
   ComCtrls, ExtCtrls, Grids, Buttons, CHILDWIN, TheDivisions,
-  TheAnalysisByMinute, TheAnalysisByMinuteThread;
+  TheAnalysisByMinute, TheAnalysisByMinuteThread, ThePersons;
 
 type
   TfrmPervonEvents = class(TMDIChild)
@@ -21,15 +21,18 @@ type
     dtpEndDate: TDateTimePicker;
     dtpStartDate: TDateTimePicker;
     tbScale: TTrackBar;
-    Panel3: TPanel;
-    lbMessage: TLabel;
-    btnClose: TWebSpeedButton;
     pnPerson: TPanel;
     Splitter1: TSplitter;
     Label1: TLabel;
     lbPerson: TListBox;
     pnData: TPanel;
-    reEvents: TRichEdit;
+    Panel3: TPanel;
+    lbOvertime: TLabel;
+    Panel1: TPanel;
+    lbMessage: TLabel;
+    btnClose: TWebSpeedButton;
+    btnPrint: TWebSpeedButton;
+    sgResult: TStringGrid;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbDivisionChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -37,14 +40,16 @@ type
     procedure btnUpdateClick(Sender: TObject);
     procedure btnPreviosMonthClick(Sender: TObject);
     procedure btnCurrentMonthClick(Sender: TObject);
-    procedure WebSpeedButton1Click(Sender: TObject);
     procedure Analysis(Sender: TObject);
   private
     { Private declarations }
-    FAnalysisByMinute: TAnalysisByMinute;
+    FAnalysis: TAnalysisByMinute;
     FThread: TAnalysisByMinuteThread;
-    procedure UpdateDivisionListForPerson(CurDivision: TDivision);
-    procedure EndAnalysis(var Result: boolean);
+    procedure UpdateDivisionList(CurDivision: TDivision);
+    function UpdatePersonList(CurDivision: TDivision;
+      CurPerson: TPerson): integer;
+    procedure EndAnalysis(Result: boolean);
+    procedure AddDayBlockToGrid(DayNum: integer);
   public
     { Public declarations }
   end;
@@ -53,29 +58,28 @@ implementation
 
 {$R *.dfm}
 
-uses  TheSettings, SysUtils, DateUtils, TheEventPairs, ThePersons;
+uses  TheSettings, SysUtils, DateUtils, TheEventPairs, Dialogs, TheShift;
 
 procedure TfrmPervonEvents.FormCreate(Sender: TObject);
 begin
   inherited;
-  FAnalysisByMinute := TAnalysisByMinute.Create;
+  FAnalysis := TAnalysisByMinute.Create;
   Self.dtpStartDate.Date := StartOfTheMonth(now);
   Self.dtpEndDate.Date := now;
   Self.DoubleBuffered := True;
   Self.LoadFromBD;
-  UpdateDivisionListForPerson(nil);
+  UpdateDivisionList(nil);
   cbDivisionChange(Self);
 end;
 
 procedure TfrmPervonEvents.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  FAnalysisByMinute.Free;
+  FAnalysis.Free;
   inherited;
 end;
 
 
-procedure TfrmPervonEvents.UpdateDivisionListForPerson(
-  CurDivision: TDivision);
+procedure TfrmPervonEvents.UpdateDivisionList(CurDivision: TDivision);
 
   procedure AddChildDivision(Level: integer; ParentDivision: TDivision);
   var
@@ -104,18 +108,40 @@ begin
   cbDivision.AddItem(Division.Title,  TObject(Division));
   AddChildDivision(1, Division);
   cbDivision.ItemIndex := 0;
-  for I := 0 to cbDivision.Items.Count - 1 do
-    if cbDivision.Items.Objects[I] = CurDivision then begin
-      cbDivision.ItemIndex := I;
-      Break;
-    end;
+  if Assigned(CurDivision) then
+    for I := 0 to cbDivision.Items.Count - 1 do
+      if cbDivision.Items.Objects[I] = CurDivision then begin
+        cbDivision.ItemIndex := I;
+        Break;
+      end;
+end;
+
+function  TfrmPervonEvents.UpdatePersonList(CurDivision: TDivision;
+  CurPerson: TPerson): integer;
+var
+  I: integer;
+  Person: TPerson;
+begin
+  lbPerson.Clear;
+  if not Assigned(CurDivision) then Exit;
+  for I := 0 to PersonsList.Count - 1 do begin
+    Person := PersonsList.Items[I];
+    if (CurDivision.ParentDivision = nil) or (Person.Division = CurDivision) then
+      lbPerson.AddItem(Person.Name, Person);
+  end;
+  Result := lbPerson.Items.Count;
+  if Assigned(CurPerson) then
+    for I := 0 to lbPerson.Items.Count - 1 do
+      if lbPerson.Items.Objects[I] = CurPerson then begin
+        lbPerson.ItemIndex := I;
+        Break;
+      end;
 end;
 
 procedure TfrmPervonEvents.cbDivisionChange(Sender: TObject);
 var
   Division: TDivision;
-  Person: TPerson;
-  I: integer;
+  Str: string;
 begin
   inherited;
   lbPerson.Visible := False;
@@ -131,22 +157,32 @@ begin
       [Division.Title]);
     Exit;
   end;
-  lbPerson.Clear;
-  for I := 0 to PersonsList.Count - 1 do begin
-    Person := PersonsList.Items[I];
-    if (Division.ParentDivision = nil) or (Person.Division = Division) then
-      lbPerson.AddItem(Person.Name, Person);
-  end;
-  if lbPerson.Count = 0 then begin
+  //
+  if UpdatePersonList(Division, nil) = 0 then begin
     lbMessage.Font.Color := clRed;
     lbMessage.Caption := Format('В подразделении "%s" нет сотрудников',
       [Division.Title]);
     Exit;
   end;
   lbPerson.Visible := True;
+  //
   lbMessage.Font.Color := clNavy;
-  lbMessage.Caption := Format('График для подразделения "%s": %s',
+  lbMessage.Caption := Format('Подразделение "%s". График "%s"',
       [Division.Title, Division.Schedule.Title]);
+  Self.ChangeTitle(Division.Title + ' c ' + DateToStr(dtpStartDate.Date)
+        + ' по ' + DateToStr(dtpEndDate.Date));
+  Str := 'Переработка не учитывается.';
+  if Division.Schedule.CanOvertime then begin
+    if Division.Schedule.OvertimeMin = 0 then
+      Str := 'Учитывается любая переработка.'
+        else Str := 'Учитывается переработка более '
+          + IntToStr(Division.Schedule.OvertimeMin) + ' минут.';
+      if Division.Schedule.UseOvertimeForHooky then Str := Str
+        + ' Переработка компенсирует опоздания.';
+  end;
+  if Division.Schedule.CanWorkToBreak then
+    Str := Str + ' Разрешено работать в перерывы.';
+  lbOvertime.Caption := Str;
 end;
 
 procedure TfrmPervonEvents.btnCloseClick(Sender: TObject);
@@ -164,14 +200,28 @@ end;
 procedure TfrmPervonEvents.btnUpdateClick(Sender: TObject);
 var
   SelectDivision: TDivision;
-  SelectDivGUID: TGUID;
+  SelectPerson: TPerson;
+  SelectDivGUID, SelectPersGUID: TGUID;
 begin
-  if cbDivision.ItemIndex < 0 then Exit;
+  if (cbDivision.ItemIndex < 0) then Exit;
+  //
   SelectDivision := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
   SelectDivGUID := SelectDivision.GUID;
+  if (lbPerson.ItemIndex >= 0) then begin
+    SelectPerson := TPerson(lbPerson.Items.Objects[lbPerson.ItemIndex]);
+    SelectPersGUID := SelectPerson.GUID;
+  end;
+  //
   Self.LoadFromBD;
-  SelectDivision := DivisionsList.Items[SelectDivGUID];
-  UpdateDivisionListForPerson(SelectDivision);
+  //
+  if (lbPerson.ItemIndex < 0) then
+      UpdatePersonList(SelectDivision, SelectPerson)
+    else begin
+      SelectDivision := DivisionsList.Items[SelectDivGUID];
+      UpdateDivisionList(SelectDivision);
+      SelectPerson := PersonsList.Items[SelectPersGUID];
+      UpdatePersonList(SelectDivision, SelectPerson);
+    end;
   Analysis(Self);
 end;
 
@@ -191,14 +241,17 @@ var
   Division: TDivision;
   ADate: TDate;
 begin
-  if not Self.lbPerson.Visible then Exit; 
+  sgResult.Visible := False;
+  if not Self.lbPerson.Visible then Exit;
   if lbPerson.ItemIndex < 0 then begin
     lbMessage.Font.Color := clRed;
     lbMessage.Caption := 'Сотрудник не выбран !';
+    lbOvertime.Visible := False;
     Exit;
-  end; 
+  end;
   Person := TPerson(lbPerson.Items.Objects[lbPerson.ItemIndex]);
-  Division := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
+  //Division := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
+  Division := Person.Division;
   if (not Assigned(Person)) or (not Assigned(Division)) then Exit;
 
   PersonList := TStringList.Create;
@@ -206,39 +259,15 @@ begin
   Self.ChangeTitle(Person.Name + ' c ' + DateToStr(dtpStartDate.Date)
         + ' по ' + DateToStr(dtpEndDate.Date));
 
-  reEvents.Lines.Clear;      
-  ADate := dtpStartDate.Date;
-  while DateOf(dtpEndDate.Date) >= DateOf(ADate) do begin
-    PersonList := TStringList.Create;
-    PersonList.Add(Person.PersonId + '=' + Person.Name);
-    FAnalysisByMinute.SetParametrs(PersonList, Division.Schedule,
-      ADate, ADate, HolydaysList);
-    FAnalysisByMinute.Analysis;
-    //Total := FAnalysisByMinute.PersonState[0].TotalTime;
-    if FAnalysisByMinute.ScheduleTotalTime = 0 then begin
-      ADate := IncDay(ADate, 1);
-      Continue;
-    end;
-    reEvents.Lines.Add(DateToStr(ADate));
-    {reEvents.Lines.Add('Всего: ' + IntToStr(Total.TotalWork));
-    reEvents.Lines.Add('Ушел раньше: ' + IntToStr(Total.EarlyFromShiftOrBreak));
-    reEvents.Lines.Add('Опоздал на смену: ' + IntToStr(Total.LateToShift));
-    reEvents.Lines.Add('Опоздал с перерыва: ' + IntToStr(Total.LateFromBreak));
-    reEvents.Lines.Add('Прогул: ' + IntToStr(Total.Hooky));
-     }
-    ADate := IncDay(ADate, 1);
-  end;
+
+  PersonList := TStringList.Create;
+  PersonList.Add(Person.PersonId + '=' + Person.Name);
+  FAnalysis.SetParametrs(PersonList, Division.Schedule,
+    dtpStartDate.Date, dtpEndDate.Date, HolydaysList);
+
+  EndAnalysis(FAnalysis.Analysis);
 
 
-
-
-
-
-
-
-
-
-    
   {FThread := TAnalysisByMinuteThread.Create(True);
   FThread.FreeOnTerminate := True;
   FThread.Analysis := Self.FAnalysisByMinute;
@@ -247,55 +276,129 @@ begin
   FThread.Resume;}
 end;
 
-procedure TfrmPervonEvents.EndAnalysis(var Result: boolean);
+procedure TfrmPervonEvents.EndAnalysis(Result: boolean);
+var
+  I: integer;
 begin
   if not Result then begin
       lbMessage.Font.Color := clRed;
       lbMessage.Caption := 'Ошибка при выполнении анализа !';
-    end else begin
-      lbMessage.Caption := 'Все получилось';
+      Exit;
     end;
+
+  for I := 1 to sgResult.RowCount - 1 do sgResult.Rows[I].Clear;
+  sgResult.RowCount := 2;
+  for I := 1 to FAnalysis.DayCnt - 1 do AddDayBlockToGrid(I);
+  sgResult.Visible := True;
 end;
 
-procedure TfrmPervonEvents.WebSpeedButton1Click(Sender: TObject);
-var
-  Pairs: TEmplPairs;
-  Date, PreviosDate: TDate;
-  I: integer;
-begin
-{  Pairs := TEmplPairs.Create('1', 10);
-  Pairs.CreatePairsFromBD(Settings.GetInstance.DBFileName,
-    StrToDateTime('16.04.2025'), now);
+procedure TfrmPervonEvents.AddDayBlockToGrid(DayNum: integer);
 
-  PairGrid.RowCount := Pairs.Count + 1;
-  for I := 0 to Pairs.Count - 1 do begin
-    PairGrid.Cells[0, I + 1] := IntToStr(I + 1);
-
-    //PairGrid.Cells[0, I + 1] := IntToStr(ord(Pairs.Pair[I].State));
-
-    if Pairs.Pair[I].InTime > 0 then Date := DateOf(Pairs.Pair[I].InTime)
-      else Date := DateOf(Pairs.Pair[I].OutTime);
-    if I = 0 then PairGrid.Cells[1, I + 1] := DateToStr(Date)
-      else begin
-        if Pairs.Pair[I - 1].InTime > 0 then
-            PreviosDate := DateOf(Pairs.Pair[I - 1].InTime)
-          else
-            PreviosDate := DateOf(Pairs.Pair[I - 1].OutTime);
-        if PreviosDate = Date then PairGrid.Cells[1, I + 1] := ''
-          else PairGrid.Cells[1, I + 1] := DateToStr(Date);
-      end;
-
-
-
-
-
-    if Pairs.Pair[I].InTime = 0  then PairGrid.Cells[2, I + 1] := '-'
-      else PairGrid.Cells[2, I + 1] := DateTimeToStr(Pairs.Pair[I].InTime);
-    if Pairs.Pair[I].OutTime = 0  then PairGrid.Cells[3, I + 1] := '-'
-      else PairGrid.Cells[3, I + 1] := DateTimeToStr(Pairs.Pair[I].OutTime);
+  procedure SetNextRow(var ARow: integer);
+  begin
+    Inc(ARow);
+    if ARow = sgResult.RowCount then
+      sgResult.RowCount := sgResult.RowCount + 1;
   end;
-  Pairs.Free;
- }
+
+  function FormatMinutes(Value: integer): string;
+  var
+    h, m: integer;
+  begin
+    h := Value div 60;
+    m := Value - h * 60;
+    Result := IntToStr(h) + ' ч ' + FormatFloat('00', m) + ' мин';
+  end;
+
+var
+  ADate: TDate;
+  PersonState: TPersonMinuteState;
+  DayResult: TDayResult;
+  ARow, FirstRow, I: integer;
+  ShiftList: TShiftList;
+  Pair: TOnePair;
+  Text: string;
+begin
+  if Length(sgResult.Cells[0, 1]) = 0 then ARow := 1
+    else begin
+      sgResult.RowCount := sgResult.RowCount + 1;
+      ARow := sgResult.RowCount - 1;
+    end;
+  PersonState := FAnalysis.PersonState[0];
+  DayResult := PersonState.DayResult[DayNum - 1];
+  //
+  ADate := IncDay(FAnalysis.StartDate, DayNum);
+  sgResult.Cells[0, ARow] := DateToStr(ADate);
+  FirstRow := ARow;
+  //
+  ShiftList := FAnalysis.GetDayShifts(ADate);
+  if ShiftList.Count > 0 then begin
+    sgResult.RowCount := sgResult.RowCount + ShiftList.Count;
+    for I := 0 to ShiftList.Count - 1 do begin
+      sgResult.Cells[1, ARow] := ShiftList.Items[I].Title;
+      Inc(ARow);
+    end;
+    sgResult.Cells[1, ARow] := 'Должно быть по графику: '
+      + FormatMinutes(DayResult.Schedule);
+  end else sgResult.Cells[1, ARow] := 'выходной';
+  //
+  ARow := FirstRow;
+  if ((DayResult.TotalWork + DayResult.Overtime) = 0)
+    and (DayResult.Schedule > 0) then begin
+      sgResult.Cells[2, ARow] := 'прогул';
+      Exit;
+    end;
+  if DayResult.TotalWork > 0 then begin
+    sgResult.Cells[2, ARow] := 'Отработанно по графику: '
+      + FormatMinutes(DayResult.TotalWork);
+    SetNextRow(ARow);
+  end;
+  if DayResult.Overtime > 0 then begin
+    sgResult.Cells[2, ARow] := 'Отработанно вне графика: '
+      + FormatMinutes(DayResult.Overtime);
+    SetNextRow(ARow);
+  end;
+  if (DayResult.TotalWork + DayResult.Overtime) > 0 then
+    sgResult.Cells[2, ARow] := 'Отработанно всего: ' + FormatMinutes(
+      DayResult.TotalWork + DayResult.Overtime);
+  //
+  ARow := FirstRow;
+  if (DayResult.Hooky = 0) and (DayResult.Schedule > 0) then
+    sgResult.Cells[3, ARow] := 'нет';
+  if DayResult.HookyComps and (DayResult.Hooky = 0) then
+      sgResult.Cells[3, ARow] := 'Все нарушения компенсированы'
+    else begin
+      if DayResult.LateToShift > 0 then begin
+        sgResult.Cells[3, ARow] := 'Опоздание на смену';
+        SetNextRow(ARow);
+      end;
+      if DayResult.Hooky > 0 then
+        sgResult.Cells[3, ARow] := 'Всего нарушкеий: ' + FormatMinutes(DayResult.Hooky);
+      if DayResult.HookyComps and (DayResult.Hooky > 0) then begin
+        SetNextRow(ARow);
+        sgResult.Cells[3, ARow] := '(частично компенсированы)';
+      end;
+    end;
+  //
+  ARow := FirstRow;
+  for I := 0 to PersonState.Pairs.Count - 1 do begin
+    Pair := PersonState.Pairs.Pair[I];
+    if DateOf(Pair.InTime) <> DateOf(ADate) then Continue;
+
+    case Pair.State of
+      psNormal: Text := 'Вход и выход: '
+        + FormatDateTime('hh:mm', Pair.InTime) + ' - '
+        + FormatDateTime('hh:mm', Pair.OutTime);
+      psNotIn: Text := 'Нет входа, выход '
+        + FormatDateTime('hh:mm', Pair.OutTime);
+      psNotOut: Text := 'Вход ' + FormatDateTime('hh:mm', Pair.InTime)
+        + ', нет выхода.';
+    end;
+    sgResult.Cells[4, ARow] := Text;
+    if I < PersonState.Pairs.Count - 1 then SetNextRow(ARow);
+  end;
+
 end;
+
 
 end.

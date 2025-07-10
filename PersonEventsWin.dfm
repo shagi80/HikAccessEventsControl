@@ -27,97 +27,19 @@ object frmPervonEvents: TfrmPervonEvents
     TabOrder = 0
     object Splitter1: TSplitter
       Left = 305
-      Top = 63
+      Top = 73
       Width = 1
-      Height = 399
+      Height = 389
       Color = clSilver
       ParentColor = False
       ExplicitTop = 53
       ExplicitHeight = 409
     end
-    object Panel3: TPanel
-      AlignWithMargins = True
-      Left = 10
-      Top = 10
-      Width = 765
-      Height = 33
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
-      Margins.Bottom = 20
-      Align = alTop
-      BevelOuter = bvNone
-      Color = clWhite
-      TabOrder = 0
-      object lbMessage: TLabel
-        Left = 0
-        Top = 0
-        Width = 4
-        Height = 16
-        Align = alLeft
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        Layout = tlCenter
-      end
-      object btnClose: TWebSpeedButton
-        AlignWithMargins = True
-        Left = 725
-        Top = 0
-        Width = 40
-        Height = 33
-        Margins.Top = 0
-        Margins.Right = 0
-        Margins.Bottom = 0
-        Aligment = taCenter
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE3E3E3232323ACACACFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFACACAC232323E3E3E3FFFFFFFFFFFFFFFFFFE7E7E7
-          1F1F1F333333181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFACACAC1818183333
-          331F1F1FE7E7E7FFFFFFFFFFFF919191333333FDFDFDA3A3A3181818ACACACFF
-          FFFFFFFFFFACACAC181818A3A3A3FDFDFD333333919191FFFFFFFFFFFFFCFCFC
-          3B3B3B9E9E9EFFFFFFA3A3A3151515A5A5A5ACACAC1616169B9B9BFFFFFFA6A6
-          A6353535FAFAFAFFFFFFFFFFFFFFFFFFFDFDFD464646A3A3A3FFFFFFA3A3A318
-          1818161616A1A1A1FFFFFFA6A6A6474747FDFDFDFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFDFDFD515151A3A3A3FFFFFFA7A7A7A7A7A7FFFFFFA3A3A3505050FDFD
-          FDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFD414141A7A7A7FF
-          FFFFFFFFFFA9A9A9414141FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFACACAC161616A5A5A5FFFFFFFFFFFFA6A6A6171717A6A6A6FFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACACAC181818A3A3A3FFFFFFA7
-          A7A7A7A7A7FFFFFFA3A3A3181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          ACACAC161616A1A1A1FFFFFFA6A6A65A5A5A5B5B5BA3A3A3FFFFFFA3A3A31717
-          17A6A6A6FFFFFFFFFFFFFFFFFFC9C9C91616169B9B9BFFFFFFA6A6A6565656FC
-          FCFCFDFDFD5A5A5A9E9E9EFFFFFFA3A3A3151515C9C9C9FFFFFFFFFFFFA9A9A9
-          343434FDFDFDA3A3A35B5B5BFDFDFDFFFFFFFFFFFFFDFDFD5B5B5BA3A3A3FDFD
-          FD343434A9A9A9FFFFFFFFFFFFFFFFFF9E9E9E3C3C3C5B5B5BFDFDFDFFFFFFFF
-          FFFFFFFFFFFFFFFFFDFDFD5B5B5B3D3D3D9F9F9FFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFD1D1D1FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDD1D1
-          D1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-        Color = 10329087
-        SelectColor = 6579455
-        ActiveColor = clMedGray
-        DisableFontColor = clGray
-        SelectFontColor = clBlack
-        ActiveFontColor = clBlack
-        OnClick = btnCloseClick
-        Margin = 0
-        Align = alRight
-        SpaceWidth = 2
-        ExplicitLeft = 736
-      end
-    end
     object pnPerson: TPanel
       Left = 10
-      Top = 63
+      Top = 73
       Width = 295
-      Height = 399
+      Height = 389
       Align = alLeft
       BevelOuter = bvNone
       BorderWidth = 10
@@ -129,12 +51,12 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 0
       object Label1: TLabel
         AlignWithMargins = True
         Left = 13
         Top = 13
-        Width = 68
+        Width = 269
         Height = 16
         Margins.Bottom = 10
         Align = alTop
@@ -145,17 +67,24 @@ object frmPervonEvents: TfrmPervonEvents
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
+        ExplicitWidth = 68
       end
       object lbPerson: TListBox
         AlignWithMargins = True
         Left = 13
         Top = 42
         Width = 269
-        Height = 344
+        Height = 334
         Align = alClient
         BevelOuter = bvNone
         BorderStyle = bsNone
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
         ItemHeight = 16
+        ParentFont = False
         TabOrder = 0
         Visible = False
         OnDblClick = Analysis
@@ -163,9 +92,9 @@ object frmPervonEvents: TfrmPervonEvents
     end
     object pnData: TPanel
       Left = 306
-      Top = 63
+      Top = 73
       Width = 469
-      Height = 399
+      Height = 389
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 10
@@ -177,16 +106,187 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 2
-      object reEvents: TRichEdit
+      TabOrder = 1
+      object sgResult: TStringGrid
         Left = 10
         Top = 10
         Width = 449
-        Height = 379
+        Height = 369
         Align = alClient
-        Lines.Strings = (
-          'reEvents')
+        FixedCols = 0
+        RowCount = 50
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing]
+        ParentFont = False
         TabOrder = 0
+        Visible = False
+        ColWidths = (
+          101
+          102
+          112
+          106
+          64)
+      end
+    end
+    object Panel3: TPanel
+      AlignWithMargins = True
+      Left = 13
+      Top = 13
+      Width = 759
+      Height = 50
+      Margins.Bottom = 10
+      Align = alTop
+      BevelOuter = bvNone
+      Color = clWhite
+      TabOrder = 2
+      object lbOvertime: TLabel
+        Left = 0
+        Top = 32
+        Width = 3
+        Height = 18
+        Align = alLeft
+        Color = clWhite
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        ExplicitHeight = 13
+      end
+      object Panel1: TPanel
+        Left = 0
+        Top = 0
+        Width = 759
+        Height = 32
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 2
+        Align = alTop
+        BevelOuter = bvNone
+        Color = clWhite
+        TabOrder = 0
+        object lbMessage: TLabel
+          Left = 0
+          Top = 0
+          Width = 4
+          Height = 32
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Layout = tlCenter
+          ExplicitHeight = 16
+        end
+        object btnClose: TWebSpeedButton
+          AlignWithMargins = True
+          Left = 723
+          Top = 0
+          Width = 36
+          Height = 32
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          Aligment = taCenter
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE3E3E3232323ACACACFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFACACAC232323E3E3E3FFFFFFFFFFFFFFFFFFE7E7E7
+            1F1F1F333333181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFACACAC1818183333
+            331F1F1FE7E7E7FFFFFFFFFFFF919191333333FDFDFDA3A3A3181818ACACACFF
+            FFFFFFFFFFACACAC181818A3A3A3FDFDFD333333919191FFFFFFFFFFFFFCFCFC
+            3B3B3B9E9E9EFFFFFFA3A3A3151515A5A5A5ACACAC1616169B9B9BFFFFFFA6A6
+            A6353535FAFAFAFFFFFFFFFFFFFFFFFFFDFDFD464646A3A3A3FFFFFFA3A3A318
+            1818161616A1A1A1FFFFFFA6A6A6474747FDFDFDFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFDFDFD515151A3A3A3FFFFFFA7A7A7A7A7A7FFFFFFA3A3A3505050FDFD
+            FDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFD414141A7A7A7FF
+            FFFFFFFFFFA9A9A9414141FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFACACAC161616A5A5A5FFFFFFFFFFFFA6A6A6171717A6A6A6FFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACACAC181818A3A3A3FFFFFFA7
+            A7A7A7A7A7FFFFFFA3A3A3181818ACACACFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            ACACAC161616A1A1A1FFFFFFA6A6A65A5A5A5B5B5BA3A3A3FFFFFFA3A3A31717
+            17A6A6A6FFFFFFFFFFFFFFFFFFC9C9C91616169B9B9BFFFFFFA6A6A6565656FC
+            FCFCFDFDFD5A5A5A9E9E9EFFFFFFA3A3A3151515C9C9C9FFFFFFFFFFFFA9A9A9
+            343434FDFDFDA3A3A35B5B5BFDFDFDFFFFFFFFFFFFFDFDFD5B5B5BA3A3A3FDFD
+            FD343434A9A9A9FFFFFFFFFFFFFFFFFF9E9E9E3C3C3C5B5B5BFDFDFDFFFFFFFF
+            FFFFFFFFFFFFFFFFFDFDFD5B5B5B3D3D3D9F9F9FFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFD1D1D1FDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDD1D1
+            D1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+          Color = 10329087
+          SelectColor = 6579455
+          ActiveColor = clMedGray
+          DisableFontColor = clGray
+          SelectFontColor = clBlack
+          ActiveFontColor = clBlack
+          OnClick = btnCloseClick
+          Margin = 0
+          Align = alRight
+          SpaceWidth = 2
+          ExplicitLeft = 736
+        end
+        object btnPrint: TWebSpeedButton
+          AlignWithMargins = True
+          Left = 590
+          Top = 0
+          Width = 100
+          Height = 32
+          Margins.Left = 0
+          Margins.Top = 0
+          Margins.Right = 30
+          Margins.Bottom = 0
+          Caption = #1055#1077#1095#1072#1090#1100
+          Aligment = taCenter
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEF2E4FDEEDBFDEEDBFD
+            EEDBFDEEDBFDEDDBFDEDDBFDEDDBFEFAF6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFEF7EEF9CA90F0B875ECAE68ECAE68ECAE68F0B875F9CA90F9CA90FDED
+            DAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD0D0D0D2C3B0F9CA90F0B875ECAE68EC
+            AE68ECAE68F0B875F9CA90F9CA90D2C3B0CACACAFDFDFDFFFFFFFFFFFFE0E0E0
+            4242427F6F5CF9CA90E8A55BDF9240DF9240DF9240DF9240DF9240F9CA907F6F
+            5C4242429F9F9FFFFFFFFFFFFFD0D0D04242426D573CCA8F46CA8F46CA8F46CA
+            8F46CA8F46CA8F46CA8F46CA8F466D573C424242818181FFFFFFFFFFFFD8D8D8
+            4242423A3A3A3838383838383838383838383838383838383838383838383A3A
+            3A424242818181FFFFFFFFFFFFDCDCDC5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E
+            5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E838383FFFFFFFFFFFFE5E5E5
+            6161616161616161616161616161616161616161616161616161616161616161
+            61616161969696FFFFFFFFFFFFE9E9E962626261616161616161616161616161
+            6161616161616161616161616161616161678B42999999FFFFFFFFFFFFFDFDFD
+            D3D3D36161616161616161616161616161616161616161616161616161616161
+            61676767EFEFEFFFFFFFFFFFFFFFFFFFFFFFFFD2CDC6F9CA90F9CA90F9CA90F9
+            CA90F9CA90F9CA90F9CA90F9CA907F6F5CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFEF9CB92F9CA90F9CA90F9CA90F9CA90F9CA90F9CA90F9CA90FDED
+            DBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFAD19FF9CA90F9CA90F9
+            CA90F9CA90F9CA90F9CA90F9CA90FDF0E0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFEFDFEFAF5FEFAF4FEFAF5FEFAF4FEFAF4FEF9F3FEFAF4FFFE
+            FEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+          Color = clBtnFace
+          SelectColor = clScrollBar
+          ActiveColor = clMedGray
+          DisableFontColor = clGray
+          SelectFontColor = clBlack
+          ActiveFontColor = clBlack
+          Enabled = False
+          Margin = 0
+          Align = alRight
+          SpaceWidth = 5
+          ExplicitLeft = 472
+        end
       end
     end
   end
@@ -204,7 +304,7 @@ object frmPervonEvents: TfrmPervonEvents
       AlignWithMargins = True
       Left = 20
       Top = 20
-      Width = 80
+      Width = 131
       Height = 13
       Margins.Left = 20
       Margins.Top = 20
@@ -217,12 +317,13 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ExplicitWidth = 80
     end
     object Label6: TLabel
       AlignWithMargins = True
       Left = 20
       Top = 120
-      Width = 83
+      Width = 131
       Height = 13
       Margins.Left = 20
       Margins.Top = 10
@@ -235,12 +336,13 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ExplicitWidth = 83
     end
     object Label7: TLabel
       AlignWithMargins = True
       Left = 20
       Top = 70
-      Width = 65
+      Width = 131
       Height = 13
       Margins.Left = 20
       Margins.Top = 10
@@ -253,12 +355,13 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ExplicitWidth = 65
     end
     object Label8: TLabel
       AlignWithMargins = True
       Left = 20
       Top = 388
-      Width = 116
+      Width = 131
       Height = 13
       Margins.Left = 20
       Margins.Top = 70
@@ -271,6 +374,7 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ExplicitWidth = 116
     end
     object btnCurrentMonth: TWebSpeedButton
       Tag = 3

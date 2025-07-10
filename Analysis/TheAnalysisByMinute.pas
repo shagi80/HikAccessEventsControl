@@ -70,21 +70,21 @@ type
     procedure AnalysisEvent;
     function GetMinuteState(Ind: integer): TPersonMinuteState;
     function GetScheduleState(Ind: integer): TScheduleState;
-    function GetDayShifts(Date: TDate): TShiftList;
     procedure Clear;
     procedure ClearPersonDayResult(PersonInd: integer);
     procedure ClearPersonTotalResult(PersonInd: integer);
     function GetScheduleTotalTime: integer;
     procedure PrepareHolydaysStateArray(var HolydayStates: THolydayStateArray);
     procedure PrepareScheduleStateArrayNew;
+    procedure CalckDayResult(State: TEventState; var PersonState: TPersonMinuteState;
+      DayNum: integer; CalckTotal: boolean);
   public
     constructor Create;
     destructor Destroy; override;
+    function GetDayShifts(Date: TDate): TShiftList;
     procedure SetParametrs(PersonIdList: TStringList; ScheduleTemplate: TSchedule;
       StartDate, EndDate: TDate; Holydays: THolydayList);
     function Analysis: boolean;
-    procedure CalckDayResult(State: TEventState; var PersonState: TPersonMinuteState;
-      DayNum: integer; CalckTotal: boolean);
     property DayCnt: integer read GetDayCount;
     property PersonCount: integer read FPersonCount;
     property MinuteCount: integer read GetMinCount;
