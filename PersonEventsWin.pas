@@ -4,12 +4,12 @@ interface
 
 uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, TWebButton,
   ComCtrls, ExtCtrls, Grids, Buttons, CHILDWIN, TheDivisions,
-  TheAnalysisByMinute, TheAnalysisByMinuteThread, ThePersons;
+  TheAnalysisByMinute, TheAnalysisByMinuteThread, ThePersons,
+  PersonAnalysisPresent;
 
 type
   TfrmPervonEvents = class(TMDIChild)
     pnMain: TPanel;
-    Panel2: TPanel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
@@ -26,13 +26,33 @@ type
     Label1: TLabel;
     lbPerson: TListBox;
     pnData: TPanel;
-    Panel3: TPanel;
+    pnTop: TPanel;
     lbOvertime: TLabel;
     Panel1: TPanel;
     lbMessage: TLabel;
     btnClose: TWebSpeedButton;
     btnPrint: TWebSpeedButton;
-    sgResult: TStringGrid;
+    Panel4: TPanel;
+    pnTotalResult: TGridPanel;
+    Label2: TLabel;
+    lbTotalSchedule: TLabel;
+    lbTotalWorkCaption: TLabel;
+    lbTotalWork: TLabel;
+    Label10: TLabel;
+    lbTotalWorkToSchedule: TLabel;
+    Label12: TLabel;
+    lbLateToShift: TLabel;
+    Label14: TLabel;
+    lbTotalOvertime: TLabel;
+    Label16: TLabel;
+    lbTotalHooky: TLabel;
+    pnLeft: TPanel;
+    cbResizeColumn: TCheckBox;
+    cbWordBreak: TCheckBox;
+    procedure btnPrintClick(Sender: TObject);
+    procedure cbResizeColumnClick(Sender: TObject);
+    procedure cbWordBreakClick(Sender: TObject);
+    procedure lbPersonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbDivisionChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -44,12 +64,12 @@ type
   private
     { Private declarations }
     FAnalysis: TAnalysisByMinute;
-    FThread: TAnalysisByMinuteThread;
+    FResultGrid: TPersonAnalysisPresent;
     procedure UpdateDivisionList(CurDivision: TDivision);
     function UpdatePersonList(CurDivision: TDivision;
       CurPerson: TPerson): integer;
     procedure EndAnalysis(Result: boolean);
-    procedure AddDayBlockToGrid(DayNum: integer);
+    procedure WriteTotalTime(TotalDayResylt: TPersonResult);
   public
     { Public declarations }
   end;
@@ -58,12 +78,20 @@ implementation
 
 {$R *.dfm}
 
-uses  TheSettings, SysUtils, DateUtils, TheEventPairs, Dialogs, TheShift;
+uses  TheSettings, SysUtils, DateUtils, TheEventPairs, Dialogs, TheShift,
+  PrintWin;
 
 procedure TfrmPervonEvents.FormCreate(Sender: TObject);
 begin
   inherited;
   FAnalysis := TAnalysisByMinute.Create;
+  FResultGrid := TPersonAnalysisPresent.Create(pnData);
+  FResultGrid.Visible := False;
+  FResultGrid.Align := alClient;
+  FResultGrid.Analysis := FAnalysis;
+  FResultGrid.Parent := pnData;
+  cbWordBreak.Checked := FResultGrid.WordBreak;
+  cbResizeColumn.Checked := FresultGrid.ResizeColumn;
   Self.dtpStartDate.Date := StartOfTheMonth(now);
   Self.dtpEndDate.Date := now;
   Self.DoubleBuffered := True;
@@ -74,10 +102,12 @@ end;
 
 procedure TfrmPervonEvents.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  FResultGrid.Free;
   FAnalysis.Free;
   inherited;
 end;
 
+{ События контролов. }
 
 procedure TfrmPervonEvents.UpdateDivisionList(CurDivision: TDivision);
 
@@ -123,6 +153,7 @@ var
   Person: TPerson;
 begin
   lbPerson.Clear;
+  Result := 0;
   if not Assigned(CurDivision) then Exit;
   for I := 0 to PersonsList.Count - 1 do begin
     Person := PersonsList.Items[I];
@@ -141,23 +172,20 @@ end;
 procedure TfrmPervonEvents.cbDivisionChange(Sender: TObject);
 var
   Division: TDivision;
-  Str: string;
 begin
-  inherited;
   lbPerson.Visible := False;
+  FResultGrid.Visible := False;
+  pnTotalResult.Visible := False;
+  lbOvertime.Visible := False;
+  btnPrint.Enabled := False;
+  lbMessage.Font.Color := clNavy;
+  lbMessage.Caption := 'Выберите сотрудника ...';
   if cbDivision.ItemIndex < 0 then begin
     lbMessage.Font.Color := clRed;
     lbMessage.Caption := 'Подразделение не выбрано';
     Exit;
   end;
   Division := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
-  if not Assigned(Division.Schedule) then begin
-    lbMessage.Font.Color := clRed;
-    lbMessage.Caption := Format('Для подразделения "%s" не задан график',
-      [Division.Title]);
-    Exit;
-  end;
-  //
   if UpdatePersonList(Division, nil) = 0 then begin
     lbMessage.Font.Color := clRed;
     lbMessage.Caption := Format('В подразделении "%s" нет сотрудников',
@@ -165,24 +193,17 @@ begin
     Exit;
   end;
   lbPerson.Visible := True;
-  //
-  lbMessage.Font.Color := clNavy;
-  lbMessage.Caption := Format('Подразделение "%s". График "%s"',
-      [Division.Title, Division.Schedule.Title]);
-  Self.ChangeTitle(Division.Title + ' c ' + DateToStr(dtpStartDate.Date)
-        + ' по ' + DateToStr(dtpEndDate.Date));
-  Str := 'Переработка не учитывается.';
-  if Division.Schedule.CanOvertime then begin
-    if Division.Schedule.OvertimeMin = 0 then
-      Str := 'Учитывается любая переработка.'
-        else Str := 'Учитывается переработка более '
-          + IntToStr(Division.Schedule.OvertimeMin) + ' минут.';
-      if Division.Schedule.UseOvertimeForHooky then Str := Str
-        + ' Переработка компенсирует опоздания.';
-  end;
-  if Division.Schedule.CanWorkToBreak then
-    Str := Str + ' Разрешено работать в перерывы.';
-  lbOvertime.Caption := Str;
+end;
+
+procedure TfrmPervonEvents.cbWordBreakClick(Sender: TObject);
+begin
+  FResultGrid.WordBreak := cbWordBreak.Checked;
+end;
+
+procedure TfrmPervonEvents.cbResizeColumnClick(Sender: TObject);
+begin
+  inherited;
+  Self.FResultGrid.ResizeColumn := cbResizeColumn.Checked;
 end;
 
 procedure TfrmPervonEvents.btnCloseClick(Sender: TObject);
@@ -210,7 +231,7 @@ begin
   if (lbPerson.ItemIndex >= 0) then begin
     SelectPerson := TPerson(lbPerson.Items.Objects[lbPerson.ItemIndex]);
     SelectPersGUID := SelectPerson.GUID;
-  end;
+  end else SelectPerson := nil;
   //
   Self.LoadFromBD;
   //
@@ -232,17 +253,13 @@ begin
   Analysis(Self);
 end;
 
-
-
-procedure TfrmPervonEvents.Analysis(Sender: TObject);
+procedure TfrmPervonEvents.lbPersonClick(Sender: TObject);
 var
-  Person: TPerson;
-  PersonList: TStringList;
   Division: TDivision;
-  ADate: TDate;
+  Person: TPerson;
+  Str: string;
 begin
-  sgResult.Visible := False;
-  if not Self.lbPerson.Visible then Exit;
+  lbOvertime.Visible := False;
   if lbPerson.ItemIndex < 0 then begin
     lbMessage.Font.Color := clRed;
     lbMessage.Caption := 'Сотрудник не выбран !';
@@ -250,56 +267,36 @@ begin
     Exit;
   end;
   Person := TPerson(lbPerson.Items.Objects[lbPerson.ItemIndex]);
-  //Division := TDivision(cbDivision.Items.Objects[cbDivision.ItemIndex]);
   Division := Person.Division;
-  if (not Assigned(Person)) or (not Assigned(Division)) then Exit;
-
-  PersonList := TStringList.Create;
-  PersonList.Add(Person.PersonId + '=' + Person.Name);
-  Self.ChangeTitle(Person.Name + ' c ' + DateToStr(dtpStartDate.Date)
-        + ' по ' + DateToStr(dtpEndDate.Date));
-
-
-  PersonList := TStringList.Create;
-  PersonList.Add(Person.PersonId + '=' + Person.Name);
-  FAnalysis.SetParametrs(PersonList, Division.Schedule,
-    dtpStartDate.Date, dtpEndDate.Date, HolydaysList);
-
-  EndAnalysis(FAnalysis.Analysis);
-
-
-  {FThread := TAnalysisByMinuteThread.Create(True);
-  FThread.FreeOnTerminate := True;
-  FThread.Analysis := Self.FAnalysisByMinute;
-  FThread.Present := nil;
-  FThread.OnAnalysisEnd := Self.EndAnalysis;
-  FThread.Resume;}
-end;
-
-procedure TfrmPervonEvents.EndAnalysis(Result: boolean);
-var
-  I: integer;
-begin
-  if not Result then begin
-      lbMessage.Font.Color := clRed;
-      lbMessage.Caption := 'Ошибка при выполнении анализа !';
-      Exit;
-    end;
-
-  for I := 1 to sgResult.RowCount - 1 do sgResult.Rows[I].Clear;
-  sgResult.RowCount := 2;
-  for I := 1 to FAnalysis.DayCnt - 1 do AddDayBlockToGrid(I);
-  sgResult.Visible := True;
-end;
-
-procedure TfrmPervonEvents.AddDayBlockToGrid(DayNum: integer);
-
-  procedure SetNextRow(var ARow: integer);
-  begin
-    Inc(ARow);
-    if ARow = sgResult.RowCount then
-      sgResult.RowCount := sgResult.RowCount + 1;
+  if not Assigned(Division.Schedule) then begin
+    lbMessage.Font.Color := clRed;
+    lbMessage.Caption := Format('Для подразделения "%s" не задан график',
+      [Division.Title]);
+    Exit;
   end;
+  //
+  Analysis(Person);
+  lbMessage.Font.Color := clNavy;
+  lbMessage.Caption := Format('Сотрудник "%s". График "%s"',
+      [Person.Name, Division.Schedule.Title]);
+  Str := 'Переработка не учитывается.';
+  if Division.Schedule.CanOvertime then begin
+    if Division.Schedule.OvertimeMin = 0 then
+      Str := 'Учитывается любая переработка.'
+        else Str := 'Учитывается переработка более '
+          + IntToStr(Division.Schedule.OvertimeMin) + ' минут.';
+      if Division.Schedule.UseOvertimeForHooky then Str := Str
+        + ' Переработка компенсирует опоздания.';
+  end;
+  if Division.Schedule.CanWorkToBreak then
+    Str := Str + ' Разрешено работать в перерывы.';
+  lbOvertime.Caption := Str;
+  lbOvertime.Visible := True;
+end;
+
+{ Анализ. }
+
+procedure TfrmPervonEvents.WriteTotalTime(TotalDayResylt: TPersonResult);
 
   function FormatMinutes(Value: integer): string;
   var
@@ -311,94 +308,107 @@ procedure TfrmPervonEvents.AddDayBlockToGrid(DayNum: integer);
   end;
 
 var
-  ADate: TDate;
-  PersonState: TPersonMinuteState;
-  DayResult: TDayResult;
-  ARow, FirstRow, I: integer;
-  ShiftList: TShiftList;
-  Pair: TOnePair;
-  Text: string;
+  TotalTime: integer;
 begin
-  if Length(sgResult.Cells[0, 1]) = 0 then ARow := 1
-    else begin
-      sgResult.RowCount := sgResult.RowCount + 1;
-      ARow := sgResult.RowCount - 1;
-    end;
-  PersonState := FAnalysis.PersonState[0];
-  DayResult := PersonState.DayResult[DayNum - 1];
-  //
-  ADate := IncDay(FAnalysis.StartDate, DayNum);
-  sgResult.Cells[0, ARow] := DateToStr(ADate);
-  FirstRow := ARow;
-  //
-  ShiftList := FAnalysis.GetDayShifts(ADate);
-  if ShiftList.Count > 0 then begin
-    sgResult.RowCount := sgResult.RowCount + ShiftList.Count;
-    for I := 0 to ShiftList.Count - 1 do begin
-      sgResult.Cells[1, ARow] := ShiftList.Items[I].Title;
-      Inc(ARow);
-    end;
-    sgResult.Cells[1, ARow] := 'Должно быть по графику: '
-      + FormatMinutes(DayResult.Schedule);
-  end else sgResult.Cells[1, ARow] := 'выходной';
-  //
-  ARow := FirstRow;
-  if ((DayResult.TotalWork + DayResult.Overtime) = 0)
-    and (DayResult.Schedule > 0) then begin
-      sgResult.Cells[2, ARow] := 'прогул';
-      Exit;
-    end;
-  if DayResult.TotalWork > 0 then begin
-    sgResult.Cells[2, ARow] := 'Отработанно по графику: '
-      + FormatMinutes(DayResult.TotalWork);
-    SetNextRow(ARow);
-  end;
-  if DayResult.Overtime > 0 then begin
-    sgResult.Cells[2, ARow] := 'Отработанно вне графика: '
-      + FormatMinutes(DayResult.Overtime);
-    SetNextRow(ARow);
-  end;
-  if (DayResult.TotalWork + DayResult.Overtime) > 0 then
-    sgResult.Cells[2, ARow] := 'Отработанно всего: ' + FormatMinutes(
-      DayResult.TotalWork + DayResult.Overtime);
-  //
-  ARow := FirstRow;
-  if (DayResult.Hooky = 0) and (DayResult.Schedule > 0) then
-    sgResult.Cells[3, ARow] := 'нет';
-  if DayResult.HookyComps and (DayResult.Hooky = 0) then
-      sgResult.Cells[3, ARow] := 'Все нарушения компенсированы'
-    else begin
-      if DayResult.LateToShift > 0 then begin
-        sgResult.Cells[3, ARow] := 'Опоздание на смену';
-        SetNextRow(ARow);
+  lbTotalSchedule.Caption := FormatMinutes(TotalDayResylt.Schedule);
+  lbTotalWorkToSchedule.Caption := FormatMinutes(TotalDayResylt.TotalWork);
+  if TotalDayResylt.Overtime > 0 then
+    lbTotalOvertime.Caption := FormatMinutes(TotalDayResylt.Overtime)
+      else lbTotalOvertime.Caption := 'нет';
+  TotalTime := TotalDayResylt.TotalWork + TotalDayResylt.Overtime;
+  lbTotalWork.Caption := FormatMinutes(TotalTime);
+  if (TotalTime >= TotalDayResylt.Schedule) then begin
+        lbTotalWorkCaption.Font.Color := clGreen;
+        lbTotalWork.Font.Color := clGreen;
+      end else begin
+        lbTotalWorkCaption.Font.Color := clRed;
+        lbTotalWork.Font.Color := clRed;
       end;
-      if DayResult.Hooky > 0 then
-        sgResult.Cells[3, ARow] := 'Всего нарушкеий: ' + FormatMinutes(DayResult.Hooky);
-      if DayResult.HookyComps and (DayResult.Hooky > 0) then begin
-        SetNextRow(ARow);
-        sgResult.Cells[3, ARow] := '(частично компенсированы)';
+  lbLateToShift.Font.Color := clGray;
+  lbTotalHooky.Font.Color := clGray;
+  if TotalDayResylt.LateCount = 0 then
+    lbLateToShift.Caption := 'нет'
+      else begin
+        lbLateToShift.Font.Color := clRed;
+        lbLateToShift.Caption := IntToStr(TotalDayResylt.LateCount);
       end;
-    end;
-  //
-  ARow := FirstRow;
-  for I := 0 to PersonState.Pairs.Count - 1 do begin
-    Pair := PersonState.Pairs.Pair[I];
-    if DateOf(Pair.InTime) <> DateOf(ADate) then Continue;
-
-    case Pair.State of
-      psNormal: Text := 'Вход и выход: '
-        + FormatDateTime('hh:mm', Pair.InTime) + ' - '
-        + FormatDateTime('hh:mm', Pair.OutTime);
-      psNotIn: Text := 'Нет входа, выход '
-        + FormatDateTime('hh:mm', Pair.OutTime);
-      psNotOut: Text := 'Вход ' + FormatDateTime('hh:mm', Pair.InTime)
-        + ', нет выхода.';
-    end;
-    sgResult.Cells[4, ARow] := Text;
-    if I < PersonState.Pairs.Count - 1 then SetNextRow(ARow);
-  end;
-
+  if TotalDayResylt.Hooky = 0 then
+    lbTotalHooky.Caption := 'нет'
+      else begin
+        lbTotalHooky.Font.Color := clRed;
+        lbTotalHooky.Caption := FormatMinutes(TotalDayResylt.Hooky);
+      end;
 end;
 
+procedure TfrmPervonEvents.Analysis(Sender: TObject);
+var
+  Person: TPerson;
+  PersonList: TStringList;
+  Division: TDivision;
+begin
+  if not Self.lbPerson.Visible then Exit;
+  if lbPerson.ItemIndex < 0 then begin
+    lbMessage.Font.Color := clRed;
+    lbMessage.Caption := 'Сотрудник не выбран !';
+    lbOvertime.Visible := False;
+    Exit;
+  end;
+  if Sender is TPerson then Person := TPerson(Sender)
+    else Person := TPerson(lbPerson.Items.Objects[lbPerson.ItemIndex]);
+  Division := Person.Division;
+  if (not Assigned(Person)) or (not Assigned(Division)) then Exit;
+
+  PersonList := TStringList.Create;
+  PersonList.Add(Person.PersonId + '=' + Person.Name);
+  Self.ChangeTitle(Person.Name + ' c ' + DateToStr(dtpStartDate.Date)
+        + ' по ' + DateToStr(dtpEndDate.Date));
+
+  FAnalysis.SetParametrs(PersonList, Division.Schedule,
+    dtpStartDate.Date, dtpEndDate.Date, HolydaysList);
+  EndAnalysis(FAnalysis.Analysis)
+end;
+
+procedure TfrmPervonEvents.EndAnalysis(Result: boolean);
+begin
+  if not Result then begin
+      lbMessage.Font.Color := clRed;
+      lbMessage.Caption := 'Ошибка при выполнении анализа !';
+      Exit;
+    end;
+  FResultGrid.UpdateAnalys;
+  WriteTotalTime(Self.FAnalysis.PersonState[0].TotalDayResult);
+  btnPrint.Enabled := True;
+  FResultGrid.Visible := True;
+  pnTotalResult.Visible := True;
+end;
+
+{ Print }
+
+procedure TfrmPervonEvents.btnPrintClick(Sender: TObject);
+var
+  ReportForm: TfrmReport;
+  RepVar: TStringList;
+  Text: string;
+begin
+  ReportForm := TfrmReport.Create(Application.MainForm);
+  ReportForm.FormBtnParentPanel := Self.FormBtnParentPanel;
+  ReportForm.ShowFomButton(bsPrint);
+  RepVar := TStringList.Create;
+  RepVar.Add('RepCaption=' + Self.Caption);
+  RepVar.Add('ScheduleTitel=' + Self.FAnalysis.ScheduleTemplate.Title);
+  RepVar.Add('ScheduleDescr=' + Self.lbOvertime.Caption);
+  RepVar.Add('ScheduleTime=' + Self.lbTotalSchedule.Caption);
+  RepVar.Add('WorkTime=' + Self.lbTotalWorkToSchedule.Caption);
+  RepVar.Add('Overtime=' + Self.lbTotalOvertime.Caption);
+  Text := Self.lbTotalWork.Caption;
+  if Self.lbTotalWork.Font.Color = clGreen then Text := Text + ' (норма)'
+    else Text := Text + ' (ниже нормы)';
+  RepVar.Add('TotalWork=' + Text);
+  RepVar.Add('ScheduleConf=' + 'test');
+  RepVar.Add('LateToShift=' + Self.lbLateToShift.Caption);
+  RepVar.Add('TotalHooky=' + Self.lbTotalHooky.Caption);
+  if not ReportForm.PrintPersonReport(Self.FResultGrid, RepVar)
+    then ReportForm.Close;
+end;
 
 end.

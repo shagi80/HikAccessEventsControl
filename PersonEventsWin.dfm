@@ -3,7 +3,7 @@ object frmPervonEvents: TfrmPervonEvents
   Top = 117
   Caption = #1054#1090#1095#1077#1090' '#1087#1086' '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1091
   ClientHeight = 472
-  ClientWidth = 946
+  ClientWidth = 1084
   Color = clWhite
   ParentFont = True
   FormStyle = fsMDIChild
@@ -18,7 +18,7 @@ object frmPervonEvents: TfrmPervonEvents
   object pnMain: TPanel
     Left = 161
     Top = 0
-    Width = 785
+    Width = 923
     Height = 472
     Align = alClient
     BevelOuter = bvNone
@@ -87,13 +87,13 @@ object frmPervonEvents: TfrmPervonEvents
         ParentFont = False
         TabOrder = 0
         Visible = False
-        OnDblClick = Analysis
+        OnClick = lbPersonClick
       end
     end
     object pnData: TPanel
       Left = 306
       Top = 73
-      Width = 469
+      Width = 607
       Height = 389
       Align = alClient
       BevelOuter = bvNone
@@ -107,36 +107,339 @@ object frmPervonEvents: TfrmPervonEvents
       Font.Style = []
       ParentFont = False
       TabOrder = 1
-      object sgResult: TStringGrid
+      object Panel4: TPanel
+        Left = 10
+        Top = 338
+        Width = 587
+        Height = 41
+        Align = alBottom
+        Color = clWhite
+        TabOrder = 0
+        object cbResizeColumn: TCheckBox
+          Left = 177
+          Top = 1
+          Width = 208
+          Height = 39
+          Align = alLeft
+          Caption = #1087#1086#1076#1086#1075#1086#1085#1103#1090#1100' '#1096#1080#1088#1080#1085#1091' '#1082#1086#1083#1086#1085#1086#1082
+          TabOrder = 0
+          OnClick = cbResizeColumnClick
+        end
+        object cbWordBreak: TCheckBox
+          Left = 1
+          Top = 1
+          Width = 176
+          Height = 39
+          Align = alLeft
+          Caption = #1087#1077#1088#1077#1085#1086#1089#1080#1090#1100' '#1087#1086' '#1089#1083#1086#1074#1072#1084
+          TabOrder = 1
+          OnClick = cbWordBreakClick
+        end
+      end
+      object pnTotalResult: TGridPanel
+        AlignWithMargins = True
         Left = 10
         Top = 10
-        Width = 449
-        Height = 369
-        Align = alClient
-        FixedCols = 0
-        RowCount = 50
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing]
-        ParentFont = False
-        TabOrder = 0
+        Width = 587
+        Height = 71
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 10
+        Align = alTop
+        BevelOuter = bvNone
+        Color = clWhite
+        ColumnCollection = <
+          item
+            SizeStyle = ssAbsolute
+            Value = 220.000000000000000000
+          end
+          item
+            SizeStyle = ssAbsolute
+            Value = 100.000000000000000000
+          end
+          item
+            SizeStyle = ssAbsolute
+            Value = 220.000000000000000000
+          end
+          item
+            SizeStyle = ssAbsolute
+            Value = 100.000000000000000000
+          end>
+        ControlCollection = <
+          item
+            Column = 0
+            Control = Label2
+            Row = 0
+          end
+          item
+            Column = 1
+            Control = lbTotalSchedule
+            Row = 0
+          end
+          item
+            Column = 2
+            Control = lbTotalWorkCaption
+            Row = 0
+          end
+          item
+            Column = 3
+            Control = lbTotalWork
+            Row = 0
+          end
+          item
+            Column = 0
+            Control = Label10
+            Row = 1
+          end
+          item
+            Column = 1
+            Control = lbTotalWorkToSchedule
+            Row = 1
+          end
+          item
+            Column = 2
+            Control = Label12
+            Row = 1
+          end
+          item
+            Column = 3
+            Control = lbLateToShift
+            Row = 1
+          end
+          item
+            Column = 0
+            Control = Label14
+            Row = 2
+          end
+          item
+            Column = 1
+            Control = lbTotalOvertime
+            Row = 2
+          end
+          item
+            Column = 2
+            Control = Label16
+            Row = 2
+          end
+          item
+            Column = 3
+            Control = lbTotalHooky
+            Row = 2
+          end>
+        RowCollection = <
+          item
+            Value = 33.345856604725460000
+          end
+          item
+            Value = 33.321185976672120000
+          end
+          item
+            Value = 33.332957418602430000
+          end>
+        TabOrder = 1
         Visible = False
-        ColWidths = (
-          101
-          102
-          112
-          106
-          64)
+        object Label2: TLabel
+          Left = 0
+          Top = 0
+          Width = 220
+          Height = 16
+          Align = alTop
+          Caption = #1042#1088#1077#1084#1103' '#1087#1086' '#1075#1088#1072#1092#1080#1082#1091
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitLeft = 1
+          ExplicitTop = 1
+          ExplicitWidth = 106
+        end
+        object lbTotalSchedule: TLabel
+          Left = 220
+          Top = 0
+          Width = 100
+          Height = 16
+          Align = alTop
+          Caption = 'lbTotalSchedule'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitWidth = 91
+        end
+        object lbTotalWorkCaption: TLabel
+          Left = 320
+          Top = 0
+          Width = 220
+          Height = 16
+          Align = alTop
+          Caption = #1054#1090#1088#1072#1073#1086#1090#1072#1085#1085#1086' '#1074#1089#1077#1075#1086
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitWidth = 113
+        end
+        object lbTotalWork: TLabel
+          Left = 540
+          Top = 0
+          Width = 100
+          Height = 16
+          Align = alTop
+          Caption = 'lbTotalWork'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitWidth = 69
+        end
+        object Label10: TLabel
+          Left = 0
+          Top = 23
+          Width = 220
+          Height = 16
+          Align = alTop
+          Caption = #1054#1090#1088#1072#1073#1086#1090#1072#1085#1085#1086' '#1087#1086' '#1075#1088#1072#1092#1080#1082#1091
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitLeft = 1
+          ExplicitTop = 28
+          ExplicitWidth = 147
+        end
+        object lbTotalWorkToSchedule: TLabel
+          Left = 220
+          Top = 23
+          Width = 100
+          Height = 16
+          Align = alTop
+          Caption = 'lbTotalWorkToSchedule'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitTop = 25
+          ExplicitWidth = 136
+        end
+        object Label12: TLabel
+          Left = 320
+          Top = 23
+          Width = 220
+          Height = 16
+          Align = alTop
+          Caption = #1054#1087#1086#1079#1076#1072#1085#1080#1103' '#1085#1072' '#1089#1084#1077#1085#1091
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitLeft = 223
+          ExplicitTop = 28
+          ExplicitWidth = 120
+        end
+        object lbLateToShift: TLabel
+          Left = 540
+          Top = 23
+          Width = 100
+          Height = 16
+          Align = alTop
+          Caption = 'lbLateToShift'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitTop = 25
+          ExplicitWidth = 75
+        end
+        object Label14: TLabel
+          Left = 0
+          Top = 46
+          Width = 220
+          Height = 16
+          Align = alTop
+          Caption = #1054#1090#1088#1072#1073#1086#1090#1072#1085#1085#1086' '#1074#1085#1077' '#1075#1088#1072#1092#1080#1082#1072
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitLeft = 1
+          ExplicitTop = 55
+          ExplicitWidth = 155
+        end
+        object lbTotalOvertime: TLabel
+          Left = 220
+          Top = 46
+          Width = 100
+          Height = 16
+          Align = alTop
+          Caption = 'lbTotalOvertime'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitTop = 50
+          ExplicitWidth = 91
+        end
+        object Label16: TLabel
+          Left = 320
+          Top = 46
+          Width = 220
+          Height = 16
+          Align = alTop
+          Caption = #1042#1089#1077' '#1087#1088#1086#1075#1091#1083#1099' '#1080' '#1085#1072#1088#1091#1096#1077#1085#1080#1103
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitLeft = 223
+          ExplicitTop = 55
+          ExplicitWidth = 152
+        end
+        object lbTotalHooky: TLabel
+          Left = 540
+          Top = 46
+          Width = 100
+          Height = 16
+          Align = alTop
+          Caption = 'lbTotalHooky'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitTop = 50
+          ExplicitWidth = 73
+        end
       end
     end
-    object Panel3: TPanel
+    object pnTop: TPanel
       AlignWithMargins = True
       Left = 13
       Top = 13
-      Width = 759
+      Width = 897
       Height = 50
       Margins.Bottom = 10
       Align = alTop
@@ -162,7 +465,7 @@ object frmPervonEvents: TfrmPervonEvents
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 759
+        Width = 897
         Height = 32
         Margins.Left = 0
         Margins.Top = 0
@@ -189,7 +492,7 @@ object frmPervonEvents: TfrmPervonEvents
         end
         object btnClose: TWebSpeedButton
           AlignWithMargins = True
-          Left = 723
+          Left = 861
           Top = 0
           Width = 36
           Height = 32
@@ -238,7 +541,7 @@ object frmPervonEvents: TfrmPervonEvents
         end
         object btnPrint: TWebSpeedButton
           AlignWithMargins = True
-          Left = 590
+          Left = 728
           Top = 0
           Width = 100
           Height = 32
@@ -282,6 +585,7 @@ object frmPervonEvents: TfrmPervonEvents
           SelectFontColor = clBlack
           ActiveFontColor = clBlack
           Enabled = False
+          OnClick = btnPrintClick
           Margin = 0
           Align = alRight
           SpaceWidth = 5
@@ -290,7 +594,7 @@ object frmPervonEvents: TfrmPervonEvents
       end
     end
   end
-  object Panel2: TPanel
+  object pnLeft: TPanel
     Left = 0
     Top = 0
     Width = 161
@@ -298,6 +602,7 @@ object frmPervonEvents: TfrmPervonEvents
     Margins.Left = 20
     Align = alLeft
     BevelOuter = bvNone
+    Caption = 'pnLeft'
     Color = clBlack
     TabOrder = 1
     object Label5: TLabel
@@ -561,7 +866,7 @@ object frmPervonEvents: TfrmPervonEvents
       Align = alTop
       Style = csDropDownList
       Ctl3D = True
-      ItemHeight = 0
+      ItemHeight = 13
       ParentCtl3D = False
       TabOrder = 0
       OnChange = cbDivisionChange

@@ -47,7 +47,8 @@ uses
   TheAnalysisByMinuteThread in 'Analysis\TheAnalysisByMinuteThread.pas',
   SettingsWin in 'DialogWin\SettingsWin.pas' {frmSettings},
   TheBaseBlockManager in 'HikAPI\TheBaseBlockManager.pas',
-  PrintWin in 'PrintWin.pas' {frmReport};
+  PrintWin in 'PrintWin.pas' {frmReport},
+  PersonAnalysisPresent in 'Controls\PersonAnalysisPresent.pas';
 
 {$R *.RES}
 

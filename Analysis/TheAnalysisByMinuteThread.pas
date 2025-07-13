@@ -15,6 +15,7 @@ type
     FAnalysis: TAnalysisByMinute;
     FAnalysisEnd: TAnalysisEnd;
     FResult: boolean;
+    FHideProgress: boolean;
     procedure SyncTikBegin;
     procedure SyncTikEnd;
   protected
@@ -23,6 +24,7 @@ type
     property Present: TAnalysisByMinPresent read FPresent write FPresent;
     property Analysis: TAnalysisByMinute read FAnalysis write FAnalysis;
     property OnAnalysisEnd: TAnalysisEnd read FAnalysisEnd write FAnalysisEnd;
+    property HideProgress: boolean read FHideProgress write FHideProgress;
   end;
 
 implementation
@@ -41,12 +43,13 @@ begin
     FPresent.OnTikEvent := nil;
   end;
   if Assigned(FAnalysisEnd) then FAnalysisEnd(FResult);
-  frmProgress.TikEnd('Все получилось !', 500);
+  if not FHideProgress then
+    frmProgress.TikEnd('Все получилось !', 500);
 end;
 
 procedure TAnalysisByMinuteThread.Execute;
 begin
-  Synchronize(Self.SyncTikBegin);
+  if not FHideProgress then Synchronize(Self.SyncTikBegin);
   FResult := FAnalysis.Analysis;
   Synchronize(Self.SyncTikEnd);
 end;
