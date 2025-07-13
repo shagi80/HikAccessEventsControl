@@ -308,7 +308,7 @@ object frmReport: TfrmReport
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 45845.789112430600000000
-    ReportOptions.LastChange = 45851.558494780100000000
+    ReportOptions.LastChange = 45851.565637060190000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'begin'
@@ -770,6 +770,7 @@ object frmReport: TfrmReport
           Font.Height = -13
           Font.Name = 'Arial'
           Font.Style = []
+          Frame.Color = clGray
           Frame.Typ = [ftTop]
           Memo.UTF8 = (
             '[frxUDS1."Col0"]')
@@ -786,6 +787,7 @@ object frmReport: TfrmReport
           Font.Height = -13
           Font.Name = 'Arial'
           Font.Style = []
+          Frame.Color = clGray
           Frame.Typ = [ftTop]
           Memo.UTF8 = (
             '[frxUDS1."Col4"]')
@@ -802,6 +804,7 @@ object frmReport: TfrmReport
           Font.Height = -13
           Font.Name = 'Arial'
           Font.Style = []
+          Frame.Color = clGray
           Frame.Typ = [ftTop]
           Memo.UTF8 = (
             '[frxUDS1."Col3"]')
@@ -818,6 +821,7 @@ object frmReport: TfrmReport
           Font.Height = -13
           Font.Name = 'Arial'
           Font.Style = []
+          Frame.Color = clGray
           Frame.Typ = [ftTop]
           Memo.UTF8 = (
             '[frxUDS1."Col1"]')
@@ -834,6 +838,7 @@ object frmReport: TfrmReport
           Font.Height = -13
           Font.Name = 'Arial'
           Font.Style = []
+          Frame.Color = clGray
           Frame.Typ = [ftTop]
           Memo.UTF8 = (
             '[frxUDS1."Col2"]')
