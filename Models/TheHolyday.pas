@@ -232,8 +232,9 @@ begin
   Result := nil;
   for I := 0 to Self.Count - 1 do begin
     Holyday := Self.Items[I];
-    if (DateOf(Holyday.FStartTime) = DateOf(Date))
-      and ((Holyday.Schedule = nil) or (Holyday.Schedule = Schedule)) then begin
+    if ((Holyday.Schedule = nil) or (Holyday.Schedule = Schedule))
+     and ((DateOf(Date) >= DateOf(Holyday.FStartTime))
+      and (DateOf(Date) <= DateOf(Holyday.FEndTime))) then begin
         Result := Holyday;
         Exit;
       end;

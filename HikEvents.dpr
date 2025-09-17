@@ -48,7 +48,11 @@ uses
   SettingsWin in 'DialogWin\SettingsWin.pas' {frmSettings},
   TheBaseBlockManager in 'HikAPI\TheBaseBlockManager.pas',
   PrintWin in 'PrintWin.pas' {frmReport},
-  PersonAnalysisPresent in 'Controls\PersonAnalysisPresent.pas';
+  PersonAnalysisPresent in 'Controls\PersonAnalysisPresent.pas',
+  TheTablePoint in 'Analysis\TheTablePoint.pas',
+  TheTableAnalysis in 'Analysis\TheTableAnalysis.pas',
+  DivisionTableWin in 'DivisionTableWin.pas' {frmDivisionTable},
+  TablePresent in 'Controls\TablePresent.pas';
 
 {$R *.RES}
 

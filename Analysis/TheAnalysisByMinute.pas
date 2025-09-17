@@ -32,6 +32,7 @@ type
     Hooky: integer;
     HookyComps: boolean;
     State: TDayResultState;
+    NightMinutes: integer;
   end;
 
   TPersonResult = record
@@ -64,6 +65,8 @@ type
     FPersonCount: integer;
     FHolydayList: THolydayList;
     FPersonList: TStringList;
+    FNightBegin: integer;
+    FNightEnd: integer;
     function LoadPersonPairs(PersonId: string; PersonInd: integer): boolean;
     function GetDayCount: integer;
     function GetMinCount: integer;
@@ -76,8 +79,8 @@ type
     function GetScheduleTotalTime: integer;
     procedure PrepareHolydaysStateArray(var HolydayStates: THolydayStateArray);
     procedure PrepareScheduleStateArrayNew;
-    procedure CalckDayResult(State: TEventState; var PersonState: TPersonMinuteState;
-      DayNum: integer; CalckTotal: boolean);
+    procedure CalckDayResult(State: TEventState; IsNight: boolean;
+      var PersonState: TPersonMinuteState; DayNum: integer; CalckTotal: boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -103,7 +106,9 @@ uses TheSettings, DateUtils, Dialogs;
 constructor TAnalysisByMinute.Create;
 begin
   inherited Create;
-  FMaxShiftLen := 14;
+  FMaxShiftLen := 16;
+  FNightBegin := 20 * 60;
+  FNightEnd := 8 * 60;
   FPersonCount := 0;
   FHolydayList := nil;
   FPersonList := nil;
@@ -203,11 +208,16 @@ begin
     Holyday := Self.FHolydayList.HolydayFor(Date, Self.FScheduleTemplate);
     if (not Assigned(Holyday)) or ((Holyday.Schedule <> nil)
       and (Holyday.Schedule <> Self.FScheduleTemplate)) then Continue;
-    StartMin := MinuteOfTheDay(Holyday.StartTime) + DayNum * 60 * 24;
-    EndMin := MinutesBetween(Holyday.StartTime, Holyday.EndTime)
-      + StartMin + 1;
-    for MinNum := StartMin to EndMin do
-      if MinNum <= High(HolydayStates) then HolydayStates[MinNum] := True;
+    if DateOf(Holyday.StartTime) < DateOf(Date) then begin
+      StartMin := DayNum * 60 * 24;
+      EndMin := MinutesBetween(StartOfTheDay(Date), Holyday.EndTime);
+    end else begin
+        StartMin := MinuteOfTheDay(Holyday.StartTime) + DayNum * 60 * 24;
+        EndMin := MinutesBetween(Holyday.StartTime, Holyday.EndTime)
+          + StartMin + 1;
+    end;
+    if EndMin > High(HolydayStates) then EndMin := High(HolydayStates);
+    for MinNum := StartMin to EndMin do HolydayStates[MinNum] := True;
   end;
 end;
 
@@ -269,7 +279,7 @@ end;
 
 { Сопоставление графика и явки. }
 
-procedure TAnalysisByMinute.CalckDayResult(State: TEventState;
+procedure TAnalysisByMinute.CalckDayResult(State: TEventState; IsNight: boolean;
   var PersonState: TPersonMinuteState; DayNum: integer; CalckTotal: boolean);
 var
   DayHookyTotal: integer;
@@ -287,6 +297,8 @@ begin
     esLateToShift: Inc(PersonState.DayResult[DayNum].LateToShift);
     esHooky: Inc(PersonState.DayResult[DayNum].Hooky);
   end;
+  // Ночные минуты
+  if IsNight then Inc(PersonState.DayResult[DayNum].NightMinutes);
   // Расчет дневных итогов
   if CalckTotal then begin
     // Суммируем все виды прогулов, запоминаем переработку
@@ -351,6 +363,7 @@ var
   EventState, PrevEventState: TEventState;
   ScheduleState: TScheduleState;
   Presence, WorkFlag: boolean;
+  IsNight: boolean;
 begin
   PrevEventState := esNone;
   EventState := esNone;
@@ -403,9 +416,14 @@ begin
       end;
       FPersonState[PersonInd].StateArray[MinuteInd].EventState := EventState;
       PrevEventState := EventState;
+      // Флаг работы в ночь
+      IsNight := (((MinuteInd - DayNum * 24 * 60 >= Self.FNightBegin) or
+          (MinuteInd  - DayNum * 24 * 60 <= Self.FNightEnd))
+           and Presence);
+      //
       if DayNum > 0 then begin
         if Presence then Inc(FPersonState[PersonInd].DayResult[DayNum - 1].Present);
-        CalckDayResult(EventState, FPersonState[PersonInd], DayNum - 1,
+        CalckDayResult(EventState, IsNight, FPersonState[PersonInd], DayNum - 1,
           ((MinuteInd + 1) mod (60 * 24) = 0));
       end;
     end;
@@ -459,6 +477,7 @@ begin
     FPersonState[PersonInd].DayResult[J].LateFromBreak := 0;
     FPersonState[PersonInd].DayResult[J].LateToShift := 0;
     FPersonState[PersonInd].DayResult[J].Hooky := 0;
+    FPersonState[PersonInd].DayResult[J].NightMinutes := 0;
     FPersonState[PersonInd].DayResult[J].HookyComps := False;
     FPersonState[PersonInd].DayResult[J].State := dsNormal;
   end;

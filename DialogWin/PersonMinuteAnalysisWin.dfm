@@ -3,11 +3,9 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
   Top = 0
   BorderStyle = bsDialog
   Caption = #1047#1072' '#1086#1076#1080#1085' '#1076#1077#1085#1100
-  ClientHeight = 368
+  ClientHeight = 371
   ClientWidth = 794
   Color = clWhite
-  Constraints.MinHeight = 200
-  Constraints.MinWidth = 400
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -22,7 +20,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
     Left = 0
     Top = 201
     Width = 794
-    Height = 167
+    Height = 170
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 20

@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, frxClass, frxPreview, AnalysisByMinPresent, ChildWin, TWebButton,
   ExtCtrls, StdCtrls, frxExportPDF, frxExportODF, frxExportXLS,
-  TheAnalysisByMinute, PersonAnalysisPresent;
+  TheAnalysisByMinute, PersonAnalysisPresent, TablePresent;
 
 type
   TfrmReport = class(TMDIChild)
@@ -29,15 +29,20 @@ type
     { Private declarations }
     FAnalysisPresent: TAnalysisByMinPresent;
     FPersonGrid: TPersonAnalysisPresent;
+    FTablePresent: TTablePresent;
     procedure frxDivisionReportGetValue(const VarName: string;
       var Value: Variant);
     procedure frxPersonReportGetValue(const VarName: string;
+      var Value: Variant);
+    procedure frxTableReportGetValue(const VarName: string;
       var Value: Variant);
   public
     { Public declarations }
     function PrintDivisionReport(AnalysisPresent: TAnalysisByMinPresent;
       RepCaption: string): boolean;
     function PrintPersonReport(Grid: TPersonAnalysisPresent;
+      RepVar: TStringList): boolean;
+    function PrintTableReport(TablePresent: TTablePresent;
       RepVar: TStringList): boolean;
   end;
 
@@ -125,7 +130,6 @@ procedure TfrmReport.frxPersonReportGetValue(const VarName: string;
   var Value: Variant);
 var
   ARow: integer;
-  TotalResult: TPersonResult;
 begin
   Value := '???';
   ARow := frxUDS1.RecNo + 1;
@@ -160,6 +164,64 @@ begin
   frxReport.Variables['TotalHooky'] := '''' + RepVar.Values['TotalHooky'] + '''';
   frxUDS1.OnGetValue := frxPersonReportGetValue;
   frxUDS1.RangeEndCount := FPersonGrid.RowCount - FPersonGrid.FixedRows;
+  frxReport.ShowReport(True);
+  Result := True;
+end;
+
+{ Печать табеля подразделения }
+
+procedure TfrmReport.frxTableReportGetValue(const VarName: string;
+  var Value: Variant);
+var
+  ARow, ACol: integer;
+  TotalTime, LateCount: integer;
+begin
+  Value := '???';
+  ARow := frxUDS1.RecNo;
+  if VarName = 'Name' then
+    Value := FTablePresent.Analysis.PersonState[ARow].PersonName;
+  if VarName = 'Total' then begin
+    TotalTime := FTablePresent.GetPersonTotalTime(
+      FTablePresent.Analysis.PersonState[ARow].TotalDayResult);
+    Value := FTablePresent.FormatMinutes(
+        FTablePresent.Analysis.PersonState[ARow].TotalDayResult.Schedule)
+           + ' / ' + FTablePresent.FormatMinutes(TotalTime);
+  end;
+  if VarName = 'Late' then begin
+    LateCount := FTablePresent.Analysis.PersonState[ARow].TotalDayResult.LateCount;
+    if LateCount = 0 then Value := 'нет'
+      else Value := 'да, ' + IntToStr(LateCount) + ' дн.';
+  end;
+  if Pos('Col', VarName) = 1 then begin
+    ACol := StrToIntDef(copy(VarName, 4, MaxInt), 0) - 1;
+    if ACol < FTablePresent.LastDayCol then begin
+      TotalTime := FTablePresent.GetDayTotalTime(
+        FTablePresent.Analysis.PersonState[ARow].DayResult[ACol]);
+      if TotalTime = 0 then begin
+          if (FTablePresent.Analysis.PersonState[ARow].DayResult[ACol].Schedule > 0) then
+            Value := 'НН' else Value := '';
+      end else Value := FTablePresent.FormatMinutes(TotalTime);
+    end else Value := '';
+  end;
+end;
+
+function TfrmReport.PrintTableReport(TablePresent: TTablePresent;
+  RepVar: TStringList): boolean;
+var
+  FileName: string;
+begin
+  Result := False;
+  FileName := ExtractFilePath(Application.ExeName) + FolderName;
+  FileName := IncludeTrailingPathDelimiter(FileName) + 'TableReport.fr3';
+  if not FileExists(FileName) then Exit;
+  FTablePresent := TablePresent;
+  Self.ChangeTitle('Печать: ' + RepVar.Values['RepCaption']);
+  frxReport.LoadFromFile(FileName);
+  frxReport.Variables['RepCaption'] := '''' + RepVar.Values['RepCaption'] + '''';
+  frxReport.Variables['ScheduleTitel'] := '''' + RepVar.Values['ScheduleTitel'] + '''';
+  frxReport.Variables['ScheduleDescr'] := '''' + RepVar.Values['ScheduleDescr'] + '''';
+  frxUDS1.OnGetValue := frxTableReportGetValue;
+  frxUDS1.RangeEndCount := TablePresent.RowCount - 1;
   frxReport.ShowReport(True);
   Result := True;
 end;

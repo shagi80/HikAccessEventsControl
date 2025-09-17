@@ -5,14 +5,14 @@ interface
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
   StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
   ActnList, ToolWin, ImgList, Grids, TWebButton, ButtonGroup, Tabs, DockTabSet,
-  TheAPIThreadStateLoader, jpeg;
+  TheAPIThreadStateLoader, jpeg, AppEvnts;
 
 type
   TMainForm = class(TForm)
     Panel2: TPanel;
     btnPerson: TWebSpeedButton;
     btnProcess: TWebSpeedButton;
-    btnDivisionReport: TWebSpeedButton;
+    btnShowDivPanel: TWebSpeedButton;
     btnPersonReport: TWebSpeedButton;
     btnSchedule: TWebSpeedButton;
     sbFormButtons: TScrollBox;
@@ -22,13 +22,24 @@ type
     pnState: TPanel;
     lbLastTime: TLabel;
     Image1: TImage;
+    pnReportButtons: TPanel;
+    btnTableReport: TWebSpeedButton;
+    Panel3: TPanel;
+    btnHideButtonsPanel: TSpeedButton;
+    btnGraphicReport: TWebSpeedButton;
+    tmButtonsPanel: TTimer;
+    Label1: TLabel;
+    procedure btnHideButtonsPanelClick(Sender: TObject);
+    procedure btnGraphicReportClick(Sender: TObject);
+    procedure btnTableReportClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnSettingsClick(Sender: TObject);
     procedure btnPersonReportClick(Sender: TObject);
     procedure btnPersonClick(Sender: TObject);
     procedure btnScheduleClick(Sender: TObject);
-    procedure btnDivisionReportClick(Sender: TObject);
+    procedure btnShowDivPanelClick(Sender: TObject);
     procedure btnProcessClick(Sender: TObject);
+    procedure HidePanel(Sender: TObject);
   private
     { Private declarations }
     FLastTimeInBD: TDateTime;
@@ -54,7 +65,7 @@ uses about, DateUtils, APIProcessWin, TheSettings, TheEventPairs,
   PersonEventsWin, ScheduleEditWin, TheShift, TheSchedule,
   TheBreaks, ScheduleAndShiftSettingsWin, TheAnalysisByMinute,
   AnalysisByMinPresent, SubdivisionEventsWin, DivisionAndPersonSettingsWin,
-  SettingsWin, TheEventsLoader, CHILDWIN;
+  SettingsWin, TheEventsLoader, CHILDWIN, DivisionTableWin;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
@@ -81,18 +92,21 @@ procedure TMainForm.UnselectFormButton;
 var
   I: integer;
 begin
+  Self.HidePanel(Self);
   for I := 0 to Self.pnFormButtons.ControlCount - 1 do
     TWebSpeedButton(Self.pnFormButtons.Controls[I]).Down := False;
 end;
 
 procedure TMainForm.SetButtonsEnabled;
 begin
+  Self.HidePanel(Self);
   Self.btnSchedule.Enabled := (Settings.GetInstance.AccessLevel > 0)
     and (FConnectToBd);
   Self.btnPerson.Enabled := (Settings.GetInstance.AccessLevel > 0)
     and (FConnectToBd);
   Self.btnProcess.Enabled := FConnectToBd;
-  Self.btnDivisionReport.Enabled := FConnectToBd;
+  Self.btnGraphicReport.Enabled := FConnectToBd;
+  Self.btnTableReport.Enabled := FConnectToBd;
   Self.btnPersonReport.Enabled := FConnectToBd;
   lbLastTime.Visible := FConnectToBd;
   if Self.FConnectToBd then begin
@@ -126,34 +140,45 @@ begin
   Loader.Free;
 end;
 
+
 //
+
+procedure TMainForm.btnShowDivPanelClick(Sender: TObject);
+begin
+  tmButtonsPanel.Enabled := True;
+  pnReportButtons.Visible := True;
+end;
+
+procedure TMainForm.HidePanel(Sender: TObject);
+begin
+  Self.pnReportButtons.Visible := False;
+  Self.tmButtonsPanel.Enabled := False;
+end;
+
+procedure TMainForm.btnHideButtonsPanelClick(Sender: TObject);
+begin
+  Self.HidePanel(Self);
+end;
+
+//
+
 
 procedure TMainForm.btnProcessClick(Sender: TObject);
 var
   frmProcess: TfrmProcess;
 begin
+  Self.HidePanel(Self);
   frmProcess := TfrmProcess.Create(Self);
   frmProcess.ShowModal;
   frmProcess.Free;
   SetButtonsEnabled;
 end;
 
-procedure TMainForm.btnDivisionReportClick(Sender: TObject);
-var
-  frmSubdivisionEvents: TfrmSubdivisionEvents;
-begin
-  frmSubdivisionEvents := TfrmSubdivisionEvents.Create(Self);
-  frmSubdivisionEvents.FormBtnParentPanel := pnFormButtons;
-  frmSubdivisionEvents.ShowFomButton(bsGrid);
-  frmSubdivisionEvents.WindowState := wsMaximized;
-end;
-
 procedure TMainForm.btnPersonReportClick(Sender: TObject);
 var
   frmPersonEvents: TfrmPervonEvents;
 begin
-  //MessageDlg('Это еще не работает !', mtWarning, [mbOk], 0);
-  //Exit;
+  Self.HidePanel(Self);
   frmPersonEvents := TfrmPervonEvents.Create(Self);
   frmPersonEvents.FormBtnParentPanel := pnFormButtons;
   frmPersonEvents.ShowFomButton(bsGrid);
@@ -174,6 +199,27 @@ begin
     FConnectToBd := Self.UpdateLastTime;
     SetButtonsEnabled;
   end;
+end;
+
+procedure TMainForm.btnGraphicReportClick(Sender: TObject);
+var
+  frmSubdivisionEvents: TfrmSubdivisionEvents;
+begin
+  Self.HidePanel(Self);
+  frmSubdivisionEvents := TfrmSubdivisionEvents.Create(Self);
+  frmSubdivisionEvents.FormBtnParentPanel := pnFormButtons;
+  frmSubdivisionEvents.ShowFomButton(bsGrid);
+  frmSubdivisionEvents.WindowState := wsMaximized;
+end;
+
+procedure TMainForm.btnTableReportClick(Sender: TObject);
+var
+  frmDivisionTable: TfrmDivisionTable;
+begin
+  Self.HidePanel(Self);
+  frmDivisionTable := TfrmDivisionTable.Create(Self);
+  frmDivisionTable.FormBtnParentPanel := pnFormButtons;
+  frmDivisionTable.ShowFomButton(bsGrid);
 end;
 
 procedure TMainForm.btnPersonClick(Sender: TObject);

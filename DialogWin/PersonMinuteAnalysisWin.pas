@@ -140,9 +140,16 @@ begin
   FDayResult := DayResult;
   lbDate.Caption := DateToStr(Date) + ' (' + FormatDateTime('dddd', Date) + ')';
   lbPerson.Caption := PersonName;
-  imgBmp.Width := AnalysisBitMap.Width;
-  imgBmp.Height := AnalysisBitMap.Height;
-  imgBmp.Picture.Bitmap.Assign(AnalysisBitMap);
+  if Assigned(AnalysisBitMap) then begin
+    imgBmp.Width := AnalysisBitMap.Width;
+    imgBmp.Height := AnalysisBitMap.Height;
+    imgBmp.Picture.Bitmap.Assign(AnalysisBitMap);
+    pnMain.Visible := True;
+    Self.Height := 400;
+  end else begin
+    pnMain.Visible := False;
+    Self.Height := 260;
+  end;
   WritePairs(Pairs, DateOf(Date));
   WriteTotalTime;
   //
