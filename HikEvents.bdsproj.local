@@ -74,5 +74,7 @@
     <Transaction>2025.09.11 19:44:33.223.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\DivisionTableWin.pas</Transaction>
     <Transaction>2025.09.11 19:44:33.223.dfm,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.dfm=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\DivisionTableWin.dfm</Transaction>
     <Transaction>2025.09.13 12:07:16.506.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Unit1.pas=C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Controls\TablePresent.pas</Transaction>
+    <Transaction>2025.09.17 16:43:07.507.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Analysis\TheTableAnalysis.pas=</Transaction>
+    <Transaction>2025.09.17 16:43:17.047.pas,C:\Users\HONOR\Documents\Borland Studio Projects\HikVisionAPI\Analysis\TheTablePoint.pas=</Transaction>
   </Transactions>
 </BorlandProject>

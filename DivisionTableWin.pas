@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, StdCtrls, TWebButton, ExtCtrls, ChildWin,
-  TheSettings, TheDivisions, TheTableAnalysis, TheAnalysisByMinute,
+  TheSettings, TheDivisions, TheAnalysisByMinute,
   TheAnalysisByMinuteThread, TablePresent;
 
 type
