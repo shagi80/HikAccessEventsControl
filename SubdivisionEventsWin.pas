@@ -248,7 +248,7 @@ procedure TfrmSubdivisionEvents.btnPrintClick(Sender: TObject);
 var
   ReportForm: TfrmReport;
 begin
-  ReportForm := TfrmReport.Create(Application.MainForm);
+  ReportForm := TfrmReport.Create(Self);
   ReportForm.FormBtnParentPanel := Self.FormBtnParentPanel;
   ReportForm.ShowFomButton(bsPrint);
   if not ReportForm.PrintDivisionReport(FAnalysisByMinPresent,

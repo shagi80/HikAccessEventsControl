@@ -41,6 +41,7 @@ implementation
 
 {$R *.dfm}
 
+
 procedure TMDIChild.FormCreate(Sender: TObject);
 begin
   ShiftsList := TShiftList.Create(True);
@@ -78,7 +79,23 @@ begin
 end;
 
 procedure TMDIChild.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  I: integer;
+  HavePrintForm: boolean;
 begin
+  HavePrintForm := False;
+  for I := 0 to Application.MainForm.MDIChildCount - 1 do
+    if Application.MainForm.MDIChildren[I].Owner = Self then begin
+      HavePrintForm := True;
+      Break;
+    end;
+  if HavePrintForm then
+    if MessageDlg('Внимание !' + chr(13)
+      + 'Вместе с отчетом будут закрыты все печатные формы.',
+      mtWarning, [mbOk, mbCancel], 0) = mrCancel then begin
+        Action := caNone;
+        Exit;
+      end;
   ShiftsList.Free;
   BreaksList.Free;
   SchedulesList.Free;

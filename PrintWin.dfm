@@ -308,7 +308,7 @@ object frmReport: TfrmReport
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 45845.789112430600000000
-    ReportOptions.LastChange = 45917.656941041660000000
+    ReportOptions.LastChange = 45918.887393773150000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'begin'
@@ -432,7 +432,7 @@ object frmReport: TfrmReport
         object Memo3: TfrxMemoView
           Left = 68.031540000000000000
           Top = 52.913420000000000000
-          Width = 650.078915910000000000
+          Width = 978.898025910000000000
           Height = 18.897650000000000000
           ShowHint = False
           Font.Charset = DEFAULT_CHARSET
@@ -447,7 +447,7 @@ object frmReport: TfrmReport
         object Memo4: TfrxMemoView
           Left = 68.031540000000000000
           Top = 71.811070000000000000
-          Width = 650.078915910000000000
+          Width = 978.898025910000000000
           Height = 15.118120000000000000
           ShowHint = False
           Font.Charset = DEFAULT_CHARSET

@@ -71,6 +71,12 @@ begin
     2: frxReport.Export(Self.frxXLSExport);
     3: frxReport.Export(Self.frxPDFExport1);
   end;
+  if Self.Owner <> nil then Self.frxReport.PrepareReport(False)
+    else begin
+      MessageDlg('Окно отчета закрыто, повторное построение печатной '
+        + 'формы не возможно !', mtWarning, [mbOk], 0);
+      Self.Close;
+    end;
 end;
 
 { Печать отчета по подразделению }
@@ -222,7 +228,8 @@ begin
   frxReport.Variables['ScheduleDescr'] := '''' + RepVar.Values['ScheduleDescr'] + '''';
   frxUDS1.OnGetValue := frxTableReportGetValue;
   frxUDS1.RangeEndCount := TablePresent.RowCount - 1;
-  frxReport.ShowReport(True);
+  frxReport.PrepareReport(True);
+  frxReport.ShowPreparedReport;
   Result := True;
 end;
 

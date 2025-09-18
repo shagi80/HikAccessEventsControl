@@ -232,7 +232,7 @@ object frmPervonEvents: TfrmPervonEvents
             Value = 33.345856604725460000
           end
           item
-            Value = 33.321185976672120000
+            Value = 33.321185976672110000
           end
           item
             Value = 33.332957418602430000
@@ -252,8 +252,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitLeft = 1
-          ExplicitTop = 1
           ExplicitWidth = 106
         end
         object lbTotalSchedule: TLabel
@@ -314,8 +312,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitLeft = 1
-          ExplicitTop = 28
           ExplicitWidth = 147
         end
         object lbTotalWorkToSchedule: TLabel
@@ -331,7 +327,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitTop = 25
           ExplicitWidth = 136
         end
         object Label12: TLabel
@@ -347,8 +342,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitLeft = 223
-          ExplicitTop = 28
           ExplicitWidth = 120
         end
         object lbLateToShift: TLabel
@@ -364,7 +357,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitTop = 25
           ExplicitWidth = 75
         end
         object Label14: TLabel
@@ -380,8 +372,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitLeft = 1
-          ExplicitTop = 55
           ExplicitWidth = 155
         end
         object lbTotalOvertime: TLabel
@@ -397,7 +387,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitTop = 50
           ExplicitWidth = 91
         end
         object Label16: TLabel
@@ -413,8 +402,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitLeft = 223
-          ExplicitTop = 55
           ExplicitWidth = 152
         end
         object lbTotalHooky: TLabel
@@ -430,7 +417,6 @@ object frmPervonEvents: TfrmPervonEvents
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitTop = 50
           ExplicitWidth = 73
         end
       end

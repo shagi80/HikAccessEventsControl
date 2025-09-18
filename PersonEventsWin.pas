@@ -390,7 +390,7 @@ var
   RepVar: TStringList;
   Text: string;
 begin
-  ReportForm := TfrmReport.Create(Application.MainForm);
+  ReportForm := TfrmReport.Create(Self);
   ReportForm.FormBtnParentPanel := Self.FormBtnParentPanel;
   ReportForm.ShowFomButton(bsPrint);
   RepVar := TStringList.Create;

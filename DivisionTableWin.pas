@@ -14,14 +14,12 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Label4: TLabel;
     btnCurrentMonth: TWebSpeedButton;
     btnUpdate: TWebSpeedButton;
     btnPreviosMonth: TWebSpeedButton;
     cbDivision: TComboBox;
     dtpEndDate: TDateTimePicker;
     dtpStartDate: TDateTimePicker;
-    tbScale: TTrackBar;
     pnMain: TPanel;
     Panel3: TPanel;
     lbOvertime: TLabel;
@@ -70,7 +68,6 @@ begin
   FTablePresent.Name := 'FTablePresent';
   FTablePresent.Parent := pnMain;
   FTablePresent.Visible := False;
-  tbScale.Position := 10;
   Self.dtpStartDate.Date := StartOfTheMonth(now);
   Self.dtpEndDate.Date := now;
   Self.DoubleBuffered := True;
@@ -170,7 +167,7 @@ begin
   FTablePresent.Visible := False;
   btnPrint.Enabled := False;
   lbOvertime.Caption := '';
-  tbScale.Enabled := FTablePresent.Visible;
+  //tbScale.Enabled := FTablePresent.Visible;
   btnPrint.Enabled := False;
   // Проверяем выбор подразделения.
   if cbDivision.ItemIndex < 0 then begin
@@ -215,7 +212,6 @@ begin
   end;
   if Division.Schedule.CanWorkToBreak then
     Str := Str + ' Разрешено работать в перерывы.';
-  lbOvertime.Caption := Str + '999';
 
   Result := True;
 end;
@@ -259,7 +255,7 @@ var
   ReportForm: TfrmReport;
   RepVar: TStringList;
 begin
-  ReportForm := TfrmReport.Create(Application.MainForm);
+  ReportForm := TfrmReport.Create(Self);
   ReportForm.FormBtnParentPanel := Self.FormBtnParentPanel;
   ReportForm.ShowFomButton(bsPrint);
   RepVar := TStringList.Create;

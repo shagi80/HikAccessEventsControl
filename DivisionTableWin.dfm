@@ -85,25 +85,6 @@ object frmDivisionTable: TfrmDivisionTable
       ParentFont = False
       ExplicitWidth = 65
     end
-    object Label4: TLabel
-      AlignWithMargins = True
-      Left = 20
-      Top = 388
-      Width = 131
-      Height = 13
-      Margins.Left = 20
-      Margins.Top = 70
-      Margins.Right = 10
-      Align = alBottom
-      Caption = #1052#1072#1089#1096#1090#1072#1073' '#1086#1090#1086#1073#1088#1072#1078#1077#1085#1080#1103
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ExplicitWidth = 116
-    end
     object btnCurrentMonth: TWebSpeedButton
       Tag = 3
       AlignWithMargins = True
@@ -289,7 +270,7 @@ object frmDivisionTable: TfrmDivisionTable
       Align = alTop
       Style = csDropDownList
       Ctl3D = True
-      ItemHeight = 0
+      ItemHeight = 13
       ParentCtl3D = False
       TabOrder = 0
     end
@@ -320,23 +301,6 @@ object frmDivisionTable: TfrmDivisionTable
       Date = 45815.530015787040000000
       Time = 45815.530015787040000000
       TabOrder = 2
-    end
-    object tbScale: TTrackBar
-      AlignWithMargins = True
-      Left = 20
-      Top = 404
-      Width = 131
-      Height = 38
-      Margins.Left = 20
-      Margins.Top = 0
-      Margins.Right = 10
-      Margins.Bottom = 30
-      Align = alBottom
-      Max = 30
-      Min = 1
-      Position = 1
-      TabOrder = 3
-      TickMarks = tmBoth
     end
   end
   object pnMain: TPanel
