@@ -29,8 +29,8 @@ type
     property CurrentPassword: string read FCurrentPassword
       write SetCurrentPassword;
     property AccessLevel: integer read FAccessLevel;
-    property MaxShiftHours: integer read FMaxShiftHours;
-    property MinWorkMinutes: integer read FMinWorkMinutes;
+    property MaxShiftHours: integer read FMaxShiftHours write FMaxShiftHours;
+    property MinWorkMinutes: integer read FMinWorkMinutes write FMinWorkMinutes;
   end;
 
   TSettings = class of TSettingsSingleton;
@@ -46,11 +46,12 @@ class function TSettingsSingleton.GetInstance: TSettingsSingleton;
 begin
   if not Assigned(FInstance) then begin
     FInstance := TSettingsSingleton.Create;
-    if not FInstance.LoadSettings then
+    if not FInstance.LoadSettings then begin
       FInstance.FDBFileName := 'hik_events.db';
-    FInstance.SetAccessLevel;
-    FInstance.FMaxShiftHours := 16;
-    FInstance.FMinWorkMinutes := Trunc(60 * 3.5);
+      FInstance.SetAccessLevel;
+      FInstance.FMaxShiftHours := 16;
+      FInstance.FMinWorkMinutes := Trunc(60 * 3.5);
+    end;
   end;
   Result := FInstance;
 end;

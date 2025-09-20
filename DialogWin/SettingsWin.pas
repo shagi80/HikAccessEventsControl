@@ -39,6 +39,10 @@ type
     edDevPaswrd_2: TEdit;
     edPassword: TMaskEdit;
     dlgOpen: TOpenDialog;
+    Label13: TLabel;
+    Label14: TLabel;
+    edMaxShiftLen: TEdit;
+    edMinShiftLen: TEdit;
     procedure edDevPort_1KeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnsaveClick(Sender: TObject);
@@ -99,10 +103,16 @@ begin
 end;
 
 procedure TfrmSettings.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  Value: Integer;
 begin
   if Self.ModalResult = mrOk then begin
     Settings.GetInstance.DBFileName := Self.edDBFileName.Text;
     Settings.GetInstance.CurrentPassword := Self.edPassword.Text;
+    Value := StrToIntDef(Self.edMaxShiftLen.Text, 0);
+    if Value > 0 then Settings.GetInstance.MaxShiftHours := Value;
+    Value := StrToIntDef(Self.edMinShiftLen.Text, 0);
+    if Value > 0 then Settings.GetInstance.MinWorkMinutes := Value;
     Settings.GetInstance.SaveSettings;
     if Settings.GetInstance.AccessLevel > 0 then SaveDeviceSettings;
   end else
@@ -114,6 +124,8 @@ begin
   Self.edPassword.Text := Settings.GetInstance.CurrentPassword;
   FOldPassword := Settings.GetInstance.CurrentPassword;
   Self.edDBFileName.Text := Settings.GetInstance.DBFileName;
+  Self.edMaxShiftLen.Text := IntToStr(Settings.GetInstance.MaxShiftHours);
+  Self.edMinShiftLen.Text := IntToStr(Settings.GetInstance.MinWorkMinutes);
   LoadDeviceSettings(Settings.GetInstance.DBFileName);
   SetDevControlEnabled;
 end;
@@ -126,6 +138,8 @@ begin
     pnDev1.Controls[I].Enabled := (Settings.GetInstance.AccessLevel > 0);
   for I := 0 to pnDev2.ControlCount - 1 do
     pnDev2.Controls[I].Enabled := (Settings.GetInstance.AccessLevel > 0);
+  Self.edMaxShiftLen.Enabled := (Settings.GetInstance.AccessLevel > 0);
+  Self.edMinShiftLen.Enabled := (Settings.GetInstance.AccessLevel > 0);
 end;
 
 procedure TfrmSettings.LoadDeviceSettings(DBFileName: string);

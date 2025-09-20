@@ -3,8 +3,8 @@ object frmSettings: TfrmSettings
   Top = 0
   BorderStyle = bsDialog
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-  ClientHeight = 419
-  ClientWidth = 545
+  ClientHeight = 456
+  ClientWidth = 570
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,10 +18,10 @@ object frmSettings: TfrmSettings
   PixelsPerInch = 96
   TextHeight = 13
   object Shape1: TShape
-    Left = 407
+    Left = 432
     Top = 0
     Width = 138
-    Height = 419
+    Height = 456
     Align = alRight
     Brush.Color = clBlack
     ExplicitLeft = 367
@@ -29,7 +29,7 @@ object frmSettings: TfrmSettings
     ExplicitHeight = 252
   end
   object btnsave: TWebSpeedButton
-    Left = 439
+    Left = 464
     Top = 20
     Width = 106
     Height = 35
@@ -78,8 +78,8 @@ object frmSettings: TfrmSettings
     SpaceWidth = 5
   end
   object btnCancel: TWebSpeedButton
-    Left = 439
-    Top = 71
+    Left = 464
+    Top = 70
     Width = 106
     Height = 35
     Caption = #1054#1090#1084#1077#1085#1080#1090#1100
@@ -130,8 +130,8 @@ object frmSettings: TfrmSettings
     AlignWithMargins = True
     Left = 20
     Top = 20
-    Width = 377
-    Height = 369
+    Width = 402
+    Height = 406
     Margins.Left = 20
     Margins.Top = 20
     Margins.Right = 10
@@ -142,7 +142,7 @@ object frmSettings: TfrmSettings
     ColumnCollection = <
       item
         SizeStyle = ssAbsolute
-        Value = 100.000000000000000000
+        Value = 130.000000000000000000
       end
       item
         SizeStyle = ssAbsolute
@@ -202,15 +202,39 @@ object frmSettings: TfrmSettings
         Column = 1
         Control = edPassword
         Row = 0
+      end
+      item
+        Column = 0
+        Control = Label13
+        Row = 4
+      end
+      item
+        Column = 0
+        Control = Label14
+        Row = 5
+      end
+      item
+        Column = 1
+        Control = edMaxShiftLen
+        Row = 4
+      end
+      item
+        Column = 1
+        Control = edMinShiftLen
+        Row = 5
       end>
     RowCollection = <
       item
         SizeStyle = ssAbsolute
-        Value = 40.000000000000000000
+        Value = 30.000000000000000000
       end
       item
         SizeStyle = ssAbsolute
-        Value = 40.000000000000000000
+        Value = 30.000000000000000000
+      end
+      item
+        SizeStyle = ssAbsolute
+        Value = 140.000000000000000000
       end
       item
         SizeStyle = ssAbsolute
@@ -218,16 +242,21 @@ object frmSettings: TfrmSettings
       end
       item
         SizeStyle = ssAbsolute
-        Value = 140.000000000000000000
+        Value = 30.000000000000000000
+      end
+      item
+        SizeStyle = ssAbsolute
+        Value = 30.000000000000000000
       end
       item
         Value = 100.000000000000000000
       end>
     TabOrder = 0
+    ExplicitHeight = 431
     object Label1: TLabel
       Left = 0
       Top = 0
-      Width = 100
+      Width = 130
       Height = 13
       Align = alTop
       Caption = #1055#1072#1088#1086#1083#1100
@@ -235,7 +264,7 @@ object frmSettings: TfrmSettings
     end
     object btnUpdatePassword: TWebSpeedButton
       AlignWithMargins = True
-      Left = 335
+      Left = 365
       Top = 0
       Width = 35
       Height = 22
@@ -255,7 +284,6 @@ object frmSettings: TfrmSettings
         43333333A2222400000033A22433333442222400000033A22244444222222400
         0000333A2222222222AA240000003333AA222222AA33A3000000333333AAAAAA
         333333000000333333333333333333000000}
-      Color = clWhite
       SelectColor = clBlack
       ActiveColor = clActiveBorder
       DisableFontColor = clBlack
@@ -270,17 +298,17 @@ object frmSettings: TfrmSettings
     end
     object Label2: TLabel
       Left = 0
-      Top = 40
-      Width = 100
+      Top = 30
+      Width = 130
       Height = 13
       Align = alTop
       Caption = #1060#1072#1081#1083' '#1041#1044
-      ExplicitTop = 30
+      ExplicitTop = 40
       ExplicitWidth = 43
     end
     object edDBFileName: TEdit
-      Left = 100
-      Top = 40
+      Left = 130
+      Top = 30
       Width = 230
       Height = 19
       Align = alTop
@@ -288,11 +316,12 @@ object frmSettings: TfrmSettings
       ParentCtl3D = False
       TabOrder = 0
       Text = 'Edit1'
+      ExplicitTop = 40
     end
     object btnOpenBDFile: TWebSpeedButton
       AlignWithMargins = True
-      Left = 335
-      Top = 40
+      Left = 365
+      Top = 30
       Width = 35
       Height = 21
       Margins.Left = 5
@@ -336,20 +365,20 @@ object frmSettings: TfrmSettings
       Align = alTop
       SpaceWidth = 2
       ExplicitLeft = 305
-      ExplicitTop = 30
     end
     object Label3: TLabel
       Left = 0
-      Top = 80
-      Width = 100
+      Top = 60
+      Width = 130
       Height = 13
       Align = alTop
       Caption = #1042#1093#1086#1076
+      ExplicitTop = 80
       ExplicitWidth = 25
     end
     object pnDev1: TPanel
-      Left = 100
-      Top = 80
+      Left = 130
+      Top = 60
       Width = 230
       Height = 130
       Align = alTop
@@ -357,6 +386,7 @@ object frmSettings: TfrmSettings
       BevelOuter = bvNone
       Color = clWhite
       TabOrder = 1
+      ExplicitTop = 80
       object Label5: TLabel
         Left = 14
         Top = 17
@@ -429,16 +459,17 @@ object frmSettings: TfrmSettings
     end
     object Label4: TLabel
       Left = 0
-      Top = 220
-      Width = 100
+      Top = 200
+      Width = 130
       Height = 13
       Align = alTop
       Caption = #1042#1099#1093#1086#1076
+      ExplicitTop = 220
       ExplicitWidth = 33
     end
     object pnDev2: TPanel
-      Left = 100
-      Top = 220
+      Left = 130
+      Top = 200
       Width = 230
       Height = 130
       Align = alTop
@@ -446,6 +477,7 @@ object frmSettings: TfrmSettings
       BevelOuter = bvNone
       Color = clWhite
       TabOrder = 2
+      ExplicitTop = 220
       object Label9: TLabel
         Left = 14
         Top = 17
@@ -517,7 +549,7 @@ object frmSettings: TfrmSettings
       end
     end
     object edPassword: TMaskEdit
-      Left = 100
+      Left = 130
       Top = 0
       Width = 230
       Height = 19
@@ -526,6 +558,54 @@ object frmSettings: TfrmSettings
       ParentCtl3D = False
       TabOrder = 3
       Text = 'edPassword'
+    end
+    object Label13: TLabel
+      Left = 0
+      Top = 340
+      Width = 130
+      Height = 13
+      Align = alTop
+      Caption = #1052#1072#1082#1089' '#1076#1083#1080#1090' '#1089#1084#1077#1085#1099', '#1095#1072#1089
+      ExplicitTop = 360
+      ExplicitWidth = 111
+    end
+    object Label14: TLabel
+      Left = 0
+      Top = 370
+      Width = 130
+      Height = 13
+      Align = alTop
+      Caption = #1052#1080#1085' '#1076#1083#1080#1090' '#1089#1084#1077#1085#1099', '#1084#1080#1085
+      ExplicitTop = 390
+      ExplicitWidth = 107
+    end
+    object edMaxShiftLen: TEdit
+      Left = 130
+      Top = 340
+      Width = 230
+      Height = 19
+      Align = alTop
+      Constraints.MaxWidth = 230
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 4
+      Text = 'edMaxShiftLen'
+      OnKeyPress = edDevPort_1KeyPress
+      ExplicitTop = 360
+    end
+    object edMinShiftLen: TEdit
+      Left = 130
+      Top = 370
+      Width = 230
+      Height = 19
+      Align = alTop
+      Constraints.MaxWidth = 230
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 5
+      Text = 'Edit1'
+      OnKeyPress = edDevPort_1KeyPress
+      ExplicitTop = 390
     end
   end
   object dlgOpen: TOpenDialog

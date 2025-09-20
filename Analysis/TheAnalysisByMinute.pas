@@ -364,9 +364,7 @@ begin
           PersonState.DayResult[DayNum].State := dsOvertime
         else
           if DayWork > 0 then
-          
-          PersonState.DayResult[DayNum].State := dsNormal;
-
+            PersonState.DayResult[DayNum].State := dsNormal;
 
     // Сумируем общий итог по сотруднику
     if (PersonState.DayResult[DayNum].State in [dsHooky, dsOvertime, dsNormal]) then begin
