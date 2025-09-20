@@ -210,6 +210,7 @@ begin
       if Division.Schedule.UseOvertimeForHooky then Str := Str
         + ' Переработка компенсирует опоздания.';
   end;
+  lbOvertime.Caption := Str;
   if Division.Schedule.CanWorkToBreak then
     Str := Str + ' Разрешено работать в перерывы.';
 

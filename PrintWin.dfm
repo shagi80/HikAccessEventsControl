@@ -308,7 +308,7 @@ object frmReport: TfrmReport
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 45845.789112430600000000
-    ReportOptions.LastChange = 45918.887393773150000000
+    ReportOptions.LastChange = 45920.743711898100000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'begin'
@@ -1090,9 +1090,9 @@ object frmReport: TfrmReport
           ParentFont = False
         end
         object Memo78: TfrxMemoView
-          Left = 805.039890000000000000
+          Left = 854.173780000000000000
           Top = 147.401670000000000000
-          Width = 105.826840000000000000
+          Width = 98.267780000000000000
           Height = 18.897650000000000000
           ShowHint = False
           Font.Charset = DEFAULT_CHARSET
@@ -1108,9 +1108,9 @@ object frmReport: TfrmReport
           VAlign = vaCenter
         end
         object Memo79: TfrxMemoView
-          Left = 805.039890000000000000
+          Left = 854.173780000000000000
           Top = 109.606370000000000000
-          Width = 105.826840000000000000
+          Width = 98.267780000000000000
           Height = 37.795300000000000000
           ShowHint = False
           Font.Charset = DEFAULT_CHARSET
@@ -1127,9 +1127,9 @@ object frmReport: TfrmReport
           VAlign = vaCenter
         end
         object Memo80: TfrxMemoView
-          Left = 910.866730000000000000
+          Left = 952.441560000000000000
           Top = 109.606370000000000000
-          Width = 136.063080000000000000
+          Width = 94.488250000000000000
           Height = 56.692950000000000000
           ShowHint = False
           Font.Charset = DEFAULT_CHARSET
@@ -1142,6 +1142,25 @@ object frmReport: TfrmReport
           Memo.UTF8 = (
             #1056#1119#1056#1109#1056#1169#1056#1111#1056#1105#1057#1027#1057#1034
             #1057#1027#1056#1109#1057#8218#1057#1026#1057#1107#1056#1169#1056#1029#1056#1105#1056#1108#1056#176)
+          ParentFont = False
+          VAlign = vaCenter
+        end
+        object Memo81: TfrxMemoView
+          Left = 805.039890000000000000
+          Top = 109.606370000000000000
+          Width = 49.133890000000000000
+          Height = 56.692950000000000000
+          ShowHint = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8 = (
+            #1056#8217#1057#1027#1056#181#1056#1110#1056#1109
+            #1057#1027#1056#1112#1056#181#1056#1029)
           ParentFont = False
           VAlign = vaCenter
         end
@@ -1759,8 +1778,8 @@ object frmReport: TfrmReport
           VAlign = vaCenter
         end
         object Memo56: TfrxMemoView
-          Left = 805.039890000000000000
-          Width = 105.826815590000000000
+          Left = 854.173780000000000000
+          Width = 98.267755590000000000
           Height = 18.897650000000000000
           ShowHint = False
           StretchMode = smActualHeight
@@ -1778,9 +1797,9 @@ object frmReport: TfrmReport
           VAlign = vaCenter
         end
         object Memo57: TfrxMemoView
-          Left = 805.039890000000000000
+          Left = 854.173780000000000000
           Top = 18.897650000000000000
-          Width = 105.826815590000000000
+          Width = 98.267755590000000000
           Height = 18.897650000000000000
           ShowHint = False
           StretchMode = smActualHeight
@@ -1798,8 +1817,8 @@ object frmReport: TfrmReport
           VAlign = vaCenter
         end
         object Memo58: TfrxMemoView
-          Left = 910.866730000000000000
-          Width = 136.063055590000000000
+          Left = 952.441560000000000000
+          Width = 94.488225590000000000
           Height = 37.795300000000000000
           ShowHint = False
           StretchMode = smActualHeight
@@ -1865,6 +1884,25 @@ object frmReport: TfrmReport
             '[frxUDS1."Name"]')
           ParentFont = False
           WordBreak = True
+        end
+        object Memo82: TfrxMemoView
+          Left = 805.039890000000000000
+          Width = 49.133865590000000000
+          Height = 37.795300000000000000
+          ShowHint = False
+          StretchMode = smActualHeight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Color = clGray
+          Frame.Typ = [ftLeft, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8 = (
+            '[frxUDS1."DayCount"]')
+          ParentFont = False
+          VAlign = vaCenter
         end
       end
     end

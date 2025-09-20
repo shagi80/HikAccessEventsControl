@@ -10,7 +10,8 @@ type
     esEarlyFromShiftOrBreak, esLateFromBreak, esLateToShift, esBreak, esHooky,
     esWorkOnBreak);
 
-  TDayResultState = (dsNormal, dsHooky, dsOvertime);
+  TDayResultState = (dsNormal, dsHooky, dsOvertime, dsSmallTime, dsFullHooky,
+    dsRest);
 
   TMinuteState = record
     Presence: boolean;
@@ -33,6 +34,7 @@ type
     HookyComps: boolean;
     State: TDayResultState;
     NightMinutes: integer;
+    IsCame: boolean;
   end;
 
   TPersonResult = record
@@ -41,6 +43,7 @@ type
     Overtime: integer;
     Hooky: integer;
     LateCount: integer;
+    DayCount: integer;
   end;
 
   TPersonMinuteState = record
@@ -60,6 +63,7 @@ type
     FEndDate: TDateTime;
     FScheduleTemplate: TSchedule;
     FMaxShiftLen: integer;
+    FMinWorkLen: integer;
     FScheduleStateArray: TScheduleStateArray;
     FPersonState: array of TPersonMinuteState;
     FPersonCount: integer;
@@ -80,7 +84,8 @@ type
     procedure PrepareHolydaysStateArray(var HolydayStates: THolydayStateArray);
     procedure PrepareScheduleStateArrayNew;
     procedure CalckDayResult(State: TEventState; IsNight: boolean;
-      var PersonState: TPersonMinuteState; DayNum: integer; CalckTotal: boolean);
+      var PersonState: TPersonMinuteState; DayNum: integer; CalckTotal,
+      IsCame: boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -106,7 +111,8 @@ uses TheSettings, DateUtils, Dialogs;
 constructor TAnalysisByMinute.Create;
 begin
   inherited Create;
-  FMaxShiftLen := 16;
+  FMaxShiftLen := Settings.GetInstance.MaxShiftHours;
+  FMinWorkLen := Settings.GetInstance.MinWorkMinutes;
   FNightBegin := 20 * 60;
   FNightEnd := 8 * 60;
   FPersonCount := 0;
@@ -280,7 +286,8 @@ end;
 { Сопоставление графика и явки. }
 
 procedure TAnalysisByMinute.CalckDayResult(State: TEventState; IsNight: boolean;
-  var PersonState: TPersonMinuteState; DayNum: integer; CalckTotal: boolean);
+  var PersonState: TPersonMinuteState; DayNum: integer; CalckTotal,
+  IsCame: boolean);
 var
   DayHookyTotal: integer;
   HookyCompinsation: integer;
@@ -299,6 +306,7 @@ begin
   end;
   // Ночные минуты
   if IsNight then Inc(PersonState.DayResult[DayNum].NightMinutes);
+  
   // Расчет дневных итогов
   if CalckTotal then begin
     // Суммируем все виды прогулов, запоминаем переработку
@@ -340,20 +348,41 @@ begin
     PersonState.DayResult[DayNum].Overtime := DayOvertime;
     PersonState.DayResult[DayNum].Hooky := DayHookyTotal;
     PersonState.DayResult[DayNum].HookyComps :=(HookyCompinsation > 0);
-    if DayHookyTotal > 0 then PersonState.DayResult[DayNum].State := dsHooky
-      else if DayOvertime > 0 then
-        PersonState.DayResult[DayNum].State := dsOvertime;
+
+    // Определяем статус дня
+    if (IsCame) and ((DayWork + DayOvertime) < Self.FMinWorkLen) then begin
+      PersonState.DayResult[DayNum].State := dsSmallTime;
+      IsCame := False;
+    end else
+      if (DayHookyTotal > 0) then begin
+        if (DayWork + DayOvertime) = 0 then
+          PersonState.DayResult[DayNum].State := dsFullHooky
+        else
+          PersonState.DayResult[DayNum].State := dsHooky;
+      end else
+        if DayOvertime > 0 then
+          PersonState.DayResult[DayNum].State := dsOvertime
+        else
+          if DayWork > 0 then
+          
+          PersonState.DayResult[DayNum].State := dsNormal;
+
+
     // Сумируем общий итог по сотруднику
-    PersonState.TotalDayResult.Overtime := PersonState.TotalDayResult.Overtime
-      + PersonState.DayResult[DayNum].Overtime;
-    PersonState.TotalDayResult.Hooky := PersonState.TotalDayResult.Hooky
-      + PersonState.DayResult[DayNum].Hooky;
-    PersonState.TotalDayResult.TotalWork := PersonState.TotalDayResult.TotalWork
-      + PersonState.DayResult[DayNum].TotalWork;
-    // Подсчет количества опозданий
-    if (PersonState.DayResult[DayNum].LateToShift > 0)
-      and (PersonState.DayResult[DayNum].WorkToSchedule > 0) then
-        Inc(PersonState.TotalDayResult.LateCount);
+    if (PersonState.DayResult[DayNum].State in [dsHooky, dsOvertime, dsNormal]) then begin
+      PersonState.TotalDayResult.Overtime := PersonState.TotalDayResult.Overtime
+        + PersonState.DayResult[DayNum].Overtime;
+      PersonState.TotalDayResult.Hooky := PersonState.TotalDayResult.Hooky
+        + PersonState.DayResult[DayNum].Hooky;
+      PersonState.TotalDayResult.TotalWork := PersonState.TotalDayResult.TotalWork
+        + PersonState.DayResult[DayNum].TotalWork;
+      // Подсчет количества опозданий
+      if (PersonState.DayResult[DayNum].LateToShift > 0)
+        and (PersonState.DayResult[DayNum].WorkToSchedule > 0) then
+          Inc(PersonState.TotalDayResult.LateCount);
+      // Подсчет кол-ва дней
+      if IsCame then Inc(PersonState.TotalDayResult.DayCount);
+    end;
   end;
 end;
 
@@ -363,10 +392,11 @@ var
   EventState, PrevEventState: TEventState;
   ScheduleState: TScheduleState;
   Presence, WorkFlag: boolean;
-  IsNight: boolean;
+  IsNight, IsCame, CalckDay: boolean;
 begin
   PrevEventState := esNone;
   EventState := esNone;
+  IsCame := False;
   for PersonInd := 0 to FPersonCount - 1 do
     for MinuteInd := 60 * 24 to High(FPersonState[PersonInd].StateArray) do begin
       DayNum := MinuteInd div (60 * 24);
@@ -380,7 +410,7 @@ begin
           then EventState := esOvertime else EventState := esRest;
         // Работа в рабочее время это работа
         ssWork: if Presence then EventState := esWork
-          else begin
+            else begin
             // Отсутствие в рабочее время по умолчанию прогул, но для
             // детализации смотрим предыдущие события
             EventState := esHooky;
@@ -415,17 +445,22 @@ begin
               else EventState := esBreak;
       end;
       FPersonState[PersonInd].StateArray[MinuteInd].EventState := EventState;
-      PrevEventState := EventState;
       // Флаг работы в ночь
       IsNight := (((MinuteInd - DayNum * 24 * 60 >= Self.FNightBegin) or
           (MinuteInd  - DayNum * 24 * 60 <= Self.FNightEnd))
            and Presence);
-      //
+      //Подсчет итогов за день
       if DayNum > 0 then begin
         if Presence then Inc(FPersonState[PersonInd].DayResult[DayNum - 1].Present);
+        if not IsCame then
+          IsCame := ((Presence) and (PrevEventState in [esNone, esRest, esLateToShift]));
+        CalckDay := ((MinuteInd + 1) mod (60 * 24) = 0);
         CalckDayResult(EventState, IsNight, FPersonState[PersonInd], DayNum - 1,
-          ((MinuteInd + 1) mod (60 * 24) = 0));
+          CalckDay, IsCame);
+        if CalckDay then IsCame := False;
       end;
+      // Запоминаем последнее событие
+      PrevEventState := EventState;
     end;
 end;
 
@@ -479,7 +514,8 @@ begin
     FPersonState[PersonInd].DayResult[J].Hooky := 0;
     FPersonState[PersonInd].DayResult[J].NightMinutes := 0;
     FPersonState[PersonInd].DayResult[J].HookyComps := False;
-    FPersonState[PersonInd].DayResult[J].State := dsNormal;
+    FPersonState[PersonInd].DayResult[J].State := dsRest;
+    FPersonState[PersonInd].DayResult[J].IsCame := False;
   end;
 end;
 
@@ -490,6 +526,7 @@ begin
   FPersonState[PersonInd].TotalDayResult.Overtime := 0;
   FPersonState[PersonInd].TotalDayResult.Hooky := 0;
   FPersonState[PersonInd].TotalDayResult.LateCount := 0;
+  FPersonState[PersonInd].TotalDayResult.DayCount := 0;
 end;
 
 function TAnalysisByMinute.Analysis: boolean;

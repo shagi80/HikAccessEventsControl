@@ -161,7 +161,8 @@ begin
     Self.Cells[3, ARow] := FormatMinutes(TotalDayResylt.Overtime)
       else Self.Cells[3, ARow] := 'no';
   TotalTime := TotalDayResylt.TotalWork + TotalDayResylt.Overtime;
-  Self.Cells[4, ARow] := FormatMinutes(TotalTime);
+  Self.Cells[4, ARow] := IntToStr(TotalDayResylt.DayCount) + ' / '
+    + FormatMinutes(TotalTime);
   if (TotalTime >= TotalDayResylt.Schedule) then
     Self.Cells[5, ARow] := 'yes' else Self.Cells[5, ARow] := 'no';
   if TotalDayResylt.LateCount = 0 then Self.Cells[6, ARow] := 'no'
@@ -189,12 +190,13 @@ begin
   Self.Cells[1, 0] := 'Время по графику';
   Self.Cells[2, 0] := 'Отработанно по графику';
   Self.Cells[3, 0] := 'Отработано вне графика';
-  Self.Cells[4, 0] := 'Отработанно всего';
+  Self.Cells[4, 0] := 'Отработанно всего ' + chr(13) + 'смен / часов';
   Self.Cells[5, 0] := 'Выполнение нормы';
   Self.Cells[6, 0] := 'Опоздания на смену';
   Self.Cells[7, 0] := 'Все прогулы и нарушения';
   Self.RowCount := FAnalysis.PersonCount + Self.FixedRows;
   Self.ColCount := FTexColCount + FAnalysis.DayCnt - 1;
+  Self.ColWidths[4] := 130;
 
 
   Self.SetDrawColWidth;
@@ -332,11 +334,41 @@ end;
 procedure TAnalysisByMinPresent.DrawDayMark(DayNum, PersonInd: integer; Rct: TRect);
 var
   DayResult: TDayResult;
+  BufColor: TColor;
+  BufWidth, Border: integer;
+  Text: string;
 begin
   DayResult := FAnalysis.PersonState[PersonInd].DayResult[DayNum - 1];
-  if DayResult.State = dsNormal then Exit;
-  Rct.Left := Rct.Right - 6;
-  Rct.Bottom := Rct.top + 6;
+  if DayResult.State in [dsNormal, dsRest] then Exit;
+  if DayResult.State = dsFullHooky then begin
+    Canvas.Brush.Color := rgb(255, 160, 122);
+    Canvas.Font.Color := clBlack;
+    Canvas.Rectangle(Rct);
+    Text := 'HH';
+    DrawText(Canvas.Handle, PAnsiChar(Text), Length(Text), Rct,
+      DT_CENTER or DT_SINGLELINE or DT_VCENTER);
+    Exit;
+  end;
+  if DayResult.State = dsSmallTime then begin
+    Border := Trunc(200 / Self.FMinPerPixel);
+    Inc(Rct.Left, Border);
+    Inc(Rct.Top,  Trunc(Border / 4));
+    Dec(Rct.Right, Border);
+    Dec(Rct.Bottom, Trunc(Border / 4));
+    BufColor := Canvas.Pen.Color;
+    Canvas.Pen.Color := rgb(255, 160, 122);
+    BufWidth := Canvas.Pen.Width;
+    Canvas.Pen.Width :=3;
+    {Canvas.MoveTo(Rct.Left, Rct.Top);
+    Canvas.LineTo(Rct.Right, Rct.Bottom); }
+    Canvas.MoveTo(Rct.Left, Rct.Bottom);
+    Canvas.LineTo(Rct.Right, Rct.Top);
+    Canvas.Pen.Color := BufColor;
+    Canvas.Pen.Width := BufWidth;
+    Exit;
+  end;
+  Rct.Left := Rct.Right - 8;
+  Rct.Bottom := Rct.top + 8;
   OffsetRect(Rct, -1, 1);
   if DayResult.State = dsHooky then Canvas.Brush.Color := clRed;
   if DayResult.State = dsOvertime then Canvas.Brush.Color := clYellow;

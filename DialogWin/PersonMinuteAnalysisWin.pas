@@ -29,9 +29,12 @@ type
     lbWorkToReport: TLabel;
     Label6: TLabel;
     lbLateToShift: TLabel;
+    lbDayState: TLabel;
+    Label8: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure WritePairs(Pairs: TEmplPairs; Date: TDate);
     procedure WriteTotalTime;
+    function GetDayStateText(State: TDayResultState): string;
   private
     { Private declarations }
     FDayResult: TDayResult;
@@ -49,6 +52,18 @@ implementation
 {$R *.dfm}
 
 uses DateUtils;
+
+function TfrmPersonMinuteAnalysis.GetDayStateText(State: TDayResultState): string;
+begin
+  case State of
+    dsNormal: Result := 'Норма';
+    dsHooky: Result := 'Нарушения';
+    dsOvertime: Result := 'Переработка';
+    dsSmallTime: Result := 'Недостаточно времени';
+    dsFullHooky: Result := 'Прогул';
+    dsRest: Result := 'Выходной';
+  end;
+end;
 
 procedure TfrmPersonMinuteAnalysis.WritePairs(Pairs: TEmplPairs; Date: TDate);
 var
@@ -87,6 +102,7 @@ procedure TfrmPersonMinuteAnalysis.WriteTotalTime;
   end;
 
 begin
+  lbDayState.Caption := Self.GetDayStateText(FDayResult.State);
   lbScheduleTime.Caption := FormatMinutes(FDayResult.Schedule);
   lbTotalWorkTime.Caption := FormatMinutes(FDayResult.Present);
   lbWorkToReport.Caption := FormatMinutes(FDayResult.TotalWork);
@@ -134,6 +150,7 @@ begin
   end;
 end;
 
+
 procedure TfrmPersonMinuteAnalysis.ShowAnalysis(AnalysisBitMap: Graphics.TBitMap;
   Date: TDate; DayResult: TDayResult; PersonName: string; Pairs: TEmplPairs);
 begin
@@ -148,7 +165,7 @@ begin
     Self.Height := 400;
   end else begin
     pnMain.Visible := False;
-    Self.Height := 260;
+    Self.Height := 280;
   end;
   WritePairs(Pairs, DateOf(Date));
   WriteTotalTime;

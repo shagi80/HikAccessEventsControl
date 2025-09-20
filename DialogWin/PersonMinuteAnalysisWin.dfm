@@ -3,7 +3,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
   Top = 0
   BorderStyle = bsDialog
   Caption = #1047#1072' '#1086#1076#1080#1085' '#1076#1077#1085#1100
-  ClientHeight = 371
+  ClientHeight = 373
   ClientWidth = 794
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
@@ -18,9 +18,9 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
   TextHeight = 13
   object pnMain: TPanel
     Left = 0
-    Top = 201
+    Top = 209
     Width = 794
-    Height = 170
+    Height = 164
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 20
@@ -47,7 +47,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
     Left = 0
     Top = 0
     Width = 794
-    Height = 201
+    Height = 209
     Align = alTop
     BevelOuter = bvNone
     Color = clWhite
@@ -57,7 +57,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       Left = 506
       Top = 20
       Width = 268
-      Height = 181
+      Height = 189
       Margins.Left = 0
       Margins.Top = 20
       Margins.Right = 20
@@ -75,7 +75,7 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
       Left = 20
       Top = 20
       Width = 483
-      Height = 181
+      Height = 189
       Margins.Left = 20
       Margins.Top = 20
       Margins.Bottom = 0
@@ -124,36 +124,36 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
         ExplicitWidth = 56
       end
       object Label1: TLabel
-        Left = 0
-        Top = 58
+        Left = 2
+        Top = 73
         Width = 130
         Height = 13
         Caption = #1044#1086#1083#1078#1085#1086' '#1073#1099#1090#1100' '#1087#1086' '#1075#1088#1072#1092#1080#1082#1091
       end
       object Label2: TLabel
-        Left = 0
-        Top = 79
+        Left = 2
+        Top = 134
         Width = 139
         Height = 13
         Caption = #1042#1089#1077#1075#1086' '#1085#1072#1093#1086#1076#1080#1083#1089#1103' '#1085#1072' '#1088#1072#1073#1086#1090#1077
       end
       object Label3: TLabel
-        Left = 0
-        Top = 167
+        Left = 2
+        Top = 175
         Width = 76
         Height = 13
         Caption = #1042#1089#1077' '#1085#1072#1088#1091#1096#1077#1085#1080#1103
       end
       object Label4: TLabel
-        Left = 0
-        Top = 123
+        Left = 2
+        Top = 114
         Width = 140
         Height = 13
         Caption = #1054#1090#1088#1072#1073#1086#1090#1072#1085#1086' '#1089#1074#1077#1088#1093' '#1075#1088#1072#1092#1080#1082#1072
       end
       object lbScheduleTime: TLabel
-        Left = 280
-        Top = 58
+        Left = 256
+        Top = 73
         Width = 89
         Height = 13
         Caption = 'lbScheduleTime'
@@ -165,15 +165,15 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
         ParentFont = False
       end
       object lbTotalWorkTime: TLabel
-        Left = 280
-        Top = 79
+        Left = 256
+        Top = 134
         Width = 79
         Height = 13
         Caption = 'lbTotalWorkTime'
       end
       object lbHookyTime: TLabel
-        Left = 280
-        Top = 167
+        Left = 256
+        Top = 175
         Width = 60
         Height = 13
         Caption = 'lbHookyTime'
@@ -185,8 +185,8 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
         ParentFont = False
       end
       object lbOvertime: TLabel
-        Left = 280
-        Top = 123
+        Left = 256
+        Top = 114
         Width = 52
         Height = 13
         Caption = 'lbOvertime'
@@ -198,15 +198,15 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
         ParentFont = False
       end
       object Label5: TLabel
-        Left = 0
-        Top = 101
+        Left = 2
+        Top = 93
         Width = 129
         Height = 13
         Caption = #1054#1090#1088#1072#1073#1086#1090#1072#1085#1085#1086' '#1087#1086' '#1075#1088#1072#1092#1080#1082#1091
       end
       object lbWorkToReport: TLabel
-        Left = 280
-        Top = 101
+        Left = 256
+        Top = 93
         Width = 93
         Height = 13
         Caption = 'lbWorkToReport'
@@ -218,18 +218,44 @@ object frmPersonMinuteAnalysis: TfrmPersonMinuteAnalysis
         ParentFont = False
       end
       object Label6: TLabel
-        Left = 0
-        Top = 145
+        Left = 2
+        Top = 154
         Width = 103
         Height = 13
         Caption = #1054#1087#1086#1079#1076#1072#1085#1080#1103' '#1085#1072' '#1089#1084#1077#1085#1091
       end
       object lbLateToShift: TLabel
-        Left = 280
-        Top = 145
+        Left = 256
+        Top = 154
         Width = 63
         Height = 13
         Caption = 'lbLateToShift'
+      end
+      object lbDayState: TLabel
+        Left = 256
+        Top = 53
+        Width = 63
+        Height = 13
+        Caption = 'lbDayState'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label8: TLabel
+        Left = 2
+        Top = 53
+        Width = 67
+        Height = 13
+        Caption = #1057#1090#1072#1090#1091#1089' '#1076#1085#1103
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
     end
   end

@@ -181,6 +181,7 @@ procedure TfrmReport.frxTableReportGetValue(const VarName: string;
 var
   ARow, ACol: integer;
   TotalTime, LateCount: integer;
+  DayState: TDayResultState;
 begin
   Value := '???';
   ARow := frxUDS1.RecNo;
@@ -193,6 +194,8 @@ begin
         FTablePresent.Analysis.PersonState[ARow].TotalDayResult.Schedule)
            + ' / ' + FTablePresent.FormatMinutes(TotalTime);
   end;
+  if VarName = 'DayCount' then
+    Value := IntToStr(FTablePresent.Analysis.PersonState[ARow].TotalDayResult.DayCount);
   if VarName = 'Late' then begin
     LateCount := FTablePresent.Analysis.PersonState[ARow].TotalDayResult.LateCount;
     if LateCount = 0 then Value := 'íåò'
@@ -201,12 +204,15 @@ begin
   if Pos('Col', VarName) = 1 then begin
     ACol := StrToIntDef(copy(VarName, 4, MaxInt), 0) - 1;
     if ACol < FTablePresent.LastDayCol then begin
+      DayState := FTablePresent.Analysis.PersonState[ARow].DayResult[ACol].State;
       TotalTime := FTablePresent.GetDayTotalTime(
         FTablePresent.Analysis.PersonState[ARow].DayResult[ACol]);
-      if TotalTime = 0 then begin
-          if (FTablePresent.Analysis.PersonState[ARow].DayResult[ACol].Schedule > 0) then
-            Value := 'ÍÍ' else Value := '';
-      end else Value := FTablePresent.FormatMinutes(TotalTime);
+      case DayState of
+        dsSmallTime: Value := 'ÍÓ';
+        dsFullHooky: Value := 'HH';
+        dsRest: Value := 'Â';
+        else Value := FTablePresent.FormatMinutes(TotalTime);
+      end;
     end else Value := '';
   end;
 end;

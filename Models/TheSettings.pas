@@ -10,8 +10,12 @@ type
     FDBFileName: string;
     FCurrentPassword: string;
     FAccessLevel: integer;
+    FMaxShiftHours: integer;
+    FMinWorkMinutes: integer;
     procedure WriteString(Stream: TStream; const Value: string);
     function ReadString(Stream: TStream): string;
+    procedure WriteInteger(Stream: TStream; const Value: Integer);
+    function ReadInteger(Stream: TStream): Integer;
     procedure SetAccessLevel;
     procedure SetCurrentPassword(Value: string);
     class var FInstance: TSettingsSingleton;
@@ -25,6 +29,8 @@ type
     property CurrentPassword: string read FCurrentPassword
       write SetCurrentPassword;
     property AccessLevel: integer read FAccessLevel;
+    property MaxShiftHours: integer read FMaxShiftHours;
+    property MinWorkMinutes: integer read FMinWorkMinutes;
   end;
 
   TSettings = class of TSettingsSingleton;
@@ -34,7 +40,7 @@ var
 
 implementation
 
-uses SQLiteTable3;
+uses SQLiteTable3, Dialogs;
 
 class function TSettingsSingleton.GetInstance: TSettingsSingleton;
 begin
@@ -43,6 +49,8 @@ begin
     if not FInstance.LoadSettings then
       FInstance.FDBFileName := 'hik_events.db';
     FInstance.SetAccessLevel;
+    FInstance.FMaxShiftHours := 16;
+    FInstance.FMinWorkMinutes := Trunc(60 * 3.5);
   end;
   Result := FInstance;
 end;
@@ -105,15 +113,30 @@ begin
     Stream.ReadBuffer(Result[1], Len * SizeOf(Char));
 end;
 
+procedure TSettingsSingleton.WriteInteger(Stream: TStream; const Value: Integer);
+begin
+  Stream.WriteBuffer(Value, SizeOf(Integer));
+end;
+
+function TSettingsSingleton.ReadInteger(Stream: TStream): Integer;
+var
+  BytesRead: Integer;
+begin
+  BytesRead := Stream.Read(Result, SizeOf(Integer));
+  if BytesRead <> SizeOf(Integer) then
+    raise EReadError.Create('Не удалось прочитать целое число');
+end;
+
 procedure TSettingsSingleton.SaveSettings;
 var
   Stream: TFileStream;
 begin
-  Exit;
-  Stream := TFileStream.Create(SETTINGS_FILE, fmCreate or fmOpenWrite);
+  Stream := TFileStream.Create(SETTINGS_FILE, fmCreate);
   try
     WriteString(Stream, FDBFileName);
     WriteString(Stream, FCurrentPassword);
+    WriteInteger(Stream, FMaxShiftHours);
+    WriteInteger(Stream, FMinWorkMinutes);
   finally
     Stream.Free;
   end;
@@ -129,6 +152,8 @@ begin
   try
     FDBFileName := ReadString(Stream);
     FCurrentPassword := ReadString(Stream);
+    FMaxShiftHours := ReadInteger(Stream);
+    FMinWorkMinutes := ReadInteger(Stream);
     Result := FileExists(Self.FDBFileName);
   finally
     Stream.Free;

@@ -69,7 +69,7 @@ begin
   Self.RowHeights[0] := 34;
   Self.DefaultColWidth := 60;
   Self.ColWidths[0] := 200;
-  Self.FResultCol := 2;
+  Self.FResultCol := 3;
   Self.Font.Height := 13;
   Self.Font.Color := clBlack;
 end;
@@ -132,6 +132,7 @@ begin
   // Устанавливаем ширину колонок
   for ACol := FixedCols to ColCount - 1 - FResultCol do
     Self.ColWidths[ACol] := 60;
+  Self.ColWidths[Self.ColCount - 3] := 80;
   Self.ColWidths[Self.ColCount - 2] := 100;
   Self.ColWidths[Self.ColCount - 1] := 100;
   // Записывае  данные строк табеля в обхекты.
@@ -172,24 +173,58 @@ begin
   end else begin
     Text := '???';
     if ACol = 0 then Text := 'ФИО сотрудинка';
-    if ACol = ColCount - 2 then Text := 'Итого, час' + chr(13)
-      + 'норма / факт';
+    if ACol = ColCount - 3 then Text := 'Итого смен' + chr(13)
+      + ' факт';
+    if ACol = ColCount - 2 then Text := 'Итого часов' + chr(13)
+      + ' норма / факт';
     if ACol = ColCount - 1 then Text := 'Опоздания' + chr(13)
-      + 'на смену';
+      + ' на смену';
     DrawText(Self.Canvas.Handle, PAnsiChar(Text), Length(Text), Rct,
       DT_CENTER or DT_WORDBREAK);
   end;
 end;
 
 procedure TTablePresent.DrawDayMark(DayResult: TDayResult; ARect: TRect);
+var
+  BufColor: TColor;
+  BufWidth, Border: integer;
+  Text: string;
 begin
-  if DayResult.State = dsNormal then Exit;
-  ARect.Left := ARect.Right - 6;
-  ARect.Bottom := ARect.top + 6;
-  OffsetRect(AREct, -1, 1);
+  if DayResult.State in [dsNormal, dsRest] then Exit;
+  if DayResult.State = dsFullHooky then begin
+    Canvas.Brush.Color := rgb(255, 160, 122);
+    Canvas.Font.Color := clBlack;
+    Canvas.Rectangle(ARect);
+    Text := 'HH';
+    DrawText(Canvas.Handle, PAnsiChar(Text), Length(Text), ARect,
+      DT_CENTER or DT_SINGLELINE or DT_VCENTER);
+    Exit;
+  end;
+  if DayResult.State = dsSmallTime then begin
+    //Border := Trunc(200 / Self.FMinPerPixel);
+    Border := 10;
+    Inc(ARect.Left, Border);
+    Inc(ARect.Top,  Trunc(Border / 4));
+    Dec(ARect.Right, Border);
+    Dec(ARect.Bottom, Trunc(Border / 4));
+    BufColor := Canvas.Pen.Color;
+    Canvas.Pen.Color := rgb(255, 160, 122);
+    BufWidth := Canvas.Pen.Width;
+    Canvas.Pen.Width :=3;
+    {Canvas.MoveTo(ARect.Left, ARect.Top);
+    Canvas.LineTo(ARect.Right, ARect.Bottom); }
+    Canvas.MoveTo(ARect.Left, ARect.Bottom);
+    Canvas.LineTo(ARect.Right, ARect.Top);
+    Canvas.Pen.Color := BufColor;
+    Canvas.Pen.Width := BufWidth;
+    Exit;
+  end;
+  ARect.Left := ARect.Right - 8;
+  ARect.Bottom := ARect.top + 8;
+  OffsetRect(ARect, -1, 1);
   if DayResult.State = dsHooky then Canvas.Brush.Color := clRed;
   if DayResult.State = dsOvertime then Canvas.Brush.Color := clYellow;
-  Canvas.Ellipse(ARect)
+  Canvas.Ellipse(ARect);
 end;
 
 procedure TTablePresent.DrawCell(ACol, ARow: Longint; ARect: TRect;
@@ -242,6 +277,11 @@ begin
       end;
     end;
     // Ячейка итогов.
+    if (ACol = ColCount - 3) then begin
+      Text := IntToStr(PersonStateHandler.PersonState.TotalDayResult.DayCount);
+      DrawText(Canvas.Handle ,PAnsiChar(Text), Length(Text), Rct,
+        DT_CENTER or DT_SINGLELINE or DT_VCENTER);
+    end;
     if (ACol = ColCount - 2) then begin
       TotalTime := Self.GetPersonTotalTime(PersonStateHandler.PersonState.TotalDayResult);
       Text := FormatMinutes(PersonStateHandler.PersonState.TotalDayResult.Schedule)
