@@ -475,6 +475,8 @@ begin
   FStartDate := StartOfTheDay(IncDay(StartDate, -1));
   FEndDate := EndOfTheDay(EndDate);
   FPersonCount := FPersonList.Count;
+  FMaxShiftLen := Settings.GetInstance.MaxShiftHours;
+  FMinWorkLen := Settings.GetInstance.MinWorkMinutes;
 end;
 
 procedure TAnalysisByMinute.Clear;
